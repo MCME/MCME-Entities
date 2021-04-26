@@ -1,0 +1,23 @@
+name: ${project.artifactId}
+version: ${project.version}
+main: com.mcmiddleearth.entities.EntitiesPlugin
+api-version: 1.16
+depend: [ ProtocolLib ]
+authors: [ Eriol_Eandur ]
+
+commands:
+  npc:
+    description: manges fake players
+    usage: /npc
+  mob:
+    description: manges fake mobs
+    usage: /mob
+  entity:
+    description: manges fake entities
+    usage: /entity
+  animation:
+    description: manges entity animations
+    usage: /animation
+  virtual:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
