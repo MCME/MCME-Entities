@@ -1,12 +1,12 @@
-package com.mcmiddleearth.entities.ai.goals;
+package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 
-public class AttackEntityGoal extends FollowEntityGoal {
+public class GoalEntityTargetAttack extends GoalEntityTargetFollow {
 
-    public AttackEntityGoal(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
+    public GoalEntityTargetAttack(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
         super(type, entity, pathfinder, target);
     }
 

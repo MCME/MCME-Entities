@@ -1,7 +1,6 @@
 package com.mcmiddleearth.entities.entities;
 
-import com.mcmiddleearth.entities.ai.goals.Goal;
-import com.mcmiddleearth.entities.ai.goals.VirtualEntityGoal;
+import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;

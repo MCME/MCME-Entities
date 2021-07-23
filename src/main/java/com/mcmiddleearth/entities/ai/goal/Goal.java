@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.ai.goals;
+package com.mcmiddleearth.entities.ai.goal;
 
 public interface Goal {
 

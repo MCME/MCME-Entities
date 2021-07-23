@@ -1,22 +1,22 @@
-package com.mcmiddleearth.entities.ai.goals;
+package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 
-public abstract class EntityTargetingGoal extends PathGoal {
+public abstract class GoalEntityTarget extends GoalPath {
 
     McmeEntity target;
 
-    private float headYaw, headPitch;
+    //private float headYaw, headPitch;
 
-    public EntityTargetingGoal(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
+    public GoalEntityTarget(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
         super(type, entity, pathfinder);
         this.target = target;
     }
 
-    @Override
+    /*@Override
     public void doTick() {
         super.doTick();
         Location targetDir = getEntity().getLocation().clone()
@@ -24,7 +24,7 @@ public abstract class EntityTargetingGoal extends PathGoal {
                         .subtract(getEntity().getLocation().toVector()));
         headYaw = targetDir.getYaw();
         headPitch = targetDir.getPitch();
-    }
+    }*/
 
     @Override
     public void update() {
@@ -32,7 +32,7 @@ public abstract class EntityTargetingGoal extends PathGoal {
         super.update();
     }
 
-    @Override
+    /*@Override
     public boolean hasHeadRotation() {
         return true;
     }
@@ -45,7 +45,7 @@ public abstract class EntityTargetingGoal extends PathGoal {
     @Override
     public float getHeadPitch() {
         return headPitch;
-    }
+    }*/
 
     public McmeEntity getTarget() {
         return target;

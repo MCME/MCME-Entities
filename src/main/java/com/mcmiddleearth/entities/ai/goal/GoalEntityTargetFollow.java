@@ -1,17 +1,14 @@
-package com.mcmiddleearth.entities.ai.goals;
+package com.mcmiddleearth.entities.ai.goal;
 
-import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 
-import java.util.logging.Logger;
-
-public class FollowEntityGoal extends EntityTargetingGoal {
+public class GoalEntityTargetFollow extends GoalEntityTarget {
 
     private final int isCloseDistanceSquared = 4;
 
-    public FollowEntityGoal(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
+    public GoalEntityTargetFollow(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
         super(type, entity, pathfinder, target);
     }
 

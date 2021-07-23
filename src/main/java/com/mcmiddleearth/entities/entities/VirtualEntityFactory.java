@@ -1,15 +1,12 @@
 package com.mcmiddleearth.entities.entities;
 
-import com.mcmiddleearth.entities.ai.goals.Goal;
-import com.mcmiddleearth.entities.ai.goals.GoalType;
-import com.mcmiddleearth.entities.ai.goals.VirtualEntityGoal;
-import com.mcmiddleearth.entities.ai.goals.VirtualEntityGoalFactory;
+import com.mcmiddleearth.entities.ai.goal.GoalType;
+import com.mcmiddleearth.entities.ai.goal.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
-import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;

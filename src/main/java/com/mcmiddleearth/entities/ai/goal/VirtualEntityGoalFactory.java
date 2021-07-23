@@ -1,15 +1,19 @@
-package com.mcmiddleearth.entities.ai.goals;
+package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.exception.InvalidLocationException;
+import com.mcmiddleearth.entities.util.Constrain;
 import org.bukkit.Location;
 
 public class VirtualEntityGoalFactory {
 
     private Location targetLocation;
+    private Location[] checkpoints;
+    private boolean loop;
 
     private McmeEntity targetEntity;
 
@@ -30,10 +34,20 @@ public class VirtualEntityGoalFactory {
         return this;
     }
 
-    public VirtualEntityGoal build(VirtualEntity entity) {
+    public VirtualEntityGoalFactory withCheckpoints(Location[] checkpoints) {
+        this.checkpoints = checkpoints;
+        return this;
+    }
+
+    public VirtualEntityGoalFactory withLoop(boolean loop) {
+        this.loop = loop;
+        return this;
+    }
+
+    public GoalVirtualEntity build(VirtualEntity entity) throws InvalidLocationException {
         MovementType movementType = entity.getMovementType();
         Pathfinder pathfinder;
-        VirtualEntityGoal goal;
+        GoalVirtualEntity goal;
         switch(movementType) {
             case WALKING: pathfinder = new WalkingPathfinder(entity);
                 break;
@@ -42,7 +56,16 @@ public class VirtualEntityGoalFactory {
         }
         switch(goalType) {
             case FOLLOW_ENTITY:
-                goal = new FollowEntityGoal(goalType,entity,pathfinder,targetEntity);
+                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalEntityTargetFollow(goalType,entity,pathfinder,targetEntity);
+                break;
+            case GOTO_LOCATION:
+                Constrain.checkSameWorld(targetLocation,entity.getLocation().getWorld());
+                goal = new GoalLocationTarget(goalType,entity,pathfinder,targetLocation);
+                break;
+            case FOLLOW_CHECKPOINTS:
+                Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
+                goal = new GoalLocationTargetFollowCheckpoints(goalType,entity,pathfinder,checkpoints,loop);
                 break;
             default:
                 goal = null;

@@ -1,6 +1,6 @@
 package com.mcmiddleearth.entities.entities.composite;
 
-import com.mcmiddleearth.entities.ai.goals.Goal;
+import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.McmeEntityType;
@@ -13,7 +13,6 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public class Bone implements McmeEntity {
 

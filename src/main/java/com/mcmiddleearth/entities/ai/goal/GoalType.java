@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.ai.goals;
+package com.mcmiddleearth.entities.ai.goal;
 
 public enum GoalType {
     STAND,
@@ -9,5 +9,6 @@ public enum GoalType {
     FLY,
     WATCH_ENTITY,
     FOLLOW_ENTITY,
-    FOLLOW_CHECKPOINTS;
+    FOLLOW_CHECKPOINTS,
+    GOTO_LOCATION;
 }

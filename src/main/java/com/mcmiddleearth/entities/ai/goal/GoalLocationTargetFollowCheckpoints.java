@@ -1,10 +1,10 @@
-package com.mcmiddleearth.entities.ai.goals;
+package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 
-public class FollowCheckpointsGoal extends LocationTargetingGoal {
+public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
 
     private final Location[] checkpoints;
 
@@ -12,12 +12,10 @@ public class FollowCheckpointsGoal extends LocationTargetingGoal {
 
     private final boolean loop;
 
-    private final int isCloseDistanceSquared = 1;
-
     private boolean isFinished;
 
-    public FollowCheckpointsGoal(GoalType type, VirtualEntity entity, Pathfinder pathfinder,
-                                 Location[] checkpoints, boolean loop) {
+    public GoalLocationTargetFollowCheckpoints(GoalType type, VirtualEntity entity, Pathfinder pathfinder,
+                                               Location[] checkpoints, boolean loop) {
         super(type, entity, pathfinder, checkpoints[0]);
         this.checkpoints = checkpoints;
         this.loop = loop;

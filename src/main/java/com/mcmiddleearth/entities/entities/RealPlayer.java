@@ -1,7 +1,6 @@
 package com.mcmiddleearth.entities.entities;
 
-import com.mcmiddleearth.command.McmeCommandSender;
-import com.mcmiddleearth.entities.ai.goals.Goal;
+import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -9,8 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 public class RealPlayer extends BukkitCommandSender implements McmeEntity {

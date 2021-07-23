@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.ai.goals;
+package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.movement.RayTracer;
@@ -8,7 +8,7 @@ import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-public abstract class PathGoal extends VirtualEntityGoal {
+public abstract class GoalPath extends GoalVirtualEntity {
 
     private Path path;
 
@@ -19,13 +19,16 @@ public abstract class PathGoal extends VirtualEntityGoal {
     private boolean hasRotation;
     private float rotation;
 
-    public PathGoal(GoalType type, VirtualEntity entity, Pathfinder pathfinder) {
+    protected final int isCloseDistanceSquared = 1;
+
+    public GoalPath(GoalType type, VirtualEntity entity, Pathfinder pathfinder) {
         super(type, entity);
         this.pathfinder = pathfinder;
     }
 
     @Override
     public void update() {
+        super.update();
 //Logger.getGlobal().info("find path from: "+getEntity().getLocation().toVector().getBlockX()+" "
 //        +getEntity().getLocation().toVector().getBlockY()+" "
 //        +getEntity().getLocation().toVector().getBlockZ());
@@ -38,8 +41,9 @@ public abstract class PathGoal extends VirtualEntityGoal {
 
     @Override
     public void doTick() {
+        super.doTick();
         hasRotation = false;
-        if(waypoint != null && getEntity().getLocation().toVector().distanceSquared(waypoint) < 1) {
+        if(waypoint != null && getEntity().getLocation().toVector().distanceSquared(waypoint) < isCloseDistanceSquared) {
             path.setStart(waypoint);
             updateWaypoint();
         }

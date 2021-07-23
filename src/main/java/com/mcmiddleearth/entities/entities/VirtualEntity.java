@@ -1,31 +1,21 @@
 package com.mcmiddleearth.entities.entities;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.ai.goals.Goal;
-import com.mcmiddleearth.entities.ai.goals.VirtualEntityGoal;
+import com.mcmiddleearth.entities.ai.goal.Goal;
+import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
 import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.logging.Logger;
-
-import static com.mcmiddleearth.entities.ai.movement.MovementEngine.checkFinite;
 
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
@@ -59,7 +49,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private MovementType movementType;
 
-    private VirtualEntityGoal goal;
+    private GoalVirtualEntity goal;
 
     private final McmeEntityType type;
 
@@ -218,8 +208,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void setGoal(Goal goal) {
-        if(goal instanceof VirtualEntityGoal) {
-            this.goal = (VirtualEntityGoal) goal;
+        if(goal instanceof GoalVirtualEntity) {
+            this.goal = (GoalVirtualEntity) goal;
         }
     }
 

@@ -1,13 +1,18 @@
-package com.mcmiddleearth.entities.ai.goals;
+package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
-import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
-public abstract class LocationTargetingGoal extends PathGoal {
+public class GoalLocationTarget extends GoalPath {
 
-    public Location target;
+    private Location target;
+
+    @Override
+    public void findPath(Vector start) {
+        super.findPath(start);
+    }
 
     @Override
     public boolean hasHeadRotation() {
@@ -36,7 +41,7 @@ public abstract class LocationTargetingGoal extends PathGoal {
                 .getYaw();
     }
 
-    public LocationTargetingGoal(GoalType type, VirtualEntity entity, Pathfinder pathfinder, Location target) {
+    public GoalLocationTarget(GoalType type, VirtualEntity entity, Pathfinder pathfinder, Location target) {
         super(type, entity, pathfinder);
         this.target = target;
     }
@@ -51,6 +56,19 @@ public abstract class LocationTargetingGoal extends PathGoal {
 
     public boolean isCloseToTarget(int distanceSquared) {
         return getEntity().getLocation().toVector().distanceSquared(getTarget().toVector()) < distanceSquared;
+    }
+
+    @Override
+    public void update() {
+        if(!isCloseToTarget(isCloseDistanceSquared)) {
+            setPathTarget(target.toVector());
+        }
+        super.update();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return isCloseToTarget(isCloseDistanceSquared);
     }
 
 }

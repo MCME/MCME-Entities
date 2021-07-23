@@ -7,9 +7,8 @@ import com.mcmiddleearth.command.SimpleTabCompleteRequest;
 import com.mcmiddleearth.command.TabCompleteRequest;
 import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
-import com.mcmiddleearth.command.bukkit.BukkitTabCompleteRequest;
 import com.mcmiddleearth.entities.EntityAPI;
-import com.mcmiddleearth.entities.ai.goals.*;
+import com.mcmiddleearth.entities.ai.goal.*;
 import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.*;
@@ -125,10 +124,10 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
     private int findPath(McmeCommandSender sender) {
         RealPlayer player = ((RealPlayer)sender);
         VirtualEntity entity = (VirtualEntity) player.getSelectedEntities().iterator().next();
-        VirtualEntityGoal goal = new FollowEntityGoal(GoalType.FOLLOW_ENTITY, entity,
+        GoalVirtualEntity goal = new GoalEntityTargetFollow(GoalType.FOLLOW_ENTITY, entity,
                                      new WalkingPathfinder(entity), player);
         goal.update();
-        Path path = ((PathGoal)goal).getPath();
+        Path path = ((GoalPath)goal).getPath();
         if(path!=null) {
             Logger.getGlobal().info("Target: " +path.getTarget());
             Logger.getGlobal().info("Start: " +path.getStart());
@@ -160,7 +159,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                                                 new Location(world, 10, 20, 13),
                                                 new Location(world, -10, 20, 13)};
         VirtualEntity entity = (VirtualEntity) ((RealPlayer) sender).getSelectedEntities().iterator().next();
-        Goal goal = new FollowCheckpointsGoal(GoalType.FOLLOW_CHECKPOINTS, entity,
+        Goal goal = new GoalLocationTargetFollowCheckpoints(GoalType.FOLLOW_CHECKPOINTS, entity,
                                               new WalkingPathfinder(entity),checkpoints,true);
         entity.setGoal(goal);
         return 0;
