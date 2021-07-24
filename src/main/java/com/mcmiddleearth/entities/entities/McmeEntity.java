@@ -5,6 +5,7 @@ import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import java.util.Set;
 import java.util.UUID;
 
 public interface McmeEntity {
@@ -46,4 +47,16 @@ public interface McmeEntity {
     public void setRotation(float yaw);
 
     public EntityBoundingBox getBoundingBox();
+
+    public int getHealth();
+    public void damage(int damage);
+    public void heal(int damage);
+    public boolean isDead();
+
+    public void playAnimation(AnimationType type);
+
+    public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor);
+    public void attack(McmeEntity target);
+
+    public Set<McmeEntity> getAttackers();
 }

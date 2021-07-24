@@ -1,5 +1,8 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
+import com.mcmiddleearth.entities.ai.goal.head.HeadGoalLocationTarget;
+import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
@@ -9,12 +12,18 @@ public class GoalLocationTarget extends GoalPath {
 
     private Location target;
 
+    public GoalLocationTarget(GoalType type, VirtualEntity entity, Pathfinder pathfinder, Location target) {
+        super(type, entity, pathfinder);
+        this.target = target;
+        setDefaultHeadGoal();
+    }
+
     @Override
     public void findPath(Vector start) {
         super.findPath(start);
     }
 
-    @Override
+    /*@Override
     public boolean hasHeadRotation() {
         return false;
     }
@@ -32,18 +41,13 @@ public class GoalLocationTarget extends GoalPath {
     @Override
     public boolean hasRotation() {
         return true;
-    }
+    }*/
 
     @Override
     public float getRotation() {
         return getEntity().getLocation().clone()
                 .setDirection(target.toVector().subtract(getEntity().getLocation().toVector()))
                 .getYaw();
-    }
-
-    public GoalLocationTarget(GoalType type, VirtualEntity entity, Pathfinder pathfinder, Location target) {
-        super(type, entity, pathfinder);
-        this.target = target;
     }
 
     public Location getTarget() {
@@ -71,4 +75,10 @@ public class GoalLocationTarget extends GoalPath {
         return isCloseToTarget(isCloseDistanceSquared);
     }
 
+
+    public void setDefaultHeadGoal() {
+        clearHeadGoals();
+        addHeadGoal(new HeadGoalLocationTarget(this, 10));
+        addHeadGoal(new HeadGoalWaypointTarget(this, 40));
+    }
 }

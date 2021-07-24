@@ -2,7 +2,7 @@ package com.mcmiddleearth.entities.ai.goal.head;
 
 public abstract class HeadGoal {
 
-    private int duration;
+    private int duration = 10;
     protected float yaw, pitch;
 
     public float getHeadYaw() {

@@ -1,29 +1,31 @@
 package com.mcmiddleearth.entities.ai.goal.head;
 
 import com.mcmiddleearth.entities.ai.goal.GoalEntityTarget;
+import com.mcmiddleearth.entities.ai.goal.GoalPath;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
-public class HeadGoalEntityTarget extends HeadGoal {
+public class HeadGoalWaypointTarget extends HeadGoal {
 
-    private final GoalEntityTarget goal;
+    private final GoalPath goal;
 
-    public HeadGoalEntityTarget(GoalEntityTarget goal) {
+    public HeadGoalWaypointTarget(GoalPath goal) {
         this.goal = goal;
     }
 
-    public HeadGoalEntityTarget(GoalEntityTarget goal, int duration) {
+    public HeadGoalWaypointTarget(GoalPath goal, int duration) {
         this(goal);
         setDuration(duration);
     }
 
     @Override
     public void doTick() {
-        Location target = goal.getTarget().getLocation();
+        Vector target = goal.getWaypoint();
         VirtualEntity entity = goal.getEntity();
-        if(target!=null) {
+        if(target != null) {
             Location targetDir = entity.getLocation().clone()
-                    .setDirection(target.toVector()
+                    .setDirection(target
                             .subtract(entity.getLocation().toVector()));
             yaw = targetDir.getYaw();
             pitch = targetDir.getPitch();

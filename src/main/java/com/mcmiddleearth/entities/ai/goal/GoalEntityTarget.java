@@ -1,9 +1,12 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
+import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 public abstract class GoalEntityTarget extends GoalPath {
 
@@ -14,6 +17,7 @@ public abstract class GoalEntityTarget extends GoalPath {
     public GoalEntityTarget(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
         super(type, entity, pathfinder);
         this.target = target;
+        setDefaultHeadGoal();
     }
 
     /*@Override
@@ -51,7 +55,17 @@ public abstract class GoalEntityTarget extends GoalPath {
         return target;
     }
 
+    public void setTarget(McmeEntity target) {
+        this.target = target;
+    }
+
     public boolean isCloseToTarget(int distanceSquared) {
         return getEntity().getLocation().toVector().distanceSquared(getTarget().getLocation().toVector()) < distanceSquared;
+    }
+
+    public void setDefaultHeadGoal() {
+        clearHeadGoals();
+        addHeadGoal(new HeadGoalEntityTarget(this, 10));
+        addHeadGoal(new HeadGoalWaypointTarget(this, 40));
     }
 }

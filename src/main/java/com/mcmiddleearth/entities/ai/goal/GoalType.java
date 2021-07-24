@@ -1,7 +1,7 @@
 package com.mcmiddleearth.entities.ai.goal;
 
 public enum GoalType {
-    STAND,
+    HOLD_POSITION,
     ATTACK_ENTITY,
     ATTACK_CLOSE,
     DIG,
@@ -10,5 +10,6 @@ public enum GoalType {
     WATCH_ENTITY,
     FOLLOW_ENTITY,
     FOLLOW_CHECKPOINTS,
+    RANDOM_CHECKPOINTS,
     GOTO_LOCATION;
 }

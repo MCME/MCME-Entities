@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class SyncEntityServer implements EntityServer {
 
@@ -66,6 +67,9 @@ public class SyncEntityServer implements EntityServer {
 
     @Override
     public void doTick() {
+        entityProvider.getEntities().stream()
+                      .filter(McmeEntity::isDead).collect(Collectors.toList())
+                      .forEach(this::removeEntity);
         entityProvider.getEntities().forEach(entity-> {
             if(entity instanceof VirtualEntity) {
                 Bukkit.getOnlinePlayers().forEach(player -> {

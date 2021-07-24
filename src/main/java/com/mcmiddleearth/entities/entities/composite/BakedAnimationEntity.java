@@ -1,12 +1,11 @@
 package com.mcmiddleearth.entities.entities.composite;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
-import com.mcmiddleearth.entities.entities.composite.animation.Animation;
-import com.mcmiddleearth.entities.entities.composite.animation.AnimationType;
+import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
+import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationType;
 import org.bukkit.Material;
 
 import java.io.File;
@@ -18,11 +17,11 @@ import java.util.logging.Logger;
 
 public class BakedAnimationEntity extends CompositeEntity {
 
-    private final Map<String, Animation> animations = new HashMap<>();
+    private final Map<String, BakedAnimation> animations = new HashMap<>();
 
     private final Map<String, Integer> states = new HashMap<>();
 
-    private Animation currentAnimation;
+    private BakedAnimation currentAnimation;
 
     private int currentState;
 
@@ -39,7 +38,7 @@ Logger.getGlobal().info("Baked Animation Get location "+getLocation());
             Material itemMaterial = Material.valueOf(modelData.get("head_item").getAsString().toUpperCase());
             JsonObject animationData = data.get("animations").getAsJsonObject();
             animationData.entrySet().forEach(entry
-                    -> animations.put(entry.getKey(), Animation.loadAnimation(entry.getValue().getAsJsonObject(),
+                    -> animations.put(entry.getKey(), BakedAnimation.loadAnimation(entry.getValue().getAsJsonObject(),
                     itemMaterial, this)));
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,7 +50,7 @@ Logger.getGlobal().info("Baked Animation Get location "+getLocation());
     public void doTick() {
         if(currentAnimation!=null) {
             if (currentAnimation.isFinished()) {
-                if (currentAnimation.getType().equals(AnimationType.CHAIN)) {
+                if (currentAnimation.getType().equals(BakedAnimationType.CHAIN)) {
                     currentAnimation = animations.get(currentAnimation.getNext());
                     currentAnimation.reset();
                 }
@@ -62,7 +61,7 @@ Logger.getGlobal().info("Baked Animation Get location "+getLocation());
     }
 
     public void setAnimation(String name) {
-        Animation newAnim = animations.get(name);
+        BakedAnimation newAnim = animations.get(name);
         if(newAnim!=null) {
             currentAnimation = newAnim;
             currentAnimation.reset();

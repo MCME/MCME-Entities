@@ -55,6 +55,10 @@ public class VirtualEntityGoalFactory {
                 pathfinder = new WalkingPathfinder(entity);
         }
         switch(goalType) {
+            case WATCH_ENTITY:
+                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalWatchEntity(goalType,entity,targetEntity);
+                break;
             case FOLLOW_ENTITY:
                 Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetFollow(goalType,entity,pathfinder,targetEntity);
@@ -66,6 +70,14 @@ public class VirtualEntityGoalFactory {
             case FOLLOW_CHECKPOINTS:
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
                 goal = new GoalLocationTargetFollowCheckpoints(goalType,entity,pathfinder,checkpoints,loop);
+                break;
+            case RANDOM_CHECKPOINTS:
+                Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
+                goal = new GoalLocationTargetRandomCheckpoints(goalType,entity,pathfinder,checkpoints);
+                break;
+            case HOLD_POSITION:
+                Constrain.checkSameWorld(targetLocation,entity.getLocation().getWorld());
+                goal = new GoalHoldPosition(goalType,entity,targetLocation);
                 break;
             default:
                 goal = null;

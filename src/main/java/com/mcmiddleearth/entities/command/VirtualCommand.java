@@ -89,7 +89,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
     private int spawnEntityArmy(McmeCommandSender sender, String type, int size) {
         VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(type), ((RealPlayer)sender).getLocation())
                 .withGoalType(GoalType.FOLLOW_ENTITY)
-                .withTargetEntity((RealPlayer)sender);
+                .withTargetEntity((RealPlayer) sender);
         //((BukkitCommandSender)sender).clearSelection();
         for(int i = 0; i < size; i++) {
             factory.withLocation(((RealPlayer)sender).getLocation().add(new Vector(i*2,0,0)));

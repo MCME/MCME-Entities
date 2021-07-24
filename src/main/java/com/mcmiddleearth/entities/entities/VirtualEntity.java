@@ -6,6 +6,7 @@ import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
 import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
+import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attributable;
@@ -30,12 +31,13 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private boolean invertWhiteList = false;
 
-    private int tickCounter = 0;
+    protected int tickCounter = 0;
 
     protected AbstractPacket spawnPacket;
     protected AbstractPacket removePacket;
     protected AbstractPacket teleportPacket;
     protected AbstractPacket movePacket;
+    protected AbstractPacket statusPacket;
 
     private Location location;
 
@@ -65,8 +67,16 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private final int jumpHeight = 1;
     private final int fallDepth = 1; //if both values differ from each other pathfinding can easily get stuck.
+    private final float knockBackPerDamage = 0.5f;
 
-    public VirtualEntity(VirtualEntityFactory factory) {
+    private int health;
+    private boolean dead = false;
+
+    private int attackCoolDown = 40;
+
+    private Set<McmeEntity> attackers = new HashSet<>();
+
+    public VirtualEntity(VirtualEntityFactory factory) throws InvalidLocationException {
         this.type = factory.getType();
         this.location = factory.getLocation();
         this.velocity = new Vector(0, 0, 0);
@@ -78,6 +88,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.boundingBox.setLocation(location);
         this.movementEngine = new MovementEngine(this);
         this.goal = factory.getGoalFactory().build(this);
+        this.health = 20;
     }
 
     @Override
@@ -113,6 +124,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 movementEngine.calculateMovement(new Vector(0,0,0));
             }
             move();
+            attackCoolDown = Math.max(0, attackCoolDown--);
         }
         tickCounter++;
     }
@@ -295,6 +307,52 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     public int getFallDepth() {
         return fallDepth;
     }
+
+    public int getHealth() { return health;}
+
+    public void damage(int damage) {
+        health -= damage;
+        if(health <= 0) dead = true;
+        playAnimation(AnimationType.HURT);
+    }
+
+    public void heal(int damage) {
+        health = Math.min(health + damage, 20);
+    }
+
+    public boolean isDead() {
+        return dead;
+    }
+
+    @Override
+    public void receiveAttack(McmeEntity damager, int damage, float knockBackFactor) {
+        damage(damage);
+        float length = damage*knockBackFactor*knockBackPerDamage;
+        Vector knockBack = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize()
+                                  .multiply(length).add(new Vector(0,length*0.6,0));
+        setMovementType(MovementType.FALLING);
+        setVelocity(knockBack);
+        attackers.add(damager);
+    }
+
+    @Override
+    public void attack(McmeEntity target) {
+        playAnimation(AnimationType.ATTACK);
+        target.receiveAttack(this,2,1);
+        attackCoolDown = 40;
+    }
+
+    public int getAttackCoolDown() {
+        return attackCoolDown;
+    }
+
+    @Override
+    public Set<McmeEntity> getAttackers() {
+        return attackers;
+    }
+
+    @Override
+    public void playAnimation(AnimationType type) { }
 
     /*Location loc;
     public void _test_spawn_(Player player) {

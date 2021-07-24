@@ -109,6 +109,26 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
         return false;
     }
 
+    @Override
+    public int getHealth() {
+        return (int)(getBukkitPlayer().getHealth()*20);
+    }
+
+    @Override
+    public void damage(int damage) {
+        getBukkitPlayer().damage(damage/20f);
+    }
+
+    @Override
+    public void heal(int damage) {
+        getBukkitPlayer().setHealth(getBukkitPlayer().getHealth()+damage/20f);
+    }
+
+    @Override
+    public boolean isDead() {
+        return getBukkitPlayer().isDead();
+    }
+
     public Player getBukkitPlayer() {
         return (Player) getCommandSender();
     }

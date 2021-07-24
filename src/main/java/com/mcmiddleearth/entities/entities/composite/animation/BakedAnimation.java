@@ -3,7 +3,6 @@ package com.mcmiddleearth.entities.entities.composite.animation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
-import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
@@ -11,13 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Animation {
+public class BakedAnimation {
 
     private final List<Frame> frames = new ArrayList<>();
 
     private int currentFrame, ticks;
 
-    private final AnimationType type;
+    private final BakedAnimationType type;
 
     private final String next;
 
@@ -27,7 +26,7 @@ public class Animation {
 
     private final BakedAnimationEntity entity;
 
-    public Animation(BakedAnimationEntity entity, AnimationType type, String next, int interval) {
+    public BakedAnimation(BakedAnimationEntity entity, BakedAnimationType type, String next, int interval) {
         this.entity = entity;
         this.type = type;
         this.next = next;
@@ -52,7 +51,7 @@ public class Animation {
         if(ticks%interval==0) {
             currentFrame++;
             if(currentFrame == frames.size()) {
-                if(type.equals(AnimationType.LOOP)) {
+                if(type.equals(BakedAnimationType.LOOP)) {
                     currentFrame = 0;
                 } else {
                     finished = true;
@@ -75,21 +74,21 @@ public class Animation {
         return next;
     }
 
-    public AnimationType getType() {
+    public BakedAnimationType getType() {
         return type;
     }
 
-    public static Animation loadAnimation(JsonObject data, Material itemMaterial, BakedAnimationEntity entity) {
+    public static BakedAnimation loadAnimation(JsonObject data, Material itemMaterial, BakedAnimationEntity entity) {
         Map<String, Integer> states = new HashMap<>();
-        AnimationType type;
+        BakedAnimationType type;
         try {
-            type = AnimationType.valueOf(data.get("loop").getAsString().toUpperCase());
+            type = BakedAnimationType.valueOf(data.get("loop").getAsString().toUpperCase());
         }catch (IllegalArgumentException ex) {
-            type = AnimationType.ONCE;
+            type = BakedAnimationType.ONCE;
         }
         int interval = (data.get("interval") == null? 1 : data.get("interval").getAsInt());
         String next = (data.has("next")?data.get("next").getAsString():null);
-        Animation animation = new Animation(entity, type, next, interval);
+        BakedAnimation animation = new BakedAnimation(entity, type, next, interval);
         JsonArray frameData = data.get("frames").getAsJsonArray();
         for(int i = 0; i< frameData.size(); i++) {
             animation.addFrame(Frame.loadFrame(entity,animation,frameData.get(i).getAsJsonObject(),itemMaterial));

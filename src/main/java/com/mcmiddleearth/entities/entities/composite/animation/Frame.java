@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import com.mcmiddleearth.entities.entities.composite.Bone;
-import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
 import org.bukkit.Material;
 
 import java.util.HashMap;
@@ -27,7 +26,7 @@ public class Frame {
         });
     }
 
-    public static Frame loadFrame(BakedAnimationEntity entity, Animation animation,
+    public static Frame loadFrame(BakedAnimationEntity entity, BakedAnimation animation,
                                   JsonObject data, Material itemMaterial) {
         Set<Map.Entry<String, JsonElement>> entries = data.get("bones").getAsJsonObject().entrySet();
         Frame frame = new Frame();

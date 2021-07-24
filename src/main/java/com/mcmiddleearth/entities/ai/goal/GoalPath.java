@@ -167,4 +167,8 @@ if(next != null && next.has(j)) {
     public Path getPath() {
         return path;
     }
+
+    public Vector getWaypoint() {
+        return waypoint;
+    }
 }

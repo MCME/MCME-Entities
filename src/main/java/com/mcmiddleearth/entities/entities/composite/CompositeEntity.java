@@ -1,24 +1,14 @@
 package com.mcmiddleearth.entities.entities.composite;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
-import com.mcmiddleearth.entities.entities.composite.animation.Animation;
+import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.CompositeEntityMovePacket;
 import com.mcmiddleearth.entities.protocol.packets.CompositeEntitySpawnPacket;
 import com.mcmiddleearth.entities.protocol.packets.CompositeEntityTeleportPacket;
 import com.mcmiddleearth.entities.protocol.packets.VirtualEntityDestroyPacket;
-import org.bukkit.Material;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public abstract class CompositeEntity extends VirtualEntity {
@@ -27,7 +17,7 @@ public abstract class CompositeEntity extends VirtualEntity {
 
     private final int firstEntityId;
 
-    public CompositeEntity(int entityId, VirtualEntityFactory factory) {
+    public CompositeEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException {
         super(factory);
         firstEntityId = entityId;
     }

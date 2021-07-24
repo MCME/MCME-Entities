@@ -1,20 +1,22 @@
 package com.mcmiddleearth.entities.ai.goal.head;
 
+import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
-public class HeadGoalLook extends HeadGoal {
+public class HeadGoalWatch extends HeadGoal {
 
-    private final Location target;
+    private final McmeEntity target;
 
     private final VirtualEntity entity;
 
-    public HeadGoalLook(Location target, VirtualEntity entity) {
+    public HeadGoalWatch(McmeEntity target, VirtualEntity entity) {
         this.target = target;
         this.entity = entity;
     }
 
-    public HeadGoalLook(Location target, VirtualEntity entity, int duration) {
+    public HeadGoalWatch(McmeEntity target, VirtualEntity entity, int duration) {
         this(target, entity);
         setDuration(duration);
     }
@@ -22,7 +24,7 @@ public class HeadGoalLook extends HeadGoal {
     @Override
     public void doTick() {
         Location targetDir = entity.getLocation().clone()
-                .setDirection(target.toVector()
+                .setDirection(target.getLocation().toVector()
                         .subtract(entity.getLocation().toVector()));
         yaw = targetDir.getYaw();
         pitch = targetDir.getPitch();

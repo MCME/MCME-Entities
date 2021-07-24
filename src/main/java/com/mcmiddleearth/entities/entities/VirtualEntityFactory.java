@@ -7,6 +7,7 @@ import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
+import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -161,7 +162,7 @@ public class VirtualEntityFactory {
         return result;
     }
 
-    public McmeEntity build(int entityId) {
+    public McmeEntity build(int entityId) throws InvalidLocationException {
         if(type.isCustomType()) {
             switch(type.getCustomType()) {
                 case BAKED_ANIMATION:

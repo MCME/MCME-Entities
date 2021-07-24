@@ -2,8 +2,10 @@ package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import jdk.javadoc.internal.doclets.formats.html.markup.Head;
 import org.bukkit.util.Vector;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -19,7 +21,7 @@ public abstract class GoalVirtualEntity implements Goal{
     private int headGoalTicks=0;
     private float currentDurationFactor=1;
 
-    private final static Random random = new Random();
+    protected final static Random random = new Random();
 
     private int updateInterval = 10;
 
@@ -81,6 +83,17 @@ public abstract class GoalVirtualEntity implements Goal{
             setRandomHeadGoal();
         }
     }
+
+    public void clearHeadGoals() {
+        headGoals.clear();
+        currentHeadGoal = null;
+    }
+
+    public Set<HeadGoal> getHeadGoals() {
+        return new HashSet<>(headGoals);
+    }
+
+    public void setDefaultHeadGoal() {}
 
     private void setRandomHeadGoal() {
         currentDurationFactor = new Random().nextFloat()+0.7f;
