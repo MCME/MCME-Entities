@@ -4,6 +4,7 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 import com.mcmiddleearth.entities.events.listener.McmeEventListener;
+import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.BlockProvider;
 import com.mcmiddleearth.entities.provider.PlayerProvider;
 import org.bukkit.Location;
@@ -19,7 +20,7 @@ public interface EntityServer {
 
     public void doTick();
 
-    public McmeEntity spawnEntity(VirtualEntityFactory factory);
+    public McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException;
 
     public void removeEntity(McmeEntity entity);
 

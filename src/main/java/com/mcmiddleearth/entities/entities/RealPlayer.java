@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.Set;
 import java.util.UUID;
 
 public class RealPlayer extends BukkitCommandSender implements McmeEntity {
@@ -138,5 +139,23 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
         getBukkitPlayer().sendMessage(baseComponents);
     }
 
+    @Override
+    public void playAnimation(AnimationType type) {
 
+    }
+
+    @Override
+    public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor) {
+        damage(damage);
+    }
+
+    @Override
+    public void attack(McmeEntity target) {
+
+    }
+
+    @Override
+    public Set<McmeEntity> getAttackers() {
+        return null;
+    }
 }

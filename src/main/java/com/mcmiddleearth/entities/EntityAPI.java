@@ -5,6 +5,7 @@ import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.RealPlayer;
+import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.PlayerProvider;
 import com.mcmiddleearth.entities.server.EntityServer;
 import org.bukkit.command.CommandSender;
@@ -53,7 +54,7 @@ public class EntityAPI {
         return null;
     }
 
-    public static McmeEntity spawnEntity(VirtualEntityFactory factory) {
+    public static McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException {
         return entityServer.spawnEntity(factory);
     }
 

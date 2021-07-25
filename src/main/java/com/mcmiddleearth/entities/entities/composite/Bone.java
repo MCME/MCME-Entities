@@ -2,6 +2,7 @@ package com.mcmiddleearth.entities.entities.composite;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
+import com.mcmiddleearth.entities.entities.AnimationType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.McmeEntityType;
 import com.mcmiddleearth.entities.protocol.packets.*;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import java.util.Set;
 import java.util.UUID;
 
 public class Bone implements McmeEntity {
@@ -220,5 +222,45 @@ public class Bone implements McmeEntity {
 
     public boolean isHasHeadRotationUpdate() {
         return hasHeadRotationUpdate;
+    }
+
+    @Override
+    public int getHealth() {
+        return 0;
+    }
+
+    @Override
+    public void damage(int damage) {
+
+    }
+
+    @Override
+    public void heal(int damage) {
+
+    }
+
+    @Override
+    public boolean isDead() {
+        return false;
+    }
+
+    @Override
+    public void playAnimation(AnimationType type) {
+
+    }
+
+    @Override
+    public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor) {
+
+    }
+
+    @Override
+    public void attack(McmeEntity target) {
+
+    }
+
+    @Override
+    public Set<McmeEntity> getAttackers() {
+        return null;
     }
 }

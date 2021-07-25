@@ -9,6 +9,7 @@ import com.mcmiddleearth.entities.events.events.McmeEntityRemoveEvent;
 import com.mcmiddleearth.entities.events.handler.EntityEventHandler;
 import com.mcmiddleearth.entities.events.handler.McmeEntityEventHandler;
 import com.mcmiddleearth.entities.events.listener.McmeEventListener;
+import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -95,7 +96,7 @@ public class SyncEntityServer implements EntityServer {
     }
 
     @Override
-    public McmeEntity spawnEntity(VirtualEntityFactory factory) {
+    public McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException {
         McmeEntity result = factory.build(lastEntityId+1);
         lastEntityId += result.getEntityQuantity();
         entityProvider.addEntity(result);

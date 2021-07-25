@@ -13,6 +13,8 @@ import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.*;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
+import com.mcmiddleearth.entities.exception.InvalidLocationException;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -82,7 +84,12 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 .withDataFile(name)
                 .withGoalType(GoalType.FOLLOW_ENTITY)
                 .withTargetEntity((RealPlayer)sender);
-        ((BukkitCommandSender)sender).setSelection(EntityAPI.spawnEntity(factory));
+        try {
+            ((BukkitCommandSender)sender).setSelection(EntityAPI.spawnEntity(factory));
+        } catch (InvalidLocationException e) {
+            sender.sendMessage(new ComponentBuilder("Can't spawn because of invalid location!").create());
+            e.printStackTrace();
+        }
         return 0;
     }
 
@@ -94,7 +101,12 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         for(int i = 0; i < size; i++) {
             factory.withLocation(((RealPlayer)sender).getLocation().add(new Vector(i*2,0,0)));
             for(int j = 0; j < size; j++) {
-                ((BukkitCommandSender) sender).addToSelection(EntityAPI.spawnEntity(factory));
+                try {
+                    ((BukkitCommandSender) sender).addToSelection(EntityAPI.spawnEntity(factory));
+                } catch (InvalidLocationException e) {
+                    sender.sendMessage(new ComponentBuilder("Can't spawn because of invalid location!").create());
+                    e.printStackTrace();
+                }
                 factory.withLocation(factory.getLocation().add(new Vector(0, 0, 2)));
             }
         }

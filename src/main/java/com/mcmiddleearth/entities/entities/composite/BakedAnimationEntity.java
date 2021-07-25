@@ -6,6 +6,7 @@ import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationType;
+import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import org.bukkit.Material;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public class BakedAnimationEntity extends CompositeEntity {
     private final File bakedAnimationFolder = new File(EntitiesPlugin.getInstance().getDataFolder(),"animation");
 
 
-    public BakedAnimationEntity(int entityId, VirtualEntityFactory factory) {
+    public BakedAnimationEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException {
         super(entityId, factory);
 Logger.getGlobal().info("Baked Animation Get location "+getLocation());
         File animationFile = new File(bakedAnimationFolder, factory.getDataFile());

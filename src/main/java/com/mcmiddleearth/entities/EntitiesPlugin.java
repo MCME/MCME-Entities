@@ -13,6 +13,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Logger;
+
 public final class EntitiesPlugin extends JavaPlugin {
 
     private static EntitiesPlugin instance;
@@ -38,6 +40,7 @@ public final class EntitiesPlugin extends JavaPlugin {
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         //manager.addPacketListener(new EntityListener(this));
+        Logger.getGlobal().info("Manager: "+manager);
         manager.addPacketListener(new VirtualEntityUseListener(this, server));
 
         server.start();
