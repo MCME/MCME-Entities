@@ -23,7 +23,7 @@ public class EntitySelectionListener implements McmeEventListener {
         }
     }
 
-    @EntityEventHandler
+    /*@EntityEventHandler
     public void onSelectionSet(VirtualPlayerAttackEvent event) {
         if (event.isSneaking()) {
             event.getPlayer().clearSelection();
@@ -32,7 +32,7 @@ public class EntitySelectionListener implements McmeEventListener {
             event.getPlayer().setSelection(event.getEntity());
             event.getPlayer().sendMessage(new ComponentBuilder("Selection set").create());
         }
-    }
+    }*/
 
     @EntityEventHandler
     public void onEntityRemove(McmeEntityRemoveEvent event) {

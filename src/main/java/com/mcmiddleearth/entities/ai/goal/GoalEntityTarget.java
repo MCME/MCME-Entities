@@ -32,7 +32,12 @@ public abstract class GoalEntityTarget extends GoalPath {
 
     @Override
     public void update() {
-        setPathTarget(getTarget().getLocation().toVector());
+        if(target!=null) {
+            setPathTarget(getTarget().getLocation().toVector());
+        } else {
+            setPathTarget(null);
+            deletePath();
+        }
         super.update();
     }
 
@@ -59,13 +64,17 @@ public abstract class GoalEntityTarget extends GoalPath {
         this.target = target;
     }
 
-    public boolean isCloseToTarget(int distanceSquared) {
-        return getEntity().getLocation().toVector().distanceSquared(getTarget().getLocation().toVector()) < distanceSquared;
+    public boolean isCloseToTarget(double distanceSquared) {
+        if(target!=null) {
+            return getEntity().getLocation().toVector().distanceSquared(getTarget().getLocation().toVector()) < distanceSquared;
+        } else {
+            return false;
+        }
     }
 
     public void setDefaultHeadGoal() {
         clearHeadGoals();
         addHeadGoal(new HeadGoalEntityTarget(this, 10));
-        addHeadGoal(new HeadGoalWaypointTarget(this, 40));
+        addHeadGoal(new HeadGoalWaypointTarget(this, 10));
     }
 }

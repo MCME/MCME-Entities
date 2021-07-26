@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.ai.goal.head;
 
 import com.mcmiddleearth.entities.ai.goal.GoalEntityTarget;
+import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 
@@ -19,11 +20,11 @@ public class HeadGoalEntityTarget extends HeadGoal {
 
     @Override
     public void doTick() {
-        Location target = goal.getTarget().getLocation();
+        McmeEntity target = goal.getTarget();
         VirtualEntity entity = goal.getEntity();
         if(target!=null) {
             Location targetDir = entity.getLocation().clone()
-                    .setDirection(target.toVector()
+                    .setDirection(target.getLocation().toVector()
                             .subtract(entity.getLocation().toVector()));
             yaw = targetDir.getYaw();
             pitch = targetDir.getPitch();

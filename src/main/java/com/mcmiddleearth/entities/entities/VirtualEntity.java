@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
@@ -67,10 +68,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private final int jumpHeight = 1;
     private final int fallDepth = 1; //if both values differ from each other pathfinding can easily get stuck.
-    private final float knockBackPerDamage = 0.5f;
+    private final float knockBackPerDamage = 0.01f;
 
     private int health;
     private boolean dead = false;
+    private int deathCounter = 0;
 
     private int attackCoolDown = 40;
 
@@ -93,6 +95,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void doTick() {
+//Logger.getGlobal().info("VirtualEntity: tick ");
         if(teleported) {
             teleport();
             if(goal!=null) {
@@ -124,9 +127,14 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 movementEngine.calculateMovement(new Vector(0,0,0));
             }
             move();
-            attackCoolDown = Math.max(0, attackCoolDown--);
+            attackCoolDown = Math.max(0, --attackCoolDown);
         }
         tickCounter++;
+//Logger.getGlobal().info("+");
+        if(isDead()) {
+            deathCounter++;
+//Logger.getGlobal().info("Death counter: "+deathCounter);
+        }
     }
 
     public void teleport() {
@@ -178,6 +186,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public void setMovementType(MovementType movementType) {
+        if(!this.movementType.equals(MovementType.FALLING)
+              && movementType.equals(MovementType.FALLING)) {
+            movementEngine.setFallStart(boundingBox.getMin().getY());
+        }
         this.movementType = movementType;
     }
 
@@ -312,8 +324,13 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     public void damage(int damage) {
         health -= damage;
-        if(health <= 0) dead = true;
-        playAnimation(AnimationType.HURT);
+        if(health <= 0) {
+            dead = true;
+            playAnimation(AnimationType.DEATH);
+//Logger.getGlobal().info("Dead!");
+        } else {
+            playAnimation(AnimationType.HURT);
+        }
     }
 
     public void heal(int damage) {
@@ -327,10 +344,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     @Override
     public void receiveAttack(McmeEntity damager, int damage, float knockBackFactor) {
         damage(damage);
-        float length = damage*knockBackFactor*knockBackPerDamage;
-        Vector knockBack = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize()
-                                  .multiply(length).add(new Vector(0,length*0.6,0));
+        double length = 0.2+damage*knockBackFactor*knockBackPerDamage;
+        Vector normal = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize();
+        Vector knockBack = normal.multiply(-length).add(new Vector(0,length*2,0));
         setMovementType(MovementType.FALLING);
+//Logger.getGlobal().info("Set Velocity: "+ knockBack.getX()+" "+knockBack.getY()+" "+knockBack.getZ());
         setVelocity(knockBack);
         attackers.add(damager);
     }
@@ -349,6 +367,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     @Override
     public Set<McmeEntity> getAttackers() {
         return attackers;
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return deathCounter > 20;
     }
 
     @Override

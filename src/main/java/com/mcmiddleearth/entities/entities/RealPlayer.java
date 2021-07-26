@@ -117,12 +117,12 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public void damage(int damage) {
-        getBukkitPlayer().damage(damage/20f);
+        getBukkitPlayer().damage(damage);
     }
 
     @Override
     public void heal(int damage) {
-        getBukkitPlayer().setHealth(getBukkitPlayer().getHealth()+damage/20f);
+        getBukkitPlayer().setHealth(getBukkitPlayer().getHealth()+damage);
     }
 
     @Override
@@ -157,5 +157,10 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     @Override
     public Set<McmeEntity> getAttackers() {
         return null;
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return false;
     }
 }

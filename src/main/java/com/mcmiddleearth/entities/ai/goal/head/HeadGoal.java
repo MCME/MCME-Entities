@@ -13,6 +13,8 @@ public abstract class HeadGoal {
         return pitch;
     }
 
+    public boolean hasHeadRotation() {return true; }
+
     public int getDuration() {
         return duration;
     }

@@ -68,9 +68,12 @@ public class SyncEntityServer implements EntityServer {
 
     @Override
     public void doTick() {
+//Logger.getGlobal().info("Server: tick "+entityProvider.getEntities().isEmpty());
+        //Logger.getGlobal().info("remove: "+entity);
         entityProvider.getEntities().stream()
-                      .filter(McmeEntity::isDead).collect(Collectors.toList())
+                      .filter(McmeEntity::isTerminated).collect(Collectors.toList())
                       .forEach(this::removeEntity);
+//Logger.getGlobal().info("Server: tick 2 "+entityProvider.getEntities().isEmpty());
         entityProvider.getEntities().forEach(entity-> {
             if(entity instanceof VirtualEntity) {
                 Bukkit.getOnlinePlayers().forEach(player -> {
@@ -91,6 +94,7 @@ public class SyncEntityServer implements EntityServer {
                     }
                 });
             }
+//Logger.getGlobal().info("Server: tick entity "+entity);
             entity.doTick();
         });
     }
@@ -105,6 +109,7 @@ public class SyncEntityServer implements EntityServer {
 
     @Override
     public void removeEntity(McmeEntity entity) {
+//Logger.getGlobal().info("Server: remove Entity");
         handleEvent(new McmeEntityRemoveEvent(entity));
         if(entity instanceof VirtualEntity) {
             ((VirtualEntity)entity).removeAllViewers();

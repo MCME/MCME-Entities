@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class SyncEntityProvider implements EntityProvider {
@@ -64,6 +65,8 @@ public class SyncEntityProvider implements EntityProvider {
 
     @Override
     public void removeEntity(McmeEntity entity) {
+
+//Logger.getGlobal().info("provider: remove Entity");
         entities.remove(entity);
     }
 }

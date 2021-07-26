@@ -40,7 +40,7 @@ public abstract class GoalVirtualEntity implements Goal{
     public abstract float getRotation();
 
     public boolean hasHeadRotation(){
-        return currentHeadGoal!=null;
+        return currentHeadGoal!=null && currentHeadGoal.hasHeadRotation();
     }
 
     public float getHeadYaw() {
@@ -66,7 +66,9 @@ public abstract class GoalVirtualEntity implements Goal{
     }
 
     public void doTick(){
-        currentHeadGoal.doTick();
+        if(currentHeadGoal!=null) {
+            currentHeadGoal.doTick();
+        }
         headGoalTicks++;
     }
 
@@ -97,7 +99,9 @@ public abstract class GoalVirtualEntity implements Goal{
 
     private void setRandomHeadGoal() {
         currentDurationFactor = new Random().nextFloat()+0.7f;
-        currentHeadGoal = (HeadGoal) headGoals.toArray()[random.nextInt(headGoals.size())];
+        if(headGoals.size()>0) {
+            currentHeadGoal = (HeadGoal) headGoals.toArray()[random.nextInt(headGoals.size())];
+        }
         headGoalTicks = 0;
     }
 

@@ -19,26 +19,24 @@ public class SimpleLivingEntity extends SimpleEntity {
 
     @Override
     public void doTick() {
-        if (isDead()) {
-            ((SimpleEntityStatusPacket) statusPacket).setStatusCode(SimpleEntityStatusPacket.StatusCode.ENTITY_DEATH);
-            statusPacket.send(getViewers());
-            tickCounter++;
-        } else {
-            if(animation!=null) {
-                switch(animation) {
-                    case HURT:
-                        animationPacket.setAnimation(SimpleEntityAnimationPacket.AnimationType.TAKE_DAMAGE);
-                        animationPacket.send(getViewers());
-                        break;
-                    case ATTACK:
-                        animationPacket.setAnimation(SimpleEntityAnimationPacket.AnimationType.SWING_MAIN_ARM);
-                        animationPacket.send(getViewers());
-                        break;
-                }
-                animation = null;
+        if(animation!=null) {
+            switch(animation) {
+                case HURT:
+                    animationPacket.setAnimation(SimpleEntityAnimationPacket.AnimationType.TAKE_DAMAGE);
+                    animationPacket.send(getViewers());
+                    break;
+                case ATTACK:
+                    animationPacket.setAnimation(SimpleEntityAnimationPacket.AnimationType.SWING_MAIN_ARM);
+                    animationPacket.send(getViewers());
+                    break;
+                case DEATH:
+                    ((SimpleEntityStatusPacket) statusPacket).setStatusCode(SimpleEntityStatusPacket.StatusCode.ENTITY_DEATH);
+                    statusPacket.send(getViewers());
+                    break;
             }
-            super.doTick();
+            animation = null;
         }
+        super.doTick();
     }
 
     @Override

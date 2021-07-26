@@ -4,6 +4,8 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.entity.Player;
 
+import java.util.logging.Logger;
+
 public class SimpleEntityAnimationPacket extends AbstractPacket {
 
     PacketContainer animation;
@@ -14,12 +16,13 @@ public class SimpleEntityAnimationPacket extends AbstractPacket {
     }
 
     public void setAnimation(SimpleEntityAnimationPacket.AnimationType type) {
-        animation.getBytes().write(0,type.animationId);
+        animation.getIntegers().write(1,type.animationId);
     }
 
     @Override
     public void send(Player recipient) {
         send(animation,recipient);
+//Logger.getGlobal().info("Recipient: "+recipient.getName()+" "+animation.getIntegers().read(1));
     }
 
     public enum AnimationType {
@@ -30,13 +33,13 @@ public class SimpleEntityAnimationPacket extends AbstractPacket {
         CRITICAL            (4),
         CRITICAL_MAGIC      (5);
 
-        byte animationId;
+        int animationId;
 
         AnimationType(int animationId) {
-            this.animationId = (byte) animationId;
+            this.animationId = animationId;
         }
 
-        public byte getAnimationId() {
+        public int getAnimationId() {
             return animationId;
         }
     }

@@ -26,7 +26,9 @@ public final class EntitiesPlugin extends JavaPlugin {
         server = new SyncEntityServer(this);
         EntityAPI.init();
 
+        PlayerListener playerListener = new PlayerListener();
         server.registerEventHandler(new EntitySelectionListener());
+        server.registerEventHandler(new PlayerListener());
 
         Bukkit.getServer().getPluginCommand("npc").setExecutor(new NPCCommand());
         Bukkit.getServer().getPluginCommand("mob").setExecutor(new MobCommand());
@@ -36,7 +38,7 @@ public final class EntitiesPlugin extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("virtual").setExecutor(virtual);
         Bukkit.getServer().getPluginCommand("virtual").setTabCompleter(virtual);
 
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
+        Bukkit.getPluginManager().registerEvents(playerListener,this);
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         //manager.addPacketListener(new EntityListener(this));

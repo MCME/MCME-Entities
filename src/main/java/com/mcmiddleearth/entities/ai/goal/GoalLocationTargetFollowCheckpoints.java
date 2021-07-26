@@ -29,7 +29,7 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
         if(isFinished) {
             return;
         }
-        if(isCloseToTarget(isCloseDistanceSquared)) {
+        if(isCloseToTarget(GoalDistance.POINT)) {
             currentCheckpoint++;
             if(currentCheckpoint==checkpoints.length && loop) {
                 currentCheckpoint = 0;

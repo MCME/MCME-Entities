@@ -19,7 +19,7 @@ public abstract class GoalPath extends GoalVirtualEntity {
     private boolean hasRotation;
     private float rotation;
 
-    protected final int isCloseDistanceSquared = 1;
+    private boolean isMoving = true;
 
     public GoalPath(GoalType type, VirtualEntity entity, Pathfinder pathfinder) {
         super(type, entity);
@@ -43,7 +43,7 @@ public abstract class GoalPath extends GoalVirtualEntity {
     public void doTick() {
         super.doTick();
         hasRotation = false;
-        if(waypoint != null && getEntity().getLocation().toVector().distanceSquared(waypoint) < isCloseDistanceSquared) {
+        if(waypoint != null && isMoving){//getEntity().getLocation().toVector().distanceSquared(waypoint) < isCloseDistanceSquared) {
             path.setStart(waypoint);
             updateWaypoint();
         }
@@ -52,6 +52,11 @@ public abstract class GoalPath extends GoalVirtualEntity {
     public void deletePath() {
         path = null;
         waypoint = null;
+    }
+
+    public void setIsMoving(boolean move) {
+        this.isMoving = move;
+        //return getEntity().getLocation().toVector().distanceSquared(waypoint) < isCloseDistanceSquared;
     }
 
     public void setPathTarget(Vector target) {
@@ -66,7 +71,7 @@ public abstract class GoalPath extends GoalVirtualEntity {
     }
 
     public Vector getDirection() {
-        if(path == null || waypoint == null) {
+        if(path == null || waypoint == null || !isMoving) {
             return null;
         } else {
             return waypoint.clone().subtract(getEntity().getLocation().toVector());

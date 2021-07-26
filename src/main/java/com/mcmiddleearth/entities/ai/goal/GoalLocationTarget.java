@@ -8,7 +8,7 @@ import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class GoalLocationTarget extends GoalPath {
+public abstract class GoalLocationTarget extends GoalPath {
 
     private Location target;
 
@@ -58,21 +58,27 @@ public class GoalLocationTarget extends GoalPath {
         this.target = target;
     }
 
-    public boolean isCloseToTarget(int distanceSquared) {
+    public boolean isCloseToTarget(double distanceSquared) {
         return getEntity().getLocation().toVector().distanceSquared(getTarget().toVector()) < distanceSquared;
     }
 
     @Override
     public void update() {
-        if(!isCloseToTarget(isCloseDistanceSquared)) {
-            setPathTarget(target.toVector());
-        }
+        //if(!isCloseToTarget(GoalDistance.POINT)) {
+        setPathTarget(target.toVector());
+        //}
         super.update();
     }
 
     @Override
+    public void doTick() {
+        setIsMoving(!isCloseToTarget(GoalDistance.POINT));
+        super.doTick();
+    }
+
+    @Override
     public boolean isFinished() {
-        return isCloseToTarget(isCloseDistanceSquared);
+        return isCloseToTarget(GoalDistance.POINT);
     }
 
 

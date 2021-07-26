@@ -7,7 +7,7 @@ import org.bukkit.entity.Entity;
 
 public class GoalEntityTargetFollow extends GoalEntityTarget {
 
-    //private final int isCloseDistanceSquared = 4;
+    private double followDistance = GoalDistance.TALK;
 
     public GoalEntityTargetFollow(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
         super(type, entity, pathfinder, target);
@@ -16,22 +16,28 @@ public class GoalEntityTargetFollow extends GoalEntityTarget {
     @Override
     public void doTick() {
         super.doTick();
-        if(isCloseToTarget(isCloseDistanceSquared*4)) {
+        if(isCloseToTarget(followDistance)) {
 //Logger.getGlobal().info("delete path as entity is close.");
-            deletePath();
+            setIsMoving(false);//deletePath();
             setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
                                                          .subtract(getEntity().getLocation().toVector())).getYaw());
+        } else {
+            setIsMoving(true);
         }
     }
 
-    @Override
+    /*@Override
     public void update() {
-        if(!(isCloseToTarget(isCloseDistanceSquared*4))) {
+        if(!(isCloseToTarget(GoalDistance.CAUTION))) {
             super.update();
         }
+    }*/
+
+    public void setFollowDistance(double distance) {
+        this.followDistance = distance;
     }
 
     @Override
-    public boolean isFinished() {return false;}
+    public boolean isFinished() { return false;}
 
 }

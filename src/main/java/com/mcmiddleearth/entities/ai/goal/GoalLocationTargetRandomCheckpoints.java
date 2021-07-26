@@ -17,7 +17,7 @@ public class GoalLocationTargetRandomCheckpoints extends GoalLocationTarget {
 
     @Override
     public void update() {
-        if(isCloseToTarget(isCloseDistanceSquared)) {
+        if(isCloseToTarget(GoalDistance.POINT)) {
             deletePath();
             int nextCheckpoint = random.nextInt(checkpoints.length);
             setTarget(checkpoints[nextCheckpoint]);

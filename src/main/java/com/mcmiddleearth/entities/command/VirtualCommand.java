@@ -47,10 +47,12 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 .requires(sender -> sender instanceof RealPlayer)
                 .then(HelpfulLiteralBuilder.literal("spawn")
                         .then(HelpfulRequiredArgumentBuilder.argument("type", word())
-                                .executes(context -> spawnEntity(context.getSource(), context.getArgument("type", String.class), null))
-                                .then(HelpfulRequiredArgumentBuilder.argument("name", word())
-                                        .executes(context -> spawnEntity(context.getSource(), context.getArgument("type", String.class),
-                                                context.getArgument("name", String.class))))))
+                                .then(HelpfulRequiredArgumentBuilder.argument("goal", word())
+                                        .executes(context -> spawnEntity(context.getSource(), context.getArgument("type", String.class), null,
+                                                        context.getArgument("goal",String.class)))
+                                        .then(HelpfulRequiredArgumentBuilder.argument("name", word())
+                                                .executes(context -> spawnEntity(context.getSource(), context.getArgument("type", String.class),
+                                                        context.getArgument("name", String.class), context.getArgument("goal",String.class)))))))
                 .then(HelpfulLiteralBuilder.literal("army")
                         .then(HelpfulRequiredArgumentBuilder.argument("type", word())
                                 .then(HelpfulRequiredArgumentBuilder.argument("size", integer())
@@ -78,14 +80,16 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         return commandNodeBuilder;
     }
 
-    private int spawnEntity(McmeCommandSender sender, String type, String name) {
+    private int spawnEntity(McmeCommandSender sender, String type, String name, String goal) {
         VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(type), ((RealPlayer)sender).getLocation())
                 .withName(name)
                 .withDataFile(name)
-                .withGoalType(GoalType.FOLLOW_ENTITY)
+                .withGoalType(GoalType.valueOf(goal.toUpperCase()))
+                .withTargetLocation(((RealPlayer)sender).getLocation().add(new Vector(20,0,20)))
                 .withTargetEntity((RealPlayer)sender);
         try {
             ((BukkitCommandSender)sender).setSelection(EntityAPI.spawnEntity(factory));
+            sender.sendMessage(new ComponentBuilder("Spawning: "+factory.getType()+" "+GoalType.valueOf(goal.toUpperCase())).create());
         } catch (InvalidLocationException e) {
             sender.sendMessage(new ComponentBuilder("Can't spawn because of invalid location!").create());
             e.printStackTrace();
@@ -95,6 +99,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
 
     private int spawnEntityArmy(McmeCommandSender sender, String type, int size) {
         VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(type), ((RealPlayer)sender).getLocation())
+                .withTargetLocation(((RealPlayer)sender).getLocation().add(new Vector(20,0,20)))
                 .withGoalType(GoalType.FOLLOW_ENTITY)
                 .withTargetEntity((RealPlayer) sender);
         //((BukkitCommandSender)sender).clearSelection();

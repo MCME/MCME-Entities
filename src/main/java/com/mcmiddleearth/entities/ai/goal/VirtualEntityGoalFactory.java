@@ -63,9 +63,21 @@ public class VirtualEntityGoalFactory {
                 Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetFollow(goalType,entity,pathfinder,targetEntity);
                 break;
+            case ATTACK_ENTITY:
+                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalEntityTargetAttack(goalType,entity,pathfinder,targetEntity);
+                break;
+            case ATTACK_CLOSE:
+                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalEntityTargetAttackClose(goalType,entity,pathfinder);
+                break;
+            case DEFEND_ENTITY:
+                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalEntityTargetDefend(goalType,entity,pathfinder,targetEntity);
+                break;
             case GOTO_LOCATION:
                 Constrain.checkSameWorld(targetLocation,entity.getLocation().getWorld());
-                goal = new GoalLocationTarget(goalType,entity,pathfinder,targetLocation);
+                goal = new GoalLocationTargetGoto(goalType,entity,pathfinder,targetLocation);
                 break;
             case FOLLOW_CHECKPOINTS:
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());

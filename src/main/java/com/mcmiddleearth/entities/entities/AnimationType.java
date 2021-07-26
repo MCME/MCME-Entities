@@ -4,5 +4,6 @@ public enum AnimationType {
 
     ATTACK,
     WALK,
-    HURT;
+    HURT,
+    DEATH;
 }

@@ -263,4 +263,9 @@ public class Bone implements McmeEntity {
     public Set<McmeEntity> getAttackers() {
         return null;
     }
+
+    @Override
+    public boolean isTerminated() {
+        return parent.isTerminated();
+    }
 }

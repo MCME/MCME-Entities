@@ -25,10 +25,15 @@ public class HeadGoalWaypointTarget extends HeadGoal {
         VirtualEntity entity = goal.getEntity();
         if(target != null) {
             Location targetDir = entity.getLocation().clone()
-                    .setDirection(target
+                    .setDirection(target.clone()
                             .subtract(entity.getLocation().toVector()));
             yaw = targetDir.getYaw();
             pitch = targetDir.getPitch();
         }
+    }
+
+    @Override
+    public boolean hasHeadRotation() {
+        return goal.getWaypoint() != null;
     }
 }

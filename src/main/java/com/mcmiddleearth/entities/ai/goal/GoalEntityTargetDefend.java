@@ -15,23 +15,25 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
 
     McmeEntity protege;
 
-    public GoalEntityTargetDefend(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target, McmeEntity protege) {
+    public GoalEntityTargetDefend(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
         super(type, entity, pathfinder, target);
-        this.protege = protege;
+        this.protege = target;
     }
 
     @Override
     public void doTick() {
         super.doTick();
-        if(target == protege && isCloseToTarget(isCloseDistanceSquared*4)) {
+        if(target == protege && isCloseToTarget(GoalDistance.CAUTION)) {
 //Logger.getGlobal().info("delete path as entity is close.");
-            deletePath();
+            setIsMoving(false);//deletePath();
             setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
                     .subtract(getEntity().getLocation().toVector())).getYaw());
-        } else if(target != protege && isCloseToTarget(isCloseDistanceSquared)) {
+        } else if(target != protege && isCloseToTarget(GoalDistance.ATTACK)) {
             if(getEntity().getAttackCoolDown()==0) {
                 getEntity().attack(target);
             }
+        } else {
+            setIsMoving(true);
         }
     }
 
@@ -63,10 +65,10 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
                 setTarget(protege);
             }
         }
-        if(!((target == protege && isCloseToTarget(isCloseDistanceSquared*4))
-             || target != protege && isCloseToTarget(isCloseDistanceSquared))) {
-            super.update();
-        }
+        //if(!((target == protege && isCloseToTarget(GoalDistance.CAUTION))
+        //     || target != protege && isCloseToTarget(GoalDistance.ATTACK))) {
+        super.update();
+        //}
     }
 
     @Override

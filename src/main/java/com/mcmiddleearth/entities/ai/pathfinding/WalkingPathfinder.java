@@ -39,7 +39,7 @@ public class WalkingPathfinder implements Pathfinder{
     }
 
     private Path getPath(PathMarker start, boolean followRightSideWall) {
-Logger.getGlobal().info("begin recursion step: ");
+//Logger.getGlobal().info("begin recursion step: ");
         path = new Path(target);
         current = new PathMarker(start);
         step = 0;
@@ -50,7 +50,7 @@ Logger.getGlobal().info("begin recursion step: ");
         current.turn(!followRightSideWall);
         followWall(followRightSideWall);
         getPathRecursive();
-Logger.getGlobal().info("finish recursion step: ");
+//Logger.getGlobal().info("finish recursion step: ");
         return path;
     }
 
@@ -58,16 +58,20 @@ Logger.getGlobal().info("finish recursion step: ");
     public Path getPath(Vector start) {
 //Logger.getGlobal().info("**************************findPath start: "+start);
 //Logger.getGlobal().info("findPath target: "+target);
-        path = new Path(target);
-        current = new PathMarker(0, getBlockCenterXZ(start));
-        step = 0;
-        fail = false;
-        getPathRecursive();
+        if(target!=null) {
+            path = new Path(target);
+            current = new PathMarker(0, getBlockCenterXZ(start));
+            step = 0;
+            fail = false;
+            getPathRecursive();
 //Logger.getGlobal().info("finished path: ");
 //path.getPoints().forEach(vector -> {
 //    System.out.println("x: " + vector.getBlockX() + " y: " + vector.getBlockY() + " z: " + vector.getBlockZ());}
 //);
-        return path;
+            return path;
+        } else {
+            return null;
+        }
     }
 
     private Path getPathRecursive() {

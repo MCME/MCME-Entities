@@ -1,0 +1,70 @@
+Interface Goal
+
+    Abstract GoalVirtualEntity
+    :Update
+    - switching between HeadGoals
+    :Tick
+    - Ticking headGoals
+
+        Abstract GoalPath
+        :Update
+        - finding a path to a target destination
+        :Tick
+        - finding next waypoint on path
+        - calculating velocity to waypoint
+        - set Rotation to waypoint
+        - can pause movement by setIsMoving(false)
+
+            Abstract GoalEntityTarget
+            :Update
+            - sets Path target to an Entity
+
+                GoalEntityTargetFollow
+                :Tick
+                - moves only when distances > GoalDistance.TALK
+
+                GoalEntityTargetAttack
+                :Tick
+                - moves only when distances > GoalDistance.ATTACK
+                - Attacks otherwise
+
+                    GoalEntityTargetAttackClose
+                    :not implemented
+
+                GoalEntityTargetDefend
+                :Update
+                - Sets Target to closes aggressive Entity in any in range around protege
+                - Sets Target to protege otherwise
+                :Tick
+                - Attacks target if target != protege and close enough
+                - Follows target
+
+            GoalLocationTarget
+            :Update
+            - sets Path target to a Location
+            :Tick
+            - moves only when distance > GoalDistance.POINT
+
+                GoalLocationTargetDefend
+                :not implemented
+
+                GoalLocationTargetFollowCheckpoints
+                :Update
+                - when checkpoint reached sets path target to next checkpoint
+                - optional looping checkpoints
+
+                GoalLocationTargetRandomCheckpoints
+                :Update
+                - when checkpoint reached sets path target to random checkpoint
+
+    GoalHoldPosition
+    :Tick
+    - Rotates towards given target location (only first tick)
+
+    GoalWatchEntity
+    :Update
+    - sets (body) rotation towards the target entity
+    :Tick
+    - sets (body) rotation to false
+
+super update and doTick methods should always be called when overriding these methods!

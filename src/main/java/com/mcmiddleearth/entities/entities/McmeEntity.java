@@ -53,6 +53,8 @@ public interface McmeEntity {
     public void heal(int damage);
     public boolean isDead();
 
+    public boolean isTerminated();
+
     public void playAnimation(AnimationType type);
 
     public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor);

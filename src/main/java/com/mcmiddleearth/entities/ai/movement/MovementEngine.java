@@ -17,11 +17,13 @@ import java.util.logging.Logger;
 
 public class MovementEngine {
 
-    private final Vector gravity = new Vector(0,-0.5,0);
+    private final Vector gravity = new Vector(0,-0.2,0); //theoretically -0.5
 
     private final VirtualEntity entity;
 
     private final BlockProvider blockProvider;
+
+    private double fallStart = 0;
 
     public MovementEngine(VirtualEntity entity) {
         this.entity = entity;
@@ -30,9 +32,20 @@ public class MovementEngine {
 
     public void calculateMovement(Vector direction) {
 //Logger.getGlobal().info("direction: "+direction);
-        if (direction == null && !entity.getMovementType().equals(MovementType.FALLING)) {
+        if ((direction == null || direction.equals(new Vector(0,0,0))) && !entity.getMovementType().equals(MovementType.FALLING)) {
             entity.setVelocity(new Vector(0, 0, 0));
             return;
+        }
+        if(entity.isDead()) {
+            switch (entity.getMovementType()) {
+                case FLYING:
+                case GLIDING:
+                    entity.setMovementType(MovementType.FALLING);
+                    break;
+                case WALKING:
+                    entity.setVelocity(new Vector(0, 0, 0));
+                    return;
+            }
         }
         switch(entity.getMovementType()) {
             case FLYING:
@@ -57,6 +70,11 @@ public class MovementEngine {
                     if (groundDistance < -velocity.getY()) {
 //Logger.getGlobal().info("WALK");
                         velocity.setY(-groundDistance);
+                        double fallHeight = fallStart - (entity.getBoundingBox().getMin().getY()-groundDistance);
+//Logger.getGlobal().info("Fall Damage?: "+fallStart +" entity y: "+entity.getBoundingBox().getMin().getY()+" ground Dist: "+ groundDistance+" fallHeight: "+fallHeight+" "+entity.getFallDepth());
+                        if(fallHeight>entity.getFallDepth()+0.5) {
+                            entity.damage((int) (fallHeight - entity.getFallDepth()));
+                        }
                         entity.setMovementType(MovementType.WALKING);
                     } else {
 if (velocity.getY()<-10) {
@@ -193,5 +211,9 @@ if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
     private double getMaxJumpHeight() {
         AttributeInstance instance = entity.getAttribute(Attribute.HORSE_JUMP_STRENGTH);
         return (instance!=null?instance.getValue():1);
+    }
+
+    public void setFallStart(double fallStart) {
+        this.fallStart = fallStart;
     }
 }
