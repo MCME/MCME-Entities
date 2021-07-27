@@ -10,10 +10,4 @@ public class GoalLocationTargetDefend extends GoalLocationTarget {
         super(type, entity, pathfinder, target);
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
-
-
 }

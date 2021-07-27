@@ -1,11 +1,16 @@
 package com.mcmiddleearth.entities.entities;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
 import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
+import com.mcmiddleearth.entities.events.events.McmeEntityDamagedEvent;
+import com.mcmiddleearth.entities.events.events.McmeEntityDeathEvent;
+import com.mcmiddleearth.entities.events.events.goal.GoalChangedEvent;
+import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityAttackEvent;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.Location;
@@ -232,8 +237,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void setGoal(Goal goal) {
-        if(goal instanceof GoalVirtualEntity) {
-            this.goal = (GoalVirtualEntity) goal;
+        if(goal instanceof GoalVirtualEntity && this.goal!=goal) {
+            GoalChangedEvent event = new GoalChangedEvent(this, this.goal, goal);
+            EntitiesPlugin.getEntityServer().handleEvent(event);
+            if(!event.isCancelled()) {
+                this.goal = (GoalVirtualEntity) goal;
+            }
         }
     }
 
@@ -323,13 +332,18 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     public int getHealth() { return health;}
 
     public void damage(int damage) {
-        health -= damage;
-        if(health <= 0) {
-            dead = true;
-            playAnimation(AnimationType.DEATH);
-//Logger.getGlobal().info("Dead!");
-        } else {
-            playAnimation(AnimationType.HURT);
+        McmeEntityDamagedEvent event = new McmeEntityDamagedEvent(this, damage);
+        EntitiesPlugin.getEntityServer().handleEvent(event);
+        if(!event.isCancelled()) {
+            health -= event.getDamage();
+            if (health <= 0) {
+                EntitiesPlugin.getEntityServer().handleEvent(new McmeEntityDeathEvent(this));
+                dead = true;
+                playAnimation(AnimationType.DEATH);
+                //Logger.getGlobal().info("Dead!");
+            } else {
+                playAnimation(AnimationType.HURT);
+            }
         }
     }
 
@@ -355,9 +369,13 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void attack(McmeEntity target) {
-        playAnimation(AnimationType.ATTACK);
-        target.receiveAttack(this,2,1);
-        attackCoolDown = 40;
+        VirtualEntityAttackEvent event = new VirtualEntityAttackEvent(this,target);
+        EntitiesPlugin.getEntityServer().handleEvent(event);
+        if(!event.isCancelled()) {
+            playAnimation(AnimationType.ATTACK);
+            target.receiveAttack(this, 2, 1);
+            attackCoolDown = 40;
+        }
     }
 
     public int getAttackCoolDown() {

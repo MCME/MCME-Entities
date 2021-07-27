@@ -1,7 +1,11 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
+import com.mcmiddleearth.entities.events.events.goal.GoalFinishedEvent;
+import com.mcmiddleearth.entities.events.events.goal.HeadGoalChangedEvent;
 import jdk.javadoc.internal.doclets.formats.html.markup.Head;
 import org.bukkit.util.Vector;
 
@@ -26,6 +30,8 @@ public abstract class GoalVirtualEntity implements Goal{
     private int updateInterval = 10;
 
     private final int updateRandom;
+
+    private boolean isFinished = false;
 
     public GoalVirtualEntity(GoalType type, VirtualEntity entity) {
         this.type = type;
@@ -74,21 +80,27 @@ public abstract class GoalVirtualEntity implements Goal{
 
     public void addHeadGoal(HeadGoal headGoal) {
         headGoals.add(headGoal);
-        setRandomHeadGoal();
+        //setRandomHeadGoal();
     }
 
     public void removeHeadGoal(HeadGoal headGoal) {
         headGoals.remove(headGoal);
         if(headGoals.isEmpty()) {
+            EntitiesPlugin.getEntityServer().handleEvent(new HeadGoalChangedEvent(getEntity(), this, null));
             currentHeadGoal = null;
-        } else {
+        } else if(currentHeadGoal == headGoal){
             setRandomHeadGoal();
         }
     }
 
     public void clearHeadGoals() {
+        EntitiesPlugin.getEntityServer().handleEvent(new HeadGoalChangedEvent(getEntity(), this, null));
         headGoals.clear();
         currentHeadGoal = null;
+    }
+
+    public HeadGoal getCurrentHeadGoal() {
+        return currentHeadGoal;
     }
 
     public Set<HeadGoal> getHeadGoals() {
@@ -100,7 +112,11 @@ public abstract class GoalVirtualEntity implements Goal{
     private void setRandomHeadGoal() {
         currentDurationFactor = new Random().nextFloat()+0.7f;
         if(headGoals.size()>0) {
-            currentHeadGoal = (HeadGoal) headGoals.toArray()[random.nextInt(headGoals.size())];
+            HeadGoal nextHeadGoal = (HeadGoal) headGoals.toArray()[random.nextInt(headGoals.size())];
+            if(nextHeadGoal!=currentHeadGoal) {
+                EntitiesPlugin.getEntityServer().handleEvent(new HeadGoalChangedEvent(getEntity(), this, nextHeadGoal));
+                currentHeadGoal = nextHeadGoal;
+            }
         }
         headGoalTicks = 0;
     }
@@ -122,5 +138,17 @@ public abstract class GoalVirtualEntity implements Goal{
         return updateRandom;
     }
 
+    public void setFinished() {
+        if(!isFinished) {
+            GoalFinishedEvent event = new GoalFinishedEvent(getEntity(), this);
+            EntitiesPlugin.getEntityServer().handleEvent(event);
+            isFinished = true;
+        }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return isFinished;
+    }
 
 }

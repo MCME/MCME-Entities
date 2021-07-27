@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.entities;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
+import com.mcmiddleearth.entities.ai.goal.GoalDistance;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -146,11 +147,17 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor) {
+        //knock back?
         damage(damage);
     }
 
     @Override
     public void attack(McmeEntity target) {
+        if(getLocation().distanceSquared(target.getLocation()) < GoalDistance.ATTACK*1.5) {
+            int damage = (int) (Math.random() * 8);
+//Logger.getGlobal().info("Attack: " + event.getEntity().getType().getBukkitEntityType() + " " + damage);
+            target.receiveAttack(this, damage, 1);
+        }
 
     }
 

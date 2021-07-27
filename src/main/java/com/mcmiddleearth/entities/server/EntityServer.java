@@ -8,6 +8,7 @@ import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.BlockProvider;
 import com.mcmiddleearth.entities.provider.PlayerProvider;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -38,9 +39,11 @@ public interface EntityServer {
 
     public BlockProvider getBlockProvider(UUID worldUniqueId);
 
-    public void registerEventHandler(McmeEventListener handler);
+    public void registerEvents(Plugin plugin, McmeEventListener handler);
 
-    public void UnregisterEventHandler(McmeEventListener handler);
+    public void unregisterEvents(Plugin plugin, McmeEventListener handler);
+
+    public void unregisterEvents(Plugin plugin);
 
     public void handleEvent(McmeEntityEvent event);
 

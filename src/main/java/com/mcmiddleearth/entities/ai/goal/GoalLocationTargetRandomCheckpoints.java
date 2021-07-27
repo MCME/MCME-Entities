@@ -1,7 +1,9 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
 import org.bukkit.Location;
 
 public class GoalLocationTargetRandomCheckpoints extends GoalLocationTarget {
@@ -18,6 +20,7 @@ public class GoalLocationTargetRandomCheckpoints extends GoalLocationTarget {
     @Override
     public void update() {
         if(isCloseToTarget(GoalDistance.POINT)) {
+            EntitiesPlugin.getEntityServer().handleEvent(new GoalCheckpointReachedEvent(getEntity(),this));
             deletePath();
             int nextCheckpoint = random.nextInt(checkpoints.length);
             setTarget(checkpoints[nextCheckpoint]);

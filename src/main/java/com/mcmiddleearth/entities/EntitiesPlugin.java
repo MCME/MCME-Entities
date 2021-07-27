@@ -27,8 +27,8 @@ public final class EntitiesPlugin extends JavaPlugin {
         EntityAPI.init();
 
         PlayerListener playerListener = new PlayerListener();
-        server.registerEventHandler(new EntitySelectionListener());
-        server.registerEventHandler(new PlayerListener());
+        //server.registerEvents(this, new EntitySelectionListener());
+        //server.registerEventHandler(this, new PlayerListener());
 
         Bukkit.getServer().getPluginCommand("npc").setExecutor(new NPCCommand());
         Bukkit.getServer().getPluginCommand("mob").setExecutor(new MobCommand());

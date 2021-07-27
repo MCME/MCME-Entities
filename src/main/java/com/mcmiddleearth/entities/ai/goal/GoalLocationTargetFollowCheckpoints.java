@@ -1,7 +1,10 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
+import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
 import org.bukkit.Location;
 
 public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
@@ -12,8 +15,6 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
 
     private final boolean loop;
 
-    private boolean isFinished;
-
     public GoalLocationTargetFollowCheckpoints(GoalType type, VirtualEntity entity, Pathfinder pathfinder,
                                                Location[] checkpoints, boolean loop) {
         super(type, entity, pathfinder, checkpoints[0]);
@@ -21,15 +22,15 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
         this.loop = loop;
         currentCheckpoint = 0;
         setPathTarget(checkpoints[0].toVector());
-        isFinished = false;
     }
 
     @Override
     public void update() {
-        if(isFinished) {
+        if(isFinished()) {
             return;
         }
         if(isCloseToTarget(GoalDistance.POINT)) {
+            EntitiesPlugin.getEntityServer().handleEvent(new GoalCheckpointReachedEvent(getEntity(),this));
             currentCheckpoint++;
             if(currentCheckpoint==checkpoints.length && loop) {
                 currentCheckpoint = 0;
@@ -39,15 +40,10 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
                 setTarget(checkpoints[currentCheckpoint]);
                 setPathTarget(checkpoints[currentCheckpoint].toVector());
             } else {
-                isFinished = true;
+                setFinished();
             }
         }
         super.update();
-    }
-
-    @Override
-    public boolean isFinished() {
-        return isFinished;
     }
 
 }

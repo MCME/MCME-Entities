@@ -5,18 +5,19 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mcmiddleearth.entities.EntityAPI;
+import com.mcmiddleearth.entities.ai.goal.GoalDistance;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
-import com.mcmiddleearth.entities.events.events.VirtualPlayerAttackEvent;
-import com.mcmiddleearth.entities.events.events.VirtualPlayerInteractAtEvent;
-import com.mcmiddleearth.entities.events.events.VirtualPlayerInteractEvent;
+import com.mcmiddleearth.entities.events.events.player.VirtualPlayerAttackEvent;
+import com.mcmiddleearth.entities.events.events.player.VirtualPlayerInteractAtEvent;
+import com.mcmiddleearth.entities.events.events.player.VirtualPlayerInteractEvent;
 import com.mcmiddleearth.entities.server.EntityServer;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-
-import java.util.logging.Logger;
 
 public class VirtualEntityUseListener extends EntityListener {
 
@@ -52,11 +53,26 @@ public class VirtualEntityUseListener extends EntityListener {
                     break;
                 case INTERACT:
 //Logger.getGlobal().info("interact!");
+                    if(player.getBukkitPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK)) {
+                        if(hand.equals(EquipmentSlot.OFF_HAND)) {
+                            if (isSneaking) {
+                                player.removeFromSelection(entity);
+                                player.sendMessage(new ComponentBuilder("Removed from selection").create());
+                            } else {
+                                player.addToSelection(entity);
+                                player.sendMessage(new ComponentBuilder("Added to selection").create());
+                            }
+                        }
+                    }
                     throwEvent(new VirtualPlayerInteractEvent(player, (VirtualEntity)entity, hand, isSneaking));
                     break;
                 case ATTACK:
 //Logger.getGlobal().info("attack!");
-                    throwEvent(new VirtualPlayerAttackEvent(player, (VirtualEntity)entity, isSneaking));
+                    VirtualPlayerAttackEvent entityEvent = new VirtualPlayerAttackEvent(player, (VirtualEntity)entity, isSneaking);
+                    throwEvent(entityEvent);
+                    if(!entityEvent.isCancelled()) {
+                        player.attack(entity);
+                    }
                     break;
             }
         }

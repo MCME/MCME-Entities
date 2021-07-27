@@ -5,6 +5,7 @@ import com.mcmiddleearth.entities.EntityAPI;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +26,20 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
         super.doTick();
         if(target == protege && isCloseToTarget(GoalDistance.CAUTION)) {
 //Logger.getGlobal().info("delete path as entity is close.");
+            EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(),this));
             setIsMoving(false);//deletePath();
             setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
                     .subtract(getEntity().getLocation().toVector())).getYaw());
         } else if(target != protege && isCloseToTarget(GoalDistance.ATTACK)) {
+            EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(),this));
             if(getEntity().getAttackCoolDown()==0) {
                 getEntity().attack(target);
             }
         } else {
             setIsMoving(true);
+        }
+        if(protege.isDead()) {
+            setFinished();
         }
     }
 
@@ -70,9 +76,5 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
         super.update();
         //}
     }
-
-    @Override
-    public boolean isFinished() {return protege.isDead();}
-
 
 }

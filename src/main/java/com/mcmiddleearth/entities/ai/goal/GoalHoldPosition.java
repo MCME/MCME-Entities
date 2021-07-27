@@ -46,11 +46,6 @@ public class GoalHoldPosition extends GoalVirtualEntity {
         return yaw;
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
-
     public void setDefaultHeadGoal() {
         clearHeadGoals();
         addHeadGoal(new HeadGoalStare(yaw,pitch));

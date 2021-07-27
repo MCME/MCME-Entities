@@ -2,15 +2,14 @@ package com.mcmiddleearth.entities.events.listener;
 
 import com.mcmiddleearth.entities.EntityAPI;
 import com.mcmiddleearth.entities.events.events.McmeEntityRemoveEvent;
-import com.mcmiddleearth.entities.events.events.VirtualPlayerAttackEvent;
-import com.mcmiddleearth.entities.events.events.VirtualPlayerInteractEvent;
+import com.mcmiddleearth.entities.events.events.player.VirtualPlayerInteractEvent;
 import com.mcmiddleearth.entities.events.handler.EntityEventHandler;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.inventory.EquipmentSlot;
 
 public class EntitySelectionListener implements McmeEventListener {
 
-    @EntityEventHandler
+    /*@EntityEventHandler
     public void onSelectionChange(VirtualPlayerInteractEvent event) {
         if(event.getHand().equals(EquipmentSlot.OFF_HAND)) {
             if (event.isSneaking()) {
@@ -21,7 +20,7 @@ public class EntitySelectionListener implements McmeEventListener {
                 event.getPlayer().sendMessage(new ComponentBuilder("Added to selection").create());
             }
         }
-    }
+    }*/
 
     /*@EntityEventHandler
     public void onSelectionSet(VirtualPlayerAttackEvent event) {
@@ -34,9 +33,9 @@ public class EntitySelectionListener implements McmeEventListener {
         }
     }*/
 
-    @EntityEventHandler
+    /*@EntityEventHandler
     public void onEntityRemove(McmeEntityRemoveEvent event) {
         EntityAPI.getMcmePlayers().forEach(player -> player.getSelectedEntities().remove(event.getEntity()));
-    }
+    }*/
 
 }

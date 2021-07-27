@@ -1,9 +1,11 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.AnimationType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
 
 import java.util.logging.Logger;
 
@@ -18,6 +20,7 @@ public class GoalEntityTargetAttack extends GoalEntityTarget {
         super.doTick();
         if(isCloseToTarget(GoalDistance.ATTACK)) {
 //Logger.getGlobal().info("delete path as entity is close.");
+            EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(),this));
             setIsMoving(false);//deletePath();
             setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
                     .subtract(getEntity().getLocation().toVector())).getYaw());
@@ -29,6 +32,9 @@ public class GoalEntityTargetAttack extends GoalEntityTarget {
         } else {
             setIsMoving(true);
         }
+        if(target.isDead()) {
+            setFinished();
+        }
     }
 
     /*@Override
@@ -37,9 +43,5 @@ public class GoalEntityTargetAttack extends GoalEntityTarget {
             super.update();
         }
     }*/
-
-    @Override
-    public boolean isFinished() { return target.isDead();}
-
 
 }

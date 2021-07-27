@@ -1,10 +1,12 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.events.events.goal.GoalEntityTargetChangedEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -61,7 +63,13 @@ public abstract class GoalEntityTarget extends GoalPath {
     }
 
     public void setTarget(McmeEntity target) {
-        this.target = target;
+        if(this.target != target) {
+            GoalEntityTargetChangedEvent event = new GoalEntityTargetChangedEvent(getEntity(),this,target);
+            EntitiesPlugin.getEntityServer().handleEvent(event);
+            if(!event.isCancelled()) {
+                this.target = event.getNextTarget();
+            }
+        }
     }
 
     public boolean isCloseToTarget(double distanceSquared) {

@@ -6,6 +6,8 @@ import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationType;
+import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimationEntityAnimationChangedEvent;
+import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimationEntityStateChangedEvent;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import org.bukkit.Material;
 
@@ -62,19 +64,27 @@ Logger.getGlobal().info("Baked Animation Get location "+getLocation());
     }
 
     public void setAnimation(String name) {
-        BakedAnimation newAnim = animations.get(name);
-        if(newAnim!=null) {
-            currentAnimation = newAnim;
-            currentAnimation.reset();
-        } else {
-            currentAnimation = null;
+        BakedAnimationEntityAnimationChangedEvent event = new BakedAnimationEntityAnimationChangedEvent(this, name);
+        EntitiesPlugin.getEntityServer().handleEvent(event);
+        if(!event.isCancelled()) {
+            BakedAnimation newAnim = animations.get(event.getNextAnimationKey());
+            if (newAnim != null) {
+                currentAnimation = newAnim;
+                currentAnimation.reset();
+            } else {
+                currentAnimation = null;
+            }
         }
     }
 
     public void setState(String state) {
-        Integer stateId = states.get(state);
-        if(stateId != null) {
-            currentState = stateId;
+        BakedAnimationEntityStateChangedEvent event = new BakedAnimationEntityStateChangedEvent(this, state);
+        EntitiesPlugin.getEntityServer().handleEvent(event);
+        if(!event.isCancelled()) {
+            Integer stateId = states.get(event.getNextState());
+            if (stateId != null) {
+                currentState = stateId;
+            }
         }
     }
 

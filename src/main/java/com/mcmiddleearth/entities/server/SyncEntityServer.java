@@ -1,9 +1,11 @@
 package com.mcmiddleearth.entities.server;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.EntityAPI;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
+import com.mcmiddleearth.entities.events.Cancelable;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityRemoveEvent;
 import com.mcmiddleearth.entities.events.handler.EntityEventHandler;
@@ -13,6 +15,8 @@ import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.event.EventPriority;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -115,6 +119,7 @@ public class SyncEntityServer implements EntityServer {
             ((VirtualEntity)entity).removeAllViewers();
         }
         entityProvider.removeEntity(entity);
+        playerProvider.getMcmePlayers().forEach(player -> player.getSelectedEntities().remove(entity));
     }
 
     @Override
@@ -159,7 +164,7 @@ public class SyncEntityServer implements EntityServer {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void registerEventHandler(McmeEventListener listener) {
+    public void registerEvents(Plugin plugin, McmeEventListener listener) {
         Arrays.stream(listener.getClass().getDeclaredMethods())
               .filter(method -> {
 //Logger.getGlobal().info(method.toString());
@@ -172,15 +177,16 @@ public class SyncEntityServer implements EntityServer {
               })
               .forEach(method -> {
 //Logger.getGlobal().info("Matching: "+method.toString());
+                  EntityEventHandler annotation = method.getDeclaredAnnotation(EntityEventHandler.class);
                   Class<? extends McmeEntityEvent> parameterType = (Class<? extends McmeEntityEvent>) method.getParameterTypes()[0];
                   List<McmeEntityEventHandler> handlerList = eventHandlers.computeIfAbsent(parameterType, k -> new ArrayList<>());
-                  handlerList.add(new McmeEntityEventHandler(method, listener));
+                  handlerList.add(new McmeEntityEventHandler(plugin, method, listener, annotation.priority, annotation.ignoreCancelled));
         });
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void UnregisterEventHandler(McmeEventListener listener) {
+    public void unregisterEvents(Plugin plugin, McmeEventListener listener) {
         Arrays.stream(listener.getClass().getDeclaredMethods())
                 .filter(method -> method.getDeclaredAnnotation(EntityEventHandler.class)!=null
                         && method.getParameterCount()==1
@@ -189,9 +195,17 @@ public class SyncEntityServer implements EntityServer {
                     Class<? extends McmeEntityEvent> parameterType = (Class<? extends McmeEntityEvent>) method.getParameterTypes()[0];
                     List<McmeEntityEventHandler> handlerList = eventHandlers.get(parameterType);
                     if(handlerList != null) {
-                        handlerList.remove(new McmeEntityEventHandler(method, listener));
+                        handlerList.remove(new McmeEntityEventHandler(plugin, method, listener, EventPriority.NORMAL, false));
                     }
                 });
+    }
+
+    @Override
+    public void unregisterEvents(Plugin plugin) {
+        eventHandlers.values().forEach(handlerList-> {
+            handlerList.stream().filter(handler->handler.getPlugin().equals(plugin))
+                       .collect(Collectors.toSet()).forEach(handlerList::remove);
+        });
     }
 
     @Override
@@ -199,7 +213,21 @@ public class SyncEntityServer implements EntityServer {
 //eventHandlers.forEach((key,value)-> Logger.getGlobal().info(key.toString() +"\n----\n"+value.toString()+"\n***********************\n"));
         List<McmeEntityEventHandler> handlerList = eventHandlers.get(event.getClass());
         if(handlerList != null) {
-            handlerList.forEach(handler -> handler.handle(event));
+            handlerList.stream().filter(handler->handler.isIgnoreCancelled() || !(event instanceof Cancelable) || !((Cancelable)event).isCancelled())
+                    .sorted(Comparator.comparingInt(one -> getValue(one.getPriority())))
+                    .forEachOrdered(handler -> handler.handle(event));
+        }
+    }
+
+    private int getValue(EventPriority priority) {
+        switch(priority) {
+            case LOWEST: return 0;
+            case LOW: return 1;
+            case NORMAL: return 2;
+            case HIGH: return 3;
+            case HIGHEST: return 4;
+            case MONITOR:
+            default: return 5;
         }
     }
 

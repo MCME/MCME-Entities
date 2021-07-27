@@ -2,7 +2,7 @@ package com.mcmiddleearth.entities.protocol.listener;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.mcmiddleearth.entities.events.events.VirtualEntityEvent;
+import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityEvent;
 import com.mcmiddleearth.entities.server.EntityServer;
 import org.bukkit.plugin.Plugin;
 

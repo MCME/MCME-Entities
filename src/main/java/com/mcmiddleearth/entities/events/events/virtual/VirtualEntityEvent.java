@@ -1,18 +1,16 @@
-package com.mcmiddleearth.entities.events.events;
+package com.mcmiddleearth.entities.events.events.virtual;
 
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 
 public abstract class VirtualEntityEvent implements McmeEntityEvent {
 
     VirtualEntity entity;
 
-    RealPlayer player;
-
-    public VirtualEntityEvent(RealPlayer player, VirtualEntity entity) {
+    public VirtualEntityEvent(VirtualEntity entity) {
         this.entity = entity;
-        this.player = player;
     }
 
     @Override
@@ -22,7 +20,4 @@ public abstract class VirtualEntityEvent implements McmeEntityEvent {
 
     public VirtualEntity getVirtualEntity() { return entity;}
 
-    public RealPlayer getPlayer() {
-        return player;
-    }
 }

@@ -1,10 +1,12 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalLocationTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.events.events.goal.GoalLocationTargetChangedEvent;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -55,7 +57,13 @@ public abstract class GoalLocationTarget extends GoalPath {
     }
 
     public void setTarget(Location target) {
-        this.target = target;
+        if(!this.target.equals(target)) {
+            GoalLocationTargetChangedEvent event = new GoalLocationTargetChangedEvent(getEntity(),this,target);
+            EntitiesPlugin.getEntityServer().handleEvent(event);
+            if(!event.isCancelled()) {
+                this.target = event.getNextTarget();
+            }
+        }
     }
 
     public boolean isCloseToTarget(double distanceSquared) {
@@ -75,12 +83,6 @@ public abstract class GoalLocationTarget extends GoalPath {
         setIsMoving(!isCloseToTarget(GoalDistance.POINT));
         super.doTick();
     }
-
-    @Override
-    public boolean isFinished() {
-        return isCloseToTarget(GoalDistance.POINT);
-    }
-
 
     public void setDefaultHeadGoal() {
         clearHeadGoals();
