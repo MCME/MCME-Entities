@@ -2,6 +2,7 @@ package com.mcmiddleearth.entities;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.mcmiddleearth.command.AbstractCommandHandler;
 import com.mcmiddleearth.entities._research.*;
 import com.mcmiddleearth.entities.command.VirtualCommand;
 import com.mcmiddleearth.entities.events.listener.EntitySelectionListener;
@@ -10,6 +11,10 @@ import com.mcmiddleearth.entities.protocol.listener.VirtualEntityUseListener;
 import com.mcmiddleearth.entities.server.EntityServer;
 import com.mcmiddleearth.entities.server.SyncEntityServer;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +28,9 @@ public final class EntitiesPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        saveDefaultConfig();
+
         server = new SyncEntityServer(this);
         EntityAPI.init();
 
@@ -34,9 +42,9 @@ public final class EntitiesPlugin extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("mob").setExecutor(new MobCommand());
         Bukkit.getServer().getPluginCommand("entity").setExecutor(new EntityCommand());
         Bukkit.getServer().getPluginCommand("animation").setExecutor(new AnimationCommand());
-        VirtualCommand virtual = new VirtualCommand("virtual");
-        Bukkit.getServer().getPluginCommand("virtual").setExecutor(virtual);
-        Bukkit.getServer().getPluginCommand("virtual").setTabCompleter(virtual);
+
+        setExecutor("virtual", new VirtualCommand("virtual"));
+        setExecutor("entities", new VirtualCommand("entities"));
 
         Bukkit.getPluginManager().registerEvents(playerListener,this);
 
@@ -63,5 +71,25 @@ public final class EntitiesPlugin extends JavaPlugin {
     @NotNull
     public static EntityServer getEntityServer() {
         return server;
+    }
+
+    public void reloadConfiguration() {
+        this.reloadConfig();
+    }
+
+    public void restartServer() {
+        server.stop();
+        reloadConfiguration();
+        server.start();
+    }
+
+    private void setExecutor(String command, CommandExecutor executor) {
+        PluginCommand pluginCommand = Bukkit.getServer().getPluginCommand(command);
+        if(pluginCommand!=null) {
+            pluginCommand.setExecutor(executor);
+            if (executor instanceof TabCompleter)
+                pluginCommand.setTabCompleter((TabCompleter) executor);
+        }
+
     }
 }

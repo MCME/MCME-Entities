@@ -8,6 +8,7 @@ import com.mcmiddleearth.entities.ai.movement.MovementEngine;
 import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.events.McmeEntityDamagedEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityDeathEvent;
 import com.mcmiddleearth.entities.events.events.goal.GoalChangedEvent;
@@ -51,7 +52,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private Location location;
 
-    private float rotation;
+    //private float rotation; //remove and replace with location.yaw
 
     private Vector velocity;
 
@@ -93,6 +94,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private String[] speech;
     private int speechCounter;
 
+    private SpeechBalloonLayout defaultSpeechBalloonLayout, currentSpeechBalloonLayout;
+
+    private Vector mouth;
+
     public VirtualEntity(VirtualEntityFactory factory) throws InvalidLocationException {
         this.type = factory.getType();
         this.location = factory.getLocation();
@@ -108,6 +113,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.goal = factory.getGoalFactory().build(this);
         this.health = 20;
         this.namePacket = new DisplayNamePacket(this.getEntityId());
+        this.defaultSpeechBalloonLayout = factory.getSpeechBalloonLayout();
+        this.mouth = factory.getMouth();
     }
 
     protected VirtualEntity(McmeEntityType type, Location location) {
@@ -165,7 +172,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             }
 //Logger.getGlobal().info("Death counter: "+deathCounter);
         }
-        speechCounter = Math.max(0, --speechCounter);
+        speechCounter = Math.max(-1, --speechCounter);
         if(speechCounter == 0) {
             removeSpeechBalloons();
         }
@@ -235,13 +242,14 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void setRotation(float yaw) {
-        rotation = yaw;
+        location.setYaw(yaw);
+        //rotation = yaw;
         rotationUpdate = true;
     }
 
     @Override
     public float getRotation() {
-        return rotation;
+        return location.getYaw();//rotation;
     }
 
     @Override
@@ -455,14 +463,20 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public void say(String[] lines, int duration) {
+        say(lines, defaultSpeechBalloonLayout, duration);
+    }
+
+    public void say(String[] lines, SpeechBalloonLayout layout, int duration) {
         this.speech = lines;
         speechCounter = duration;
+        currentSpeechBalloonLayout = layout;
+        removeSpeechBalloons();
         viewers.forEach(this::createSpeechBalloon);
     }
 
     private void createSpeechBalloon(Player viewer) {
         try {
-            SpeechBalloon balloon = EntitiesPlugin.getEntityServer().spawnSpeechBalloon(this, viewer, speech);
+            SpeechBalloon balloon = EntitiesPlugin.getEntityServer().spawnSpeechBalloon(this, viewer, currentSpeechBalloonLayout, speech);
             speechBallons.put(viewer,balloon);
         } catch (InvalidLocationException e) {
             e.printStackTrace();
@@ -475,7 +489,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public void stopTalking() {
-        speechCounter = 0;
+        speechCounter = 1;
+    }
+
+    @Override
+    public Vector getMouth() {
+        return mouth;
     }
 
     public Set<Player> getWhiteList() {

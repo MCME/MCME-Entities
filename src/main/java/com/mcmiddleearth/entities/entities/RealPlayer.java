@@ -173,4 +173,9 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public void finalise() {}
+
+    @Override
+    public Vector getMouth() {
+        return new Vector(0,1.8,0);
+    }
 }

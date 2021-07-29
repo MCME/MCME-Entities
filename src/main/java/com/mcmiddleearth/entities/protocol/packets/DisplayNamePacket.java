@@ -24,7 +24,7 @@ public class DisplayNamePacket extends AbstractPacket {
                     .WrappedDataWatcherObject(2,
                     WrappedDataWatcher.Registry.getChatComponentSerializer(true));
             watcher.setObject(nameValue, Optional.of(WrappedChatComponent
-                    .fromJson(name).getHandle()));
+                    .fromChatMessage(name/*.replace('&','§')*/)[0].getHandle()));
         }
         WrappedDataWatcher.WrappedDataWatcherObject nameVisible = new WrappedDataWatcher
                 .WrappedDataWatcherObject(3,

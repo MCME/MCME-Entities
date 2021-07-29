@@ -63,4 +63,6 @@ public interface McmeEntity {
     public Set<McmeEntity> getAttackers();
 
     public void finalise();
+
+    public Vector getMouth();
 }

@@ -8,6 +8,7 @@ import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
@@ -44,6 +45,11 @@ public class VirtualEntityFactory {
     private Location targetLocation;
 
     private McmeEntity targetEntity;
+
+    private SpeechBalloonLayout speechBalloonLayout = new SpeechBalloonLayout(SpeechBalloonLayout.Position.RIGHT,
+                                                                              SpeechBalloonLayout.Width.OPTIMAL);
+
+    private Vector mouth = new Vector(0,1.8,0);
 
     public VirtualEntityFactory(McmeEntityType type, Location location) {
         invertWhitelist = false;
@@ -129,6 +135,16 @@ public class VirtualEntityFactory {
         return this;
     }
 
+    public VirtualEntityFactory withSpeechBalloonLayout(SpeechBalloonLayout layout) {
+        this.speechBalloonLayout = layout;
+        return this;
+    }
+
+    public VirtualEntityFactory withMouth(Vector mouth) {
+        this.mouth = mouth;
+        return this;
+    }
+
     public String getDataFile() {
         return this.dataFile;
     }
@@ -172,6 +188,10 @@ public class VirtualEntityFactory {
     public Location getLocation() {
         return location.clone();
     }
+
+    public SpeechBalloonLayout getSpeechBalloonLayout() { return speechBalloonLayout; }
+
+    public Vector getMouth() { return mouth; }
 
     public Map<Attribute, AttributeInstance> getAttributes() {
         Map<Attribute,AttributeInstance> result = new HashMap<>();

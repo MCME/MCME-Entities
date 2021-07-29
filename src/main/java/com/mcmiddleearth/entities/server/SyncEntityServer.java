@@ -6,6 +6,7 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.Cancelable;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityRemoveEvent;
@@ -69,6 +70,7 @@ public class SyncEntityServer implements EntityServer {
     @Override
     public void stop() {
         if(serverTask!=null && !serverTask.isCancelled()) {
+            entityProvider.getEntities().forEach(this::removeEntity);
             serverTask.cancel();
         }
     }
@@ -130,8 +132,9 @@ public class SyncEntityServer implements EntityServer {
     }
 
     @Override
-    public SpeechBalloon spawnSpeechBalloon(VirtualEntity speaker, Player viewer, String[] lines) throws InvalidLocationException {
-        SpeechBalloon balloon =  new SpeechBalloon(lastEntityId+1,speaker,lines, viewer);
+    public SpeechBalloon spawnSpeechBalloon(VirtualEntity speaker, Player viewer,
+                                            SpeechBalloonLayout layout, String[] lines) throws InvalidLocationException {
+        SpeechBalloon balloon =  new SpeechBalloon(lastEntityId+1,speaker,lines, viewer,layout);
         lastEntityId += balloon.getEntityQuantity();
         entityProvider.addEntity(balloon);
         return balloon;

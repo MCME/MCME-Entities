@@ -21,3 +21,6 @@ commands:
   virtual:
     description: manages virtual entities
     usage: /virtual spawn | kill | animate
+  entities:
+    description: manages entities plugin
+    usage: /entities reload | restart

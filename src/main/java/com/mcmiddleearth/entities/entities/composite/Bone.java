@@ -22,9 +22,9 @@ public class Bone implements McmeEntity {
 
     private final int entityId;
 
-    private final CompositeEntity parent;
+    protected final CompositeEntity parent;
 
-    private Vector relativePosition, relativePositionRotated, velocity;
+    protected Vector relativePosition, relativePositionRotated, velocity;
     private EulerAngle headPose;
 
     //private float rotation;
@@ -293,4 +293,9 @@ public class Bone implements McmeEntity {
 
     @Override
     public void finalise() {}
+
+    @Override
+    public Vector getMouth() {
+        return new Vector(0,0,0);
+    }
 }
