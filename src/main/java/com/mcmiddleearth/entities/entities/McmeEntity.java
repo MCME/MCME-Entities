@@ -61,4 +61,6 @@ public interface McmeEntity {
     public void attack(McmeEntity target);
 
     public Set<McmeEntity> getAttackers();
+
+    public void finalise();
 }

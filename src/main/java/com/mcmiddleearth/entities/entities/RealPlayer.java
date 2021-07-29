@@ -170,4 +170,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     public boolean isTerminated() {
         return false;
     }
+
+    @Override
+    public void finalise() {}
 }

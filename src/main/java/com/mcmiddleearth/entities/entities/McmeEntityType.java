@@ -16,6 +16,7 @@ public class McmeEntityType {
 
     public static enum CustomEntityType {
         BAKED_ANIMATION,
+        SPEECH_BALLOON,
         BONE;
     }
 

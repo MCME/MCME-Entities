@@ -7,12 +7,15 @@ import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
 import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.events.events.McmeEntityDamagedEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityDeathEvent;
 import com.mcmiddleearth.entities.events.events.goal.GoalChangedEvent;
 import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityAttackEvent;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
+import com.mcmiddleearth.entities.protocol.packets.DisplayNamePacket;
+import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
@@ -22,7 +25,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
@@ -30,6 +32,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private UUID uniqueId;
 
     private String name;
+    private String displayName;
 
     private final Set<Player> viewers = new HashSet<>();
 
@@ -44,6 +47,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     protected AbstractPacket teleportPacket;
     protected AbstractPacket movePacket;
     protected AbstractPacket statusPacket;
+    protected AbstractPacket namePacket;
 
     private Location location;
 
@@ -79,9 +83,15 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private boolean dead = false;
     private int deathCounter = 0;
 
+    private boolean isTerminated = false;
+
     private int attackCoolDown = 40;
 
     private Set<McmeEntity> attackers = new HashSet<>();
+
+    private Map<Player,SpeechBalloon> speechBallons = new HashMap<>();
+    private String[] speech;
+    private int speechCounter;
 
     public VirtualEntity(VirtualEntityFactory factory) throws InvalidLocationException {
         this.type = factory.getType();
@@ -89,6 +99,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.velocity = new Vector(0, 0, 0);
         this.uniqueId = factory.getUniqueId();
         this.name = factory.getName();
+        this.displayName = factory.getDisplayName();
         this.invertWhiteList = factory.isInvertWhitelist();
         this.movementType = factory.getMovementType();
         this.boundingBox = factory.getBoundingBox();
@@ -96,6 +107,17 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.movementEngine = new MovementEngine(this);
         this.goal = factory.getGoalFactory().build(this);
         this.health = 20;
+        this.namePacket = new DisplayNamePacket(this.getEntityId());
+    }
+
+    protected VirtualEntity(McmeEntityType type, Location location) {
+        this.type = type;
+        this.location = location;
+        this.velocity = new Vector(0, 0, 0);
+        this.uniqueId = UuidGenerator.getRandomV2();
+        this.boundingBox = new EntityBoundingBox(0,0,0,0);
+        this.movementEngine = null;
+
     }
 
     @Override
@@ -136,9 +158,16 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         }
         tickCounter++;
 //Logger.getGlobal().info("+");
-        if(isDead()) {
+        if(isDead() && !isTerminated) {
             deathCounter++;
+            if(deathCounter>20) {
+                terminate();
+            }
 //Logger.getGlobal().info("Death counter: "+deathCounter);
+        }
+        speechCounter = Math.max(0, --speechCounter);
+        if(speechCounter == 0) {
+            removeSpeechBalloons();
         }
     }
 
@@ -298,12 +327,23 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             return;
         }
         spawnPacket.send(player);
+        if(displayName!=null) {
+            namePacket.send(player);
+        }
         viewers.add(player);
+        if(speech != null) {
+            createSpeechBalloon(player);
+        }
     }
 
     public synchronized void removeViewer(Player player) {
         removePacket.send(player);
         viewers.remove(player);
+        SpeechBalloon balloon = speechBallons.get(player);
+        if(balloon != null) {
+            speechBallons.remove(player);
+            EntitiesPlugin.getEntityServer().removeEntity(balloon);
+        }
     }
 
     public void removeAllViewers() {
@@ -389,11 +429,62 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public boolean isTerminated() {
-        return deathCounter > 20;
+        return isTerminated;
+    }
+
+    public void terminate() {
+        isTerminated = true;
+    }
+
+    @Override
+    public  void finalise() {
+        removeSpeechBalloons();
     }
 
     @Override
     public void playAnimation(AnimationType type) { }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+        ((DisplayNamePacket)namePacket).setName(displayName);
+        namePacket.send(viewers);
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void say(String[] lines, int duration) {
+        this.speech = lines;
+        speechCounter = duration;
+        viewers.forEach(this::createSpeechBalloon);
+    }
+
+    private void createSpeechBalloon(Player viewer) {
+        try {
+            SpeechBalloon balloon = EntitiesPlugin.getEntityServer().spawnSpeechBalloon(this, viewer, speech);
+            speechBallons.put(viewer,balloon);
+        } catch (InvalidLocationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removeSpeechBalloons() {
+        speechBallons.forEach((player, balloon) -> balloon.terminate());
+        speechBallons.clear();
+    }
+
+    public void stopTalking() {
+        speechCounter = 0;
+    }
+
+    public Set<Player> getWhiteList() {
+        return whiteList;
+    }
+
+    public boolean isInvertWhiteList() {
+        return invertWhiteList;
+    }
 
     /*Location loc;
     public void _test_spawn_(Player player) {

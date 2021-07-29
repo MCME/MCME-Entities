@@ -66,7 +66,7 @@ public abstract class GoalVirtualEntity implements Goal{
     }
 
     public void update(){
-        if(headGoals.size()>1 && headGoalTicks > currentHeadGoal.getDuration()*currentDurationFactor) {
+        if(currentHeadGoal==null || headGoals.size()>1 && headGoalTicks > currentHeadGoal.getDuration()*currentDurationFactor) {
             setRandomHeadGoal();
         }
     }
@@ -110,8 +110,8 @@ public abstract class GoalVirtualEntity implements Goal{
     public void setDefaultHeadGoal() {}
 
     private void setRandomHeadGoal() {
-        currentDurationFactor = new Random().nextFloat()+0.7f;
         if(headGoals.size()>0) {
+            currentDurationFactor = new Random().nextFloat()+0.7f;
             HeadGoal nextHeadGoal = (HeadGoal) headGoals.toArray()[random.nextInt(headGoals.size())];
             if(nextHeadGoal!=currentHeadGoal) {
                 EntitiesPlugin.getEntityServer().handleEvent(new HeadGoalChangedEvent(getEntity(), this, nextHeadGoal));

@@ -15,4 +15,9 @@ public class CompositeEntityTeleportPacket extends AbstractPacket {
     public void send(Player recipient) {
         entity.getBones().forEach(bone -> bone.getTeleportPacket().send(recipient));
     }
+
+    @Override
+    public void update() {
+        entity.getBones().forEach(bone -> bone.getTeleportPacket().update());
+    }
 }

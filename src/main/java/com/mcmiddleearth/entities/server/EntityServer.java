@@ -1,13 +1,16 @@
 package com.mcmiddleearth.entities.server;
 
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 import com.mcmiddleearth.entities.events.listener.McmeEventListener;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.BlockProvider;
 import com.mcmiddleearth.entities.provider.PlayerProvider;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
@@ -46,6 +49,8 @@ public interface EntityServer {
     public void unregisterEvents(Plugin plugin);
 
     public void handleEvent(McmeEntityEvent event);
+
+    SpeechBalloon spawnSpeechBalloon(VirtualEntity virtualEntity, Player viewer, String[] lines) throws InvalidLocationException;
 
     //public boolean isPassable(int x, int y, int z);
 }

@@ -24,15 +24,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
+import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 
 public class VirtualCommand extends AbstractCommandHandler implements TabExecutor {
@@ -66,6 +69,9 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                         .then(HelpfulRequiredArgumentBuilder.argument("name", word())
                                 .executes(context -> removeEntity(context.getSource(),
                                                     Collections.singleton(EntityAPI.getEntity(context.getArgument("name", String.class)))))))
+                .then(HelpfulLiteralBuilder.literal("say")
+                        .then(HelpfulRequiredArgumentBuilder.argument("text",greedyString())
+                                .executes(context -> say(context.getSource(),context.getArgument("text",String.class)))))
                 .then(HelpfulLiteralBuilder.literal("selection")
                         .executes(context -> showSelection(context.getSource()))
                         .then(HelpfulLiteralBuilder.literal("clear")
@@ -179,6 +185,24 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         Goal goal = new GoalLocationTargetFollowCheckpoints(GoalType.FOLLOW_CHECKPOINTS, entity,
                                               new WalkingPathfinder(entity),checkpoints,true);
         entity.setGoal(goal);
+        return 0;
+    }
+
+    private int say(McmeCommandSender sender, String text) {
+        String[] words = text.split(" ");
+        List<String> lines = new ArrayList<>();
+        int i=0;
+        while(i<words.length) {
+            StringBuilder line = new StringBuilder(words[i]);
+            i++;
+            while (line.length() < 15 && i < words.length) {
+                line.append(" ").append(words[i]);
+                i++;
+            }
+            lines.add(line.toString());
+        }
+        VirtualEntity entity = (VirtualEntity) ((RealPlayer) sender).getSelectedEntities().iterator().next();
+        entity.say(lines.toArray(new String[0]), 200);
         return 0;
     }
 

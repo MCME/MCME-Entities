@@ -9,7 +9,7 @@ public abstract class VirtualEntityPlayerEvent extends VirtualEntityEvent {
     private RealPlayer player;
 
     public VirtualEntityPlayerEvent(RealPlayer player, VirtualEntity entity) {
-        super(player, entity);
+        super(entity);
         this.player = player;
     }
 

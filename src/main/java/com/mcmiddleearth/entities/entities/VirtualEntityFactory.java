@@ -7,11 +7,13 @@ import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,9 @@ public class VirtualEntityFactory {
 
     private UUID uniqueId;
 
-    private String name, dataFile;
+    private String name, dataFile, displayName;
+
+    private Vector displayNamePosition = new Vector(0,2,0);
 
     private Location location;
 
@@ -67,6 +71,16 @@ public class VirtualEntityFactory {
 
     public VirtualEntityFactory withName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public VirtualEntityFactory withDisplayName(String displayName) {
+        this.displayName = displayName;
+        return this;
+    }
+
+    public VirtualEntityFactory withDisplayNamePosition(Vector position) {
+        this.displayNamePosition = position;
         return this;
     }
 
@@ -148,6 +162,12 @@ public class VirtualEntityFactory {
     public String getName() {
         return name;
     }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public Vector getDisplayNamePosition() { return displayNamePosition; }
 
     public Location getLocation() {
         return location.clone();

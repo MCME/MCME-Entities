@@ -5,9 +5,11 @@ import com.mcmiddleearth.entities.EntityAPI;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.events.Cancelable;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityRemoveEvent;
+import com.mcmiddleearth.entities.events.events.McmeEntitySpawnEvent;
 import com.mcmiddleearth.entities.events.handler.EntityEventHandler;
 import com.mcmiddleearth.entities.events.handler.McmeEntityEventHandler;
 import com.mcmiddleearth.entities.events.listener.McmeEventListener;
@@ -15,6 +17,7 @@ import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -108,18 +111,30 @@ public class SyncEntityServer implements EntityServer {
         McmeEntity result = factory.build(lastEntityId+1);
         lastEntityId += result.getEntityQuantity();
         entityProvider.addEntity(result);
+        handleEvent(new McmeEntitySpawnEvent(result));
         return result;
     }
 
     @Override
     public void removeEntity(McmeEntity entity) {
 //Logger.getGlobal().info("Server: remove Entity");
-        handleEvent(new McmeEntityRemoveEvent(entity));
+        if(!(entity instanceof SpeechBalloon)) {
+            handleEvent(new McmeEntityRemoveEvent(entity));
+        }
         if(entity instanceof VirtualEntity) {
             ((VirtualEntity)entity).removeAllViewers();
         }
+        entity.finalise();
         entityProvider.removeEntity(entity);
         playerProvider.getMcmePlayers().forEach(player -> player.getSelectedEntities().remove(entity));
+    }
+
+    @Override
+    public SpeechBalloon spawnSpeechBalloon(VirtualEntity speaker, Player viewer, String[] lines) throws InvalidLocationException {
+        SpeechBalloon balloon =  new SpeechBalloon(lastEntityId+1,speaker,lines, viewer);
+        lastEntityId += balloon.getEntityQuantity();
+        entityProvider.addEntity(balloon);
+        return balloon;
     }
 
     @Override

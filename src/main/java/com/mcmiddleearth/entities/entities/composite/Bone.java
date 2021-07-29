@@ -40,6 +40,9 @@ public class Bone implements McmeEntity {
     private final AbstractPacket movePacket;
     private final AbstractPacket metaPacket;
     private final AbstractPacket initPacket;
+    private final AbstractPacket namePacket;
+
+    private String displayName;
 
     public Bone(String name, CompositeEntity parent, EulerAngle headPose,
                 Vector relativePosition, ItemStack headItem) {
@@ -58,6 +61,7 @@ public class Bone implements McmeEntity {
         movePacket = new SimpleEntityMovePacket(this);
         initPacket = new BoneInitPacket(this);
         metaPacket = new BoneMetaPacket(this);
+        namePacket = new DisplayNamePacket(this.entityId);
     }
 
     @Override
@@ -71,6 +75,10 @@ public class Bone implements McmeEntity {
         velocity = parent.getVelocity().clone().add(shift);
 
         relativePositionRotated = newRelativePositionRotated;
+    }
+
+    public void teleport() {
+        relativePositionRotated = RotationMatrix.fastRotateY(relativePosition, -parent.getRotation());
     }
 
     public void resetUpdateFlags() {
@@ -92,6 +100,10 @@ public class Bone implements McmeEntity {
 
     public AbstractPacket getSpawnPacket() {
         return spawnPacket;
+    }
+
+    public AbstractPacket getNamePacket() {
+        return namePacket;
     }
 
     public AbstractPacket getTeleportPacket() {
@@ -268,4 +280,17 @@ public class Bone implements McmeEntity {
     public boolean isTerminated() {
         return parent.isTerminated();
     }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+        ((DisplayNamePacket)namePacket).setName(displayName);
+        namePacket.send(parent.getViewers());
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @Override
+    public void finalise() {}
 }
