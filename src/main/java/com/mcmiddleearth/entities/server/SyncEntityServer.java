@@ -1,7 +1,6 @@
 package com.mcmiddleearth.entities.server;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.EntityAPI;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
@@ -133,8 +132,8 @@ public class SyncEntityServer implements EntityServer {
 
     @Override
     public SpeechBalloon spawnSpeechBalloon(VirtualEntity speaker, Player viewer,
-                                            SpeechBalloonLayout layout, String[] lines) throws InvalidLocationException {
-        SpeechBalloon balloon =  new SpeechBalloon(lastEntityId+1,speaker,lines, viewer,layout);
+                                            SpeechBalloonLayout layout) throws InvalidLocationException {
+        SpeechBalloon balloon =  new SpeechBalloon(lastEntityId+1, speaker, viewer, layout);
         lastEntityId += balloon.getEntityQuantity();
         entityProvider.addEntity(balloon);
         return balloon;

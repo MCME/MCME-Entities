@@ -52,7 +52,7 @@ public interface EntityServer {
     public void handleEvent(McmeEntityEvent event);
 
     SpeechBalloon spawnSpeechBalloon(VirtualEntity virtualEntity, Player viewer,
-                                     SpeechBalloonLayout layout, String[] lines) throws InvalidLocationException;
+                                     SpeechBalloonLayout layout) throws InvalidLocationException;
 
     //public boolean isPassable(int x, int y, int z);
 }

@@ -26,6 +26,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
@@ -91,7 +92,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private Set<McmeEntity> attackers = new HashSet<>();
 
     private Map<Player,SpeechBalloon> speechBallons = new HashMap<>();
-    private String[] speech;
+    //private String[] speech;
+    private boolean isTalking;
     private int speechCounter;
 
     private SpeechBalloonLayout defaultSpeechBalloonLayout, currentSpeechBalloonLayout;
@@ -170,10 +172,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             if(deathCounter>20) {
                 terminate();
             }
-//Logger.getGlobal().info("Death counter: "+deathCounter);
         }
+//Logger.getGlobal().info("speechCounterr: "+speechCounter);
         speechCounter = Math.max(-1, --speechCounter);
         if(speechCounter == 0) {
+Logger.getGlobal().info("stop talking");
+            isTalking = false;
             removeSpeechBalloons();
         }
     }
@@ -339,7 +343,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             namePacket.send(player);
         }
         viewers.add(player);
-        if(speech != null) {
+        if(isTalking) {
             createSpeechBalloon(player);
         }
     }
@@ -462,21 +466,33 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         return displayName;
     }
 
-    public void say(String[] lines, int duration) {
-        say(lines, defaultSpeechBalloonLayout, duration);
+    public void say(String message, int duration) {
+        currentSpeechBalloonLayout = defaultSpeechBalloonLayout.clone().withMessage(message).withDuration(duration);
+        say(currentSpeechBalloonLayout);
     }
 
-    public void say(String[] lines, SpeechBalloonLayout layout, int duration) {
-        this.speech = lines;
-        speechCounter = duration;
-        currentSpeechBalloonLayout = layout;
+    public void say(String[] lines, int duration) {
+        currentSpeechBalloonLayout = defaultSpeechBalloonLayout.clone().withLines(lines).withDuration(duration);
+        say(currentSpeechBalloonLayout);
+    }
+
+    public void sayJson(String[] jsonLines, int duration) {
+        currentSpeechBalloonLayout = defaultSpeechBalloonLayout.clone().withJson(jsonLines).withDuration(duration);
+        say(currentSpeechBalloonLayout);
+    }
+
+    public void say(SpeechBalloonLayout factory) {
         removeSpeechBalloons();
+        isTalking = true;
+        //this.speech = lines;
+        speechCounter = factory.getDuration();
+        currentSpeechBalloonLayout = factory;
         viewers.forEach(this::createSpeechBalloon);
     }
 
     private void createSpeechBalloon(Player viewer) {
         try {
-            SpeechBalloon balloon = EntitiesPlugin.getEntityServer().spawnSpeechBalloon(this, viewer, currentSpeechBalloonLayout, speech);
+            SpeechBalloon balloon = EntitiesPlugin.getEntityServer().spawnSpeechBalloon(this, viewer, currentSpeechBalloonLayout);
             speechBallons.put(viewer,balloon);
         } catch (InvalidLocationException e) {
             e.printStackTrace();

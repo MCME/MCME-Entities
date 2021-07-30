@@ -202,7 +202,8 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
             lines.add(line.toString());
         }
         VirtualEntity entity = (VirtualEntity) ((RealPlayer) sender).getSelectedEntities().iterator().next();
-        entity.say(lines.toArray(new String[0]), 200);
+        //entity.say(lines.toArray(new String[0]), 200);
+        entity.say(text,2000);
         return 0;
     }
 

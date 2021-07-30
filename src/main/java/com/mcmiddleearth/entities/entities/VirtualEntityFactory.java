@@ -7,7 +7,6 @@ import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.UuidGenerator;
