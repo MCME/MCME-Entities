@@ -18,7 +18,7 @@ public class SpeechBalloon extends CompositeEntity {
 
     private final Player viewer;
 
-    private final static double armorStandHeight = 1.8;
+    private final static double armorStandNameHeight = 2.3;
 
     public SpeechBalloon(int entityId, McmeEntity speaker, Player viewer, SpeechBalloonLayout layout) {
         super(entityId, new McmeEntityType(McmeEntityType.CustomEntityType.SPEECH_BALLOON),speaker.getLocation());
@@ -34,17 +34,19 @@ Logger.getGlobal().info("Create Speech Balloon, viewer: "+viewer.getName()+" mes
             meta.setCustomModelData(layout.getBalloonModelData()/*1*/);
 Logger.getGlobal().info("BAlloon data: "+layout.getBalloonModelData());
             item.setItemMeta(meta);
-            Bone bone = new Balloon("balloon", this, new EulerAngle(0, 0, 0),
+            Bone bone = new Balloon("balloon", this, new EulerAngle(0,
+                                                                   (layout.getPosition().equals(SpeechBalloonLayout.Position.LEFT)?180:0),
+                                                                 0),
                     new Vector(speaker.getMouth().getX()+layout.getLayoutOffset().getX(),
-                               speaker.getMouth().getY()+layout.getLayoutOffset().getY()-armorStandHeight,
-                               speaker.getMouth().getZ()+layout.getLayoutOffset().getZ()), item,viewer);
+                               speaker.getMouth().getY()+layout.getLayoutOffset().getY()- armorStandNameHeight,
+                               speaker.getMouth().getZ()+layout.getLayoutOffset().getZ()-0.125), item,viewer);
             getBones().add(bone);
         }
         for(int i = 0; i < layout.getLines().length; i++) {
             String line = layout.getLines()[i];
             Bone bone = new Bone("line"+i, this, new EulerAngle(0, 0, 0),
                     new Vector(speaker.getMouth().getX()+layout.getLayoutOffset().getX()/*1*/,
-                               speaker.getMouth().getY()+layout.getLayoutOffset().getY()-armorStandHeight/*0.2*/
+                               speaker.getMouth().getY()+layout.getLayoutOffset().getY()- armorStandNameHeight/*0.2*/
                                        - layout.getLinePitch()/*0.26*/ * i,
                                speaker.getMouth().getZ()+layout.getLayoutOffset().getZ()/*0*/), null);
             this.getBones().add(bone);

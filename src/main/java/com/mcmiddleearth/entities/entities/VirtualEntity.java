@@ -1,5 +1,6 @@
 package com.mcmiddleearth.entities.entities;
 
+import com.fasterxml.uuid.UUIDGenerator;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
@@ -123,7 +124,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.type = type;
         this.location = location;
         this.velocity = new Vector(0, 0, 0);
-        this.uniqueId = UuidGenerator.getRandomV2();
+        this.uniqueId = UuidGenerator.fast_random();//UuidGenerator.getRandomV2();
         this.boundingBox = new EntityBoundingBox(0,0,0,0);
         this.movementEngine = null;
 

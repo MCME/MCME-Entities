@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.mcmiddleearth.command.AbstractCommandHandler;
 import com.mcmiddleearth.entities._research.*;
+import com.mcmiddleearth.entities.command.EntitiesCommand;
 import com.mcmiddleearth.entities.command.VirtualCommand;
 import com.mcmiddleearth.entities.events.listener.EntitySelectionListener;
 import com.mcmiddleearth.entities.events.listener.PlayerListener;
@@ -38,13 +39,13 @@ public final class EntitiesPlugin extends JavaPlugin {
         //server.registerEvents(this, new EntitySelectionListener());
         //server.registerEventHandler(this, new PlayerListener());
 
-        Bukkit.getServer().getPluginCommand("npc").setExecutor(new NPCCommand());
-        Bukkit.getServer().getPluginCommand("mob").setExecutor(new MobCommand());
-        Bukkit.getServer().getPluginCommand("entity").setExecutor(new EntityCommand());
-        Bukkit.getServer().getPluginCommand("animation").setExecutor(new AnimationCommand());
+        //Bukkit.getServer().getPluginCommand("npc").setExecutor(new NPCCommand());
+        //Bukkit.getServer().getPluginCommand("mob").setExecutor(new MobCommand());
+        //Bukkit.getServer().getPluginCommand("entity").setExecutor(new EntityCommand());
+        //Bukkit.getServer().getPluginCommand("animation").setExecutor(new AnimationCommand());
 
         setExecutor("virtual", new VirtualCommand("virtual"));
-        setExecutor("entities", new VirtualCommand("entities"));
+        setExecutor("entities", new EntitiesCommand("entities"));
 
         Bukkit.getPluginManager().registerEvents(playerListener,this);
 

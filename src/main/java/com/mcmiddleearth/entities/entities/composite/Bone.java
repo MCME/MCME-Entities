@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class Bone implements McmeEntity {
 
@@ -46,22 +47,31 @@ public class Bone implements McmeEntity {
 
     public Bone(String name, CompositeEntity parent, EulerAngle headPose,
                 Vector relativePosition, ItemStack headItem) {
+//long start = System.currentTimeMillis();
         this.name = name;
-        uniqueId = UuidGenerator.getRandomV2();
+        uniqueId = UuidGenerator.fast_nullUUID();//UuidGenerator.getRandomV2();
+//Logger.getGlobal().info("UUID: "+(System.currentTimeMillis()-start));
         entityId = parent.getEntityId()+parent.getBones().size();
         this.parent = parent;
 //Logger.getGlobal().info("Bone get parent parent: "+parent);
         this.relativePosition = relativePosition;
         relativePositionRotated = relativePosition.clone();
+//Logger.getGlobal().info("position cloned: "+(System.currentTimeMillis()-start));
         velocity = new Vector(0,0,0);
         this.headPose = headPose;
         this.headItem = headItem;
         spawnPacket = new SimpleNonLivingEntitySpawnPacket(this);
+//Logger.getGlobal().info("spawn packet: "+(System.currentTimeMillis()-start));
         teleportPacket = new SimpleEntityTeleportPacket(this);
+//Logger.getGlobal().info("teleport packet: "+(System.currentTimeMillis()-start));
         movePacket = new SimpleEntityMovePacket(this);
+//Logger.getGlobal().info("move packet: "+(System.currentTimeMillis()-start));
         initPacket = new BoneInitPacket(this);
+//Logger.getGlobal().info("init packet: "+(System.currentTimeMillis()-start));
         metaPacket = new BoneMetaPacket(this);
+//Logger.getGlobal().info("meta packet: "+(System.currentTimeMillis()-start));
         namePacket = new DisplayNamePacket(this.entityId);
+//Logger.getGlobal().info("name packet: "+(System.currentTimeMillis()-start));
     }
 
     @Override

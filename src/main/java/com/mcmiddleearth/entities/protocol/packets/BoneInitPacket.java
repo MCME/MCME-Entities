@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mcmiddleearth.entities.entities.composite.Bone;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public class BoneInitPacket extends BoneMetaPacket {
@@ -13,12 +14,18 @@ public class BoneInitPacket extends BoneMetaPacket {
     public BoneInitPacket(Bone bone) {
         super(bone);
 
+//long start = System.currentTimeMillis();
         writeInit(watcher);
+//Logger.getGlobal().info("Init: "+(System.currentTimeMillis()-start));
+
         writeHeadPose(watcher);
+//Logger.getGlobal().info("Pose: "+(System.currentTimeMillis()-start));
 
         writeHeadItem();
+//Logger.getGlobal().info("item: "+(System.currentTimeMillis()-start));
 
         posePacket.getWatchableCollectionModifier().write(0,watcher.getWatchableObjects());
+//Logger.getGlobal().info("Bone creation: "+(System.currentTimeMillis()-start));
     }
 
     @Override

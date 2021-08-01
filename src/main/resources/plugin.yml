@@ -24,3 +24,11 @@ commands:
   entities:
     description: manages entities plugin
     usage: /entities reload | restart
+
+permissions:
+  mcmeentities.admin:
+    description: allows to manage plugin
+    default: op
+  mcmeentities.user:
+    description: allow to use plugin commands
+    default: op

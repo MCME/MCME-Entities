@@ -29,18 +29,22 @@ public class Frame {
     public static Frame loadFrame(BakedAnimationEntity entity, BakedAnimation animation,
                                   JsonObject data, Material itemMaterial) {
         Set<Map.Entry<String, JsonElement>> entries = data.get("bones").getAsJsonObject().entrySet();
+long start = System.currentTimeMillis();
         Frame frame = new Frame();
         entries.forEach(entry-> {
             BoneData boneData = BoneData.loadBoneData(entity.getStates(),entry.getValue().getAsJsonObject(),itemMaterial);
             Bone bone = entity.getBones().stream().filter(searchBone->entry.getKey().equals(searchBone.getName())).findFirst().orElse(null);
             if(bone == null) {
+long boneStart = System.currentTimeMillis();
                 bone = new Bone(entry.getKey(), entity, boneData.getHeadPose(),
                                 boneData.getPosition(), boneData.getItems()[0]);
+Logger.getGlobal().info("Bone creation: "+(System.currentTimeMillis()-boneStart));
                 entity.getBones().add(bone);
 Logger.getGlobal().info("create bone at: "+bone.getLocation());
             }
             frame.bones.put(bone,boneData);
         });
+Logger.getGlobal().info("Frame loading: "+(System.currentTimeMillis()-start));
         return frame;
     }
 }

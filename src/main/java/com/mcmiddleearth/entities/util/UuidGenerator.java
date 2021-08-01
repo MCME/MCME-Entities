@@ -12,7 +12,16 @@ import java.util.logging.Logger;
 
 public class UuidGenerator {
 
-    public static UUID getRandomV1() {
+    public static UUID fast_nullUUID() {
+        return new UUID(0L,0L);
+    }
+
+    public static UUID fast_random() {
+        Random rand = new Random();
+        return new UUID(rand.nextLong(),rand.nextLong());
+    }
+
+    public static UUID slow_getRandomV1() {
         Random random = new Random();
         long random63BitLong = random.nextLong() & 0x3FFFFFFFFFFFFFFFL;
         long variant3BitFlag = 0x8000000000000000L;
@@ -32,13 +41,15 @@ Logger.getGlobal().info("UUID version: "+uuid.version());
         return uuid;
     }
 
-    public static UUID getRandomV2() {
+    public static UUID slow_getRandomV2() {
+        //long nul = 0;
+        //return new UUID(nul,nul);
         UUID uuid = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate();
 Logger.getGlobal().info("UUID version: "+uuid.version());
         return uuid;
     }
 
-    public static UUID getRandomV3(String namespace, String name) {
+    public static UUID slow_getRandomV3(String namespace, String name) {
         byte[] bytes = new byte[0];
         try {
             bytes = (namespace+name).getBytes("UTF-8");

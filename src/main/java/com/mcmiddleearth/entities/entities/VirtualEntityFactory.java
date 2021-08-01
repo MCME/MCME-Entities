@@ -48,11 +48,11 @@ public class VirtualEntityFactory {
     private SpeechBalloonLayout speechBalloonLayout = new SpeechBalloonLayout(SpeechBalloonLayout.Position.RIGHT,
                                                                               SpeechBalloonLayout.Width.OPTIMAL);
 
-    private Vector mouth = new Vector(0,1.8,0);
+    private Vector mouth = new Vector(0,1.7,0);
 
     public VirtualEntityFactory(McmeEntityType type, Location location) {
         invertWhitelist = false;
-        uniqueId = UuidGenerator.getRandomV2();
+        uniqueId = UuidGenerator.fast_random();//getRandomV2();
         this.type = type;
         this.location = location;
         attributes = VirtualAttributeFactory.getAttributesFor(type);

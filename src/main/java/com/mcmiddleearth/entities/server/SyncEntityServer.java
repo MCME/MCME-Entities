@@ -37,13 +37,14 @@ public class SyncEntityServer implements EntityServer {
 
     private final Map<UUID, BlockProvider> blockProviders;
 
-    private BukkitTask serverTask;
+    private ServerTask serverTask;
 
     private int lastEntityId = 100000;
 
     private int viewDistance = 20;
 
     private final Map<Class<? extends McmeEntityEvent>, List<McmeEntityEventHandler>> eventHandlers = new HashMap<>();
+
 
     public SyncEntityServer(EntitiesPlugin plugin) {
         this.plugin = plugin;
@@ -54,13 +55,21 @@ public class SyncEntityServer implements EntityServer {
 
     @Override
     public void start() {
-        serverTask = new BukkitRunnable() {
+        ServerTask newTask = new ServerTask(this);
+        new BukkitRunnable() {
+            int counter = 100;
             @Override
             public void run() {
-                try {
-                    doTick();
-                } catch(Exception ex) {
-                    Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING,"Ticking error!",ex);
+                if(serverTask == null || serverTask.isShutdownComplete()) {
+                    serverTask = newTask;
+Logger.getGlobal().info("Start new server task");
+                    serverTask.start();
+                    cancel();
+                } else {
+                    counter--;
+                    if(counter == 0) {
+                        Logger.getLogger(SyncEntityServer.class.getSimpleName()).warning("Can't start server as another ServerTask is still running.");
+                    }
                 }
             }
         }.runTaskTimer(plugin,1,1);
@@ -69,8 +78,7 @@ public class SyncEntityServer implements EntityServer {
     @Override
     public void stop() {
         if(serverTask!=null && !serverTask.isCancelled()) {
-            entityProvider.getEntities().forEach(this::removeEntity);
-            serverTask.cancel();
+            serverTask.requestShutdown();//shutdownRequest = true;
         }
     }
 
@@ -82,7 +90,7 @@ public class SyncEntityServer implements EntityServer {
                       .filter(McmeEntity::isTerminated).collect(Collectors.toList())
                       .forEach(this::removeEntity);
 //Logger.getGlobal().info("Server: tick 2 "+entityProvider.getEntities().isEmpty());
-        entityProvider.getEntities().forEach(entity-> {
+        new ArrayList<>(entityProvider.getEntities()).forEach(entity-> {
             if(entity instanceof VirtualEntity) {
                 Bukkit.getOnlinePlayers().forEach(player -> {
                     if (player.getLocation().getWorld().equals(entity.getLocation().getWorld())
@@ -167,6 +175,10 @@ public class SyncEntityServer implements EntityServer {
     @Override
     public PlayerProvider getPlayerProvider() {
         return playerProvider;
+    }
+
+    private EntityProvider getEntityProvider() {
+        return entityProvider;
     }
 
     @Override
@@ -269,5 +281,48 @@ public class SyncEntityServer implements EntityServer {
 
         }
     }*/
+
+    public static class ServerTask {
+
+        private boolean shutdownRequest = false;
+        private boolean shutdownComplete = false;
+        private final SyncEntityServer server;
+        private BukkitTask task;
+
+        public ServerTask(SyncEntityServer server) {
+            this.server = server;
+        }
+
+        public void requestShutdown() {
+            shutdownRequest = true;
+        }
+
+        public boolean isCancelled() {
+            return task.isCancelled();
+        }
+
+        public boolean isShutdownComplete() {
+            return shutdownComplete;
+        }
+
+        public void start() {
+            task = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (shutdownRequest) {
+                            new ArrayList<>(server.getEntityProvider().getEntities()).forEach(server::removeEntity);
+                            cancel();
+                            shutdownComplete = true;
+                        } else {
+                            server.doTick();
+                        }
+                    } catch (Exception ex) {
+                        Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING, "Ticking error!", ex);
+                    }
+                }
+            }.runTaskTimer(EntitiesPlugin.getInstance(),1,1);
+        }
+    }
 
 }

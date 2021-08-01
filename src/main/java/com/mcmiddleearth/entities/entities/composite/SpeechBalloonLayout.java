@@ -42,38 +42,39 @@ public class SpeechBalloonLayout {
 
     public SpeechBalloonLayout(Position position, Width width) {
         this.position = position;
-        lineLengthNarrow = getConfig().getInt("lineLengthNarrow",15);
-        lineLengthWide = getConfig().getInt("lineLengthWide",30);
-        widthInBlocksNarrow = getConfig().getDouble("widthInBlocksNarrow",1);
-        widthInBlocksWide = getConfig().getDouble("widthInBlocksNarrow",2);
-        hasBalloon = getConfig().getBoolean("hasBalloon", true);
+        lineLengthNarrow = getConfig().getInt("LineLengthNarrow",15);
+        lineLengthWide = getConfig().getInt("LineLengthWide",30);
+        widthInBlocksNarrow = getConfig().getDouble("WidthInBlocksNarrow",1);
+        widthInBlocksWide = getConfig().getDouble("WidthInBlocksWide",2);
+        hasBalloon = getConfig().getBoolean("HasBalloon", true);
         try {
-            balloonMaterial = Material.valueOf(getConfig().getString("balloonMaterial", "WHITE_STAINED_GLASS").toUpperCase());
+            balloonMaterial = Material.valueOf(getConfig().getString("BalloonMaterial", "WHITE_STAINED_GLASS").toUpperCase());
         } catch (IllegalArgumentException ex) {
             balloonMaterial = Material.WHITE_STAINED_GLASS;
         }
-        linePrefix = getConfig().getString("linePrefix", "");
-        linePitch = getConfig().getDouble("linePitch",0.26);
-        modelDataNarrow = getConfig().getIntegerList("customModelDataNarrow").toArray(new Integer[0]);
+        linePrefix = getConfig().getString("LinePrefix", "");
+        linePitch = getConfig().getDouble("LinePitch",0.26);
+        modelDataNarrow = getConfig().getIntegerList("CustomModelDataNarrow").toArray(new Integer[0]);
         if(modelDataNarrow.length==0) {
             modelDataNarrow = new Integer[]{1, 2, 3, 4, 5};
         }
-        modelDataWide = getConfig().getIntegerList("customModelDataWide").toArray(new Integer[0]);
+        modelDataWide = getConfig().getIntegerList("CustomModelDataWide").toArray(new Integer[0]);
         if(modelDataWide.length==0) {
             modelDataWide = new Integer[]{6, 7, 8, 9, 10};
         }
         this.width = width;
         switch(position) {
             case LEFT:
-                baseOffset = ConfigurationUtil.getVector(getConfig(),"positionLeft", new Vector(-1.5,0.2,0));
+                baseOffset = ConfigurationUtil.getVector(getConfig(),"PositionLeft", new Vector(-1.5,0.2,0));
                 break;
             case RIGHT:
-                baseOffset = ConfigurationUtil.getVector(getConfig(),"positionRight", new Vector(1.5,0.2,0));
+                baseOffset = ConfigurationUtil.getVector(getConfig(),"PositionRight", new Vector(1.5,0.2,0));
                 break;
             case TOP:
-                baseOffset = ConfigurationUtil.getVector(getConfig(),"positionTop", new Vector(0,1.2,0));
+                baseOffset = ConfigurationUtil.getVector(getConfig(),"PositionTop", new Vector(0,1.2,0));
                 break;
         }
+Logger.getGlobal().info("baseOffset: "+baseOffset.toString());
         layoutOffset = baseOffset;
     };
 
@@ -138,7 +139,7 @@ Logger.getGlobal().info("Lines: "+lines.length);
                 }
             }
             lines = wrappedLines.toArray(new String[0]);
-Logger.getGlobal().info("Wrapped"+lines.length);
+Logger.getGlobal().info("Wrapped "+lines.length);
             //add Line prefix
             for(int i = 0; i < lines.length; i++) {
                 lines[i] = (linePrefix + lines[i]).replace('&','§');
@@ -150,7 +151,9 @@ Logger.getGlobal().info("Wrapped"+lines.length);
             case RIGHT:
                 layoutOffset.setX(baseOffset.getX()+(isWide?widthInBlocksWide/2:widthInBlocksNarrow/2)); break;
             case LEFT:
-                layoutOffset.setX(-baseOffset.getX()-(isWide?widthInBlocksWide/2:widthInBlocksNarrow/2)); break;
+                layoutOffset.setX(baseOffset.getX()-(isWide?widthInBlocksWide/2:widthInBlocksNarrow/2)); break;
+            case TOP:
+                layoutOffset.setX(baseOffset.getX());
         }
         layoutOffset.setY(baseOffset.getY()+linePitch*lines.length);
     }
@@ -160,15 +163,15 @@ Logger.getGlobal().info("Wrapped"+lines.length);
     }
 
     public Integer getBalloonModelData() {
-        int lineCount = this.lines.length;
+        int dataIndex = this.lines.length-1;
         Integer[] modelData;
         if(isWide) {
             modelData = modelDataWide;
         } else {
             modelData = modelDataNarrow;
         }
-        lineCount = Math.min(modelData.length-1,lineCount);
-        return modelData[lineCount];
+        dataIndex = Math.min(modelData.length-1,dataIndex);
+        return modelData[dataIndex];
     }
 
     public SpeechBalloonLayout withBalloonModelData(Integer[] dataValues, boolean wide) {
@@ -266,6 +269,10 @@ Logger.getGlobal().info("Lines: "+lines.length);
     public SpeechBalloonLayout withLinePitch(double linePitch) {
         this.linePitch = linePitch;
         return this;
+    }
+
+    public Position getPosition() {
+        return position;
     }
 
     public enum Position {

@@ -8,11 +8,14 @@ import com.mcmiddleearth.command.TabCompleteRequest;
 import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
 import com.mcmiddleearth.entities.EntityAPI;
+import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.ai.goal.*;
 import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.*;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -47,21 +50,38 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
     @Override
     protected HelpfulLiteralBuilder createCommandTree(HelpfulLiteralBuilder commandNodeBuilder) {
         commandNodeBuilder
+                .requires(sender -> !((sender instanceof RealPlayer)
+                        && !((RealPlayer)sender).getBukkitPlayer().hasPermission(Permission.USER.getNode())))
                 .requires(sender -> sender instanceof RealPlayer)
                 .then(HelpfulLiteralBuilder.literal("spawn")
                         .then(HelpfulRequiredArgumentBuilder.argument("type", word())
                                 .then(HelpfulRequiredArgumentBuilder.argument("goal", word())
                                         .executes(context -> spawnEntity(context.getSource(), context.getArgument("type", String.class), null,
-                                                        context.getArgument("goal",String.class)))
+                                                context.getArgument("goal",String.class)))
                                         .then(HelpfulRequiredArgumentBuilder.argument("name", word())
                                                 .executes(context -> spawnEntity(context.getSource(), context.getArgument("type", String.class),
                                                         context.getArgument("name", String.class), context.getArgument("goal",String.class)))))))
                 .then(HelpfulLiteralBuilder.literal("army")
+                    .then(HelpfulRequiredArgumentBuilder.argument("type", word())
+                        .then(HelpfulRequiredArgumentBuilder.argument("size", integer())
+                            .then(HelpfulRequiredArgumentBuilder.argument("goal", word())
+                                .executes(context -> spawnEntityArmy(context.getSource(),
+                                                               context.getArgument("type", String.class),
+                                                               context.getArgument("size", Integer.class),
+                                                               null,
+                                                               context.getArgument("goal",String.class)))
+                                .then(HelpfulRequiredArgumentBuilder.argument("name", word())
+                                                .executes(context -> spawnEntityArmy(context.getSource(),
+                                                                               context.getArgument("type", String.class),
+                                                                               context.getArgument("size", Integer.class),
+                                                                               context.getArgument("name", String.class),
+                                                                               context.getArgument("goal",String.class))))))))
+                /*.then(HelpfulLiteralBuilder.literal("army")
                         .then(HelpfulRequiredArgumentBuilder.argument("type", word())
                                 .then(HelpfulRequiredArgumentBuilder.argument("size", integer())
                                     .executes(context -> spawnEntityArmy(context.getSource(),
                                                                          context.getArgument("type", String.class),
-                                                                         context.getArgument("size", Integer.class))))))
+                                                                         context.getArgument("size", Integer.class))))))*/
                 .then(HelpfulLiteralBuilder.literal("remove")
                         .executes(context -> removeEntity((BukkitCommandSender)context.getSource(),
                                                           ((BukkitCommandSender)context.getSource())
@@ -70,8 +90,9 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                                 .executes(context -> removeEntity(context.getSource(),
                                                     Collections.singleton(EntityAPI.getEntity(context.getArgument("name", String.class)))))))
                 .then(HelpfulLiteralBuilder.literal("say")
-                        .then(HelpfulRequiredArgumentBuilder.argument("text",greedyString())
-                                .executes(context -> say(context.getSource(),context.getArgument("text",String.class)))))
+                        .then(HelpfulRequiredArgumentBuilder.argument("side",word())
+                            .then(HelpfulRequiredArgumentBuilder.argument("text",greedyString())
+                                    .executes(context -> say(context.getSource(),context.getArgument("side",String.class),context.getArgument("text",String.class))))))
                 .then(HelpfulLiteralBuilder.literal("selection")
                         .executes(context -> showSelection(context.getSource()))
                         .then(HelpfulLiteralBuilder.literal("clear")
@@ -103,10 +124,13 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         return 0;
     }
 
-    private int spawnEntityArmy(McmeCommandSender sender, String type, int size) {
+    private int spawnEntityArmy(McmeCommandSender sender, String type, int size, String name, String goal) {
+//Logger.getGlobal().info("Army: type: "+type+" size: "+size+" name: "+name+" goal: "+goal);
         VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(type), ((RealPlayer)sender).getLocation())
                 .withTargetLocation(((RealPlayer)sender).getLocation().add(new Vector(20,0,20)))
-                .withGoalType(GoalType.FOLLOW_ENTITY)
+                .withName(name)
+                .withDataFile(name)
+                .withGoalType(GoalType.valueOf(goal.toUpperCase()))
                 .withTargetEntity((RealPlayer) sender);
         //((BukkitCommandSender)sender).clearSelection();
         for(int i = 0; i < size; i++) {
@@ -168,10 +192,11 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
 
     private int animateEntity(McmeCommandSender sender, String animationId) {
         RealPlayer player = ((RealPlayer)sender);
-        VirtualEntity entity = (VirtualEntity) player.getSelectedEntities().iterator().next();
-        if(entity instanceof BakedAnimationEntity) {
-            ((BakedAnimationEntity)entity).setAnimation(animationId);
-        }
+        player.getSelectedEntities().forEach(entity -> {
+            if (entity instanceof BakedAnimationEntity) {
+                ((BakedAnimationEntity) entity).setAnimation(animationId);
+            }
+        });
         return 0;
     }
 
@@ -188,7 +213,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         return 0;
     }
 
-    private int say(McmeCommandSender sender, String text) {
+    private int say(McmeCommandSender sender, String side, String text) {
         String[] words = text.split(" ");
         List<String> lines = new ArrayList<>();
         int i=0;
@@ -203,7 +228,12 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         }
         VirtualEntity entity = (VirtualEntity) ((RealPlayer) sender).getSelectedEntities().iterator().next();
         //entity.say(lines.toArray(new String[0]), 200);
-        entity.say(text,2000);
+        SpeechBalloonLayout.Position position = (side.equals("l")? SpeechBalloonLayout.Position.LEFT:
+                (side.equals("t")? SpeechBalloonLayout.Position.TOP: SpeechBalloonLayout.Position.RIGHT));
+        SpeechBalloonLayout layout = new SpeechBalloonLayout(position, SpeechBalloonLayout.Width.OPTIMAL)
+                .withDuration(2000)
+                .withMessage(text);
+        entity.say(layout);
         return 0;
     }
 

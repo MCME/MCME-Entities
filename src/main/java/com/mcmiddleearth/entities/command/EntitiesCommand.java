@@ -9,6 +9,7 @@ import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.EntityAPI;
+import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.ai.goal.*;
 import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
@@ -46,14 +47,18 @@ public class EntitiesCommand extends AbstractCommandHandler implements TabExecut
     @Override
     protected HelpfulLiteralBuilder createCommandTree(HelpfulLiteralBuilder commandNodeBuilder) {
         commandNodeBuilder
+                .requires(sender -> !((sender instanceof RealPlayer)
+                                      && !((RealPlayer)sender).getBukkitPlayer().hasPermission(Permission.ADMIN.getNode())))
                 .then(HelpfulLiteralBuilder.literal("reload")
                         .executes(context -> {
                             EntitiesPlugin.getInstance().reloadConfig();
+                            context.getSource().sendMessage(new ComponentBuilder("Configuration reloaded!").create());
                             return 0;
                         }))
                 .then(HelpfulLiteralBuilder.literal("restart")
                         .executes(context -> {
                             EntitiesPlugin.getInstance().restartServer();
+                            context.getSource().sendMessage(new ComponentBuilder("Entities server restarted!").create());
                             return 0;
                         }));
         return commandNodeBuilder;

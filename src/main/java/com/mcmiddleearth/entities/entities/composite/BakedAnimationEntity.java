@@ -33,16 +33,20 @@ public class BakedAnimationEntity extends CompositeEntity {
 
     public BakedAnimationEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException {
         super(entityId, factory);
-Logger.getGlobal().info("Baked Animation Get location "+getLocation());
+//Logger.getGlobal().info("Baked Animation Get location "+getLocation());
         File animationFile = new File(bakedAnimationFolder, factory.getDataFile());
         try (FileReader reader = new FileReader(animationFile)) {
+//long start = System.currentTimeMillis();
             JsonObject data = new JsonParser().parse(reader).getAsJsonObject();
+//Logger.getGlobal().info("File loading: "+(System.currentTimeMillis()-start));
             JsonObject modelData = data.get("model").getAsJsonObject();
             Material itemMaterial = Material.valueOf(modelData.get("head_item").getAsString().toUpperCase());
             JsonObject animationData = data.get("animations").getAsJsonObject();
+//start = System.currentTimeMillis();
             animationData.entrySet().forEach(entry
                     -> animations.put(entry.getKey(), BakedAnimation.loadAnimation(entry.getValue().getAsJsonObject(),
                     itemMaterial, this)));
+//Logger.getGlobal().info("Animation loading: "+(System.currentTimeMillis()-start));
         } catch (IOException e) {
             e.printStackTrace();
         }

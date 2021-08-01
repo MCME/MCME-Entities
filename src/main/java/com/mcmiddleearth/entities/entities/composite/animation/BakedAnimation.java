@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class BakedAnimation {
 
@@ -90,9 +91,11 @@ public class BakedAnimation {
         String next = (data.has("next")?data.get("next").getAsString():null);
         BakedAnimation animation = new BakedAnimation(entity, type, next, interval);
         JsonArray frameData = data.get("frames").getAsJsonArray();
+//long start = System.currentTimeMillis();
         for(int i = 0; i< frameData.size(); i++) {
             animation.addFrame(Frame.loadFrame(entity,animation,frameData.get(i).getAsJsonObject(),itemMaterial));
         }
+//Logger.getGlobal().info("Frame loading: "+(System.currentTimeMillis()-start));
         return animation;
     }
 }

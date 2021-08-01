@@ -19,6 +19,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import java.util.logging.Logger;
+
 public class VirtualEntityUseListener extends EntityListener {
 
     public VirtualEntityUseListener(Plugin plugin, EntityServer entityServer) {
