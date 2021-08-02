@@ -48,7 +48,7 @@ Logger.getGlobal().info("BAlloon data: "+layout.getBalloonModelData());
                     new Vector(speaker.getMouth().getX()+layout.getLayoutOffset().getX()/*1*/,
                                speaker.getMouth().getY()+layout.getLayoutOffset().getY()- armorStandNameHeight/*0.2*/
                                        - layout.getLinePitch()/*0.26*/ * i,
-                               speaker.getMouth().getZ()+layout.getLayoutOffset().getZ()/*0*/), null);
+                               speaker.getMouth().getZ()+layout.getLayoutOffset().getZ()/*0*/), null, false);
             this.getBones().add(bone);
 Logger.getGlobal().info("Bone display name: "+line);
             bone.setDisplayName(line);//"{\"text\": \"foo\",\"bold\": \"true\"}");

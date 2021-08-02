@@ -111,6 +111,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(type), ((RealPlayer)sender).getLocation())
                 .withName(name)
                 .withDataFile(name)
+                .withHeadPitchCenter(new Vector(0,0,0.3))
                 .withGoalType(GoalType.valueOf(goal.toUpperCase()))
                 .withTargetLocation(((RealPlayer)sender).getLocation().add(new Vector(20,0,20)))
                 .withTargetEntity((RealPlayer)sender);
@@ -129,6 +130,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(type), ((RealPlayer)sender).getLocation())
                 .withTargetLocation(((RealPlayer)sender).getLocation().add(new Vector(20,0,20)))
                 .withName(name)
+                .withHeadPitchCenter(new Vector(0,0,0.3))
                 .withDataFile(name)
                 .withGoalType(GoalType.valueOf(goal.toUpperCase()))
                 .withTargetEntity((RealPlayer) sender);

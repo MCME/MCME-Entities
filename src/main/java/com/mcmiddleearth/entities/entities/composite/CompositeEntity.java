@@ -7,6 +7,7 @@ import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.*;
 import org.bukkit.Location;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,16 +15,21 @@ import java.util.Set;
 public abstract class CompositeEntity extends VirtualEntity {
 
     private final Set<Bone> bones = new HashSet<>();
+    //private final Set<Bone> headBones = new HashSet<>();
 
     private final int firstEntityId;
 
     private Bone displayNameBone;
 
+    private Vector headPitchCenter;
+
     public CompositeEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException {
         super(factory);
         firstEntityId = entityId;
+        headPitchCenter = factory.getHeadPitchCenter();
         if(getDisplayName()!=null) {
-            displayNameBone = new Bone("displayName",this,new EulerAngle(0,0,0),factory.getDisplayNamePosition(),null);
+            displayNameBone = new Bone("displayName",this,new EulerAngle(0,0,0),
+                                       factory.getDisplayNamePosition(),null,false);
             displayNameBone.setDisplayName(factory.getDisplayName());
             bones.add(displayNameBone);
         }
@@ -65,10 +71,30 @@ public abstract class CompositeEntity extends VirtualEntity {
         bones.forEach(Bone::resetUpdateFlags);
     }
 
+    public Vector getHeadPitchCenter() {
+        return headPitchCenter;
+    }
+
+    public void setHeadPitchCenter(Vector headPitchCenter) {
+        this.headPitchCenter = headPitchCenter;
+    }
+
     public void setRotation(float yaw) {
+        bones.stream().filter(bone->!bone.isHeadBone()).forEach(bone-> {
+            bone.setRotation(yaw);
+        });
         super.setRotation(yaw);
         //bones.forEach(bone->bone.setRotation(yaw));
     }
+
+    @Override
+    public void setHeadRotation(float yaw, float pitch) {
+        bones.stream().filter(Bone::isHeadBone).forEach(bone-> {
+            bone.setRotation(yaw);
+            bone.setPitch(pitch);
+        });
+    }
+
 
     public Set<Bone> getBones() {
         return bones;

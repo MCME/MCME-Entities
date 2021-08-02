@@ -45,6 +45,8 @@ public class VirtualEntityFactory {
 
     private McmeEntity targetEntity;
 
+    private Vector headPitchCenter = new Vector(0,0,0);
+
     private SpeechBalloonLayout speechBalloonLayout = new SpeechBalloonLayout(SpeechBalloonLayout.Position.RIGHT,
                                                                               SpeechBalloonLayout.Width.OPTIMAL);
 
@@ -142,6 +144,15 @@ public class VirtualEntityFactory {
     public VirtualEntityFactory withMouth(Vector mouth) {
         this.mouth = mouth;
         return this;
+    }
+
+    public VirtualEntityFactory withHeadPitchCenter(Vector pitchCenter) {
+        this.headPitchCenter = pitchCenter;
+        return this;
+    }
+
+    public Vector getHeadPitchCenter() {
+        return headPitchCenter;
     }
 
     public String getDataFile() {

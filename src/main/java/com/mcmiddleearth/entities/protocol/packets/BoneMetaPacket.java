@@ -55,9 +55,9 @@ public class BoneMetaPacket extends AbstractPacket {
     protected void writeHeadPose(WrappedDataWatcher watcher) {
         WrappedDataWatcher.WrappedDataWatcherObject state = new WrappedDataWatcher
                 .WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.getVectorSerializer());
-        watcher.setObject(state, new Vector3F((float)bone.getHeadPose().getX(),
-                                              (float)bone.getHeadPose().getY(),
-                                              (float)bone.getHeadPose().getZ()), false);
+        watcher.setObject(state, new Vector3F((float)bone.getRotatedHeadPose().getX(),
+                                              (float)bone.getRotatedHeadPose().getY(),
+                                              (float)bone.getRotatedHeadPose().getZ()), false);
     }
 
     protected void writeHeadItem() {

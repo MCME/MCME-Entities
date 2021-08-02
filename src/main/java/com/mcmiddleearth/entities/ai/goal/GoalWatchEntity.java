@@ -13,6 +13,8 @@ public class GoalWatchEntity extends GoalVirtualEntity {
     private boolean hasRotation;
     private float rotation;
 
+    private boolean secondUpdate = false;
+
     public GoalWatchEntity(GoalType type, VirtualEntity entity, McmeEntity target) {
         super(type, entity);
         this.target = target;
@@ -22,10 +24,13 @@ public class GoalWatchEntity extends GoalVirtualEntity {
     @Override
     public void update() {
         super.update();
-        Location orientation = getEntity().getLocation().clone()
-                .setDirection(target.getLocation().toVector().subtract(getEntity().getLocation().toVector()));
-        rotation = orientation.getYaw();
-        hasRotation = true;
+        if(secondUpdate) {
+            Location orientation = getEntity().getLocation().clone()
+                    .setDirection(target.getLocation().toVector().subtract(getEntity().getLocation().toVector()));
+            rotation = orientation.getYaw();
+            hasRotation = true;
+        }
+        secondUpdate = !secondUpdate;
     }
 
     @Override

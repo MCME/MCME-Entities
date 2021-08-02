@@ -3,6 +3,7 @@ package com.mcmiddleearth.entities.entities.composite.animation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mcmiddleearth.entities.util.RotationMatrix;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -11,6 +12,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class BoneData {
 
@@ -23,8 +25,10 @@ public class BoneData {
     private static final double Y_SHIFT = 0.5;
 
     public BoneData(EulerAngle headPose, Vector position, ItemStack[] items) {
-        this.headPose = headPose;
-        this.position = position;
+//Logger.getGlobal().info("HeadPose: "+headPose.getX()+" "+headPose.getY()+" "+headPose.getZ());
+        this.headPose = headPose;//RotationMatrix.rotateXEulerAngleDegree(headPose,45);
+//Logger.getGlobal().info("HeadPose: "+this.headPose.getX()+" "+this.headPose.getY()+" "+this.headPose.getZ());
+        this.position = position;//RotationMatrix.fastRotateX(position,45);
         this.items = items;
     }
 
