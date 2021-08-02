@@ -6,6 +6,8 @@ import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import java.util.logging.Logger;
+
 public class HeadGoalWaypointTarget extends HeadGoal {
 
     private final GoalPath goal;
@@ -34,6 +36,7 @@ public class HeadGoalWaypointTarget extends HeadGoal {
 
     @Override
     public boolean hasHeadRotation() {
+//Logger.getGlobal().info("Has waypoint: "+goal.getWaypoint());
         return goal.getWaypoint() != null;
     }
 }

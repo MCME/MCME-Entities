@@ -6,6 +6,8 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.logging.Logger;
+
 public class SimpleEntityTeleportPacket extends AbstractPacket {
 
     private final PacketContainer teleport;
@@ -28,7 +30,7 @@ public class SimpleEntityTeleportPacket extends AbstractPacket {
                 .write(1, location.getY())
                 .write(2, location.getZ());
         teleport.getBytes()
-                .write(0, (byte)(location.getYaw()*256/360))
+                .write(0, (byte)(entity.getRotation()*256/360))
                 .write(1, (byte)(location.getPitch()*256/360));
         teleport.getBooleans().write(0,true);//entity.onGround());
     }

@@ -78,7 +78,7 @@ public class SimpleEntityMovePacket extends AbstractPacket {
                 break;
         }
         if(entity.hasLookUpdate()) {
-            head.getBytes().write(0,getAngle(entity.getLocation().getYaw()));
+            head.getBytes().write(0,getAngle(entity.getHeadYaw()));
         }
     }
 

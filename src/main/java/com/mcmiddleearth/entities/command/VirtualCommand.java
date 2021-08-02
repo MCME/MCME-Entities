@@ -10,6 +10,7 @@ import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
 import com.mcmiddleearth.entities.EntityAPI;
 import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.ai.goal.*;
+import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWatch;
 import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.*;
@@ -116,7 +117,13 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 .withTargetLocation(((RealPlayer)sender).getLocation().add(new Vector(20,0,20)))
                 .withTargetEntity((RealPlayer)sender);
         try {
-            ((BukkitCommandSender)sender).setSelection(EntityAPI.spawnEntity(factory));
+            VirtualEntity entity = (VirtualEntity) EntityAPI.spawnEntity(factory);
+            /*if(goal.equalsIgnoreCase("hold_position")) {
+                GoalVirtualEntity entityGoal = (GoalVirtualEntity) entity.getGoal();
+                entityGoal.clearHeadGoals();
+                entityGoal.addHeadGoal(new HeadGoalWatch((RealPlayer) sender, entity));
+            }*/
+            ((BukkitCommandSender)sender).setSelection(entity);
             sender.sendMessage(new ComponentBuilder("Spawning: "+factory.getType()+" "+GoalType.valueOf(goal.toUpperCase())).create());
         } catch (InvalidLocationException e) {
             sender.sendMessage(new ComponentBuilder("Can't spawn because of invalid location!").create());

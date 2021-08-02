@@ -106,7 +106,7 @@ public abstract class GoalPath extends GoalVirtualEntity {
                 waypoint = path.get(index).clone();
             }
 //Logger.getGlobal().info("Waypoint: "+waypoint.getX()+" "+waypoint.getZ());
-            if(waypoint != null) {
+            if(waypoint != null && isMoving) {
                 setRotation(getEntity().getLocation().clone()
                         .setDirection(waypoint.clone().subtract(getEntity().getLocation().toVector())).getYaw());
             }

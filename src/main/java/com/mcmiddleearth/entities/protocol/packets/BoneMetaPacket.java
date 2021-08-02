@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class BoneMetaPacket extends AbstractPacket {
 
@@ -36,7 +35,7 @@ public class BoneMetaPacket extends AbstractPacket {
 
     @Override
     public void update() {
-        if(bone.isHasHeadRotationUpdate()) {
+        if(bone.isHasHeadPitchUpdate()) {
             WrappedDataWatcher watcher = new WrappedDataWatcher();
             writeHeadPose(watcher);
             posePacket.getWatchableCollectionModifier().write(0,watcher.getWatchableObjects());

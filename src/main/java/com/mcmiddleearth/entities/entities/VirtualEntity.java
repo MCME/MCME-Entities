@@ -58,6 +58,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private Vector velocity;
 
+    private float headYaw;
+
     private boolean lookUpdate, rotationUpdate;
 
     private boolean teleported;
@@ -152,13 +154,13 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                         goal.doTick();
                 }*/
                 movementEngine.calculateMovement(goal.getDirection());
-                if(goal.hasHeadRotation()) {
-//Logger.getGlobal().info("head rotation: "+ goal.getHeadYaw()+" "+goal.getHeadPitch());
-                    setHeadRotation(goal.getHeadYaw(), goal.getHeadPitch());
-                }
                 if(goal.hasRotation()) {
 //Logger.getGlobal().info("rotation: "+ goal.getRotation());
                     setRotation(goal.getRotation());
+                }
+                if(goal.hasHeadRotation()) {
+//Logger.getGlobal().info("head rotation: "+ goal.getHeadYaw()+" "+goal.getHeadPitch());
+                    setHeadRotation(goal.getHeadYaw(), goal.getHeadPitch());
                 }
             } else {
                 movementEngine.calculateMovement(new Vector(0,0,0));
@@ -201,7 +203,7 @@ Logger.getGlobal().info("stop talking");
 //Logger.getGlobal().info("location new: "+ getLocation().getX()+" "+getLocation().getY()+" "+getLocation().getZ());
         boundingBox.setLocation(location);
 
-        if(tickCounter % updateInterval == updateRandom) {
+        if((tickCounter % updateInterval == updateRandom)) {
             teleportPacket.update();
             teleportPacket.send(viewers);
         } else {
@@ -240,7 +242,8 @@ Logger.getGlobal().info("stop talking");
     }
 
     public void setHeadRotation(float yaw, float pitch) {
-        getLocation().setYaw(yaw);
+        // getLocation().setYaw(yaw);
+        headYaw = yaw;
         getLocation().setPitch(pitch);
         lookUpdate = true;
     }
@@ -256,6 +259,9 @@ Logger.getGlobal().info("stop talking");
     public float getRotation() {
         return location.getYaw();//rotation;
     }
+
+    @Override
+    public float getHeadYaw() { return headYaw; }
 
     @Override
     public UUID getUniqueId() {

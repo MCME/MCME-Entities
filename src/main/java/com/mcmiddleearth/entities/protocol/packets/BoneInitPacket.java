@@ -4,9 +4,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mcmiddleearth.entities.entities.composite.Bone;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
-import java.util.logging.Logger;
-
 public class BoneInitPacket extends BoneMetaPacket {
 
     WrappedDataWatcher watcher = new WrappedDataWatcher();
@@ -30,7 +27,7 @@ public class BoneInitPacket extends BoneMetaPacket {
 
     @Override
     public void update() {
-        if(bone.isHasHeadRotationUpdate()) {
+        if(bone.isHasHeadPitchUpdate()) {
             writeHeadPose(watcher);
             posePacket.getWatchableCollectionModifier().write(0,watcher.getWatchableObjects());
         }

@@ -44,6 +44,8 @@ public interface McmeEntity {
 
     public float getRotation();
 
+    public float getHeadYaw();
+
     public void setRotation(float yaw);
 
     public EntityBoundingBox getBoundingBox();

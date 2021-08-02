@@ -21,6 +21,9 @@ public class Frame {
     public void apply(int state) {
         bones.forEach((bone, boneData) -> {
             bone.setRelativePosition(boneData.getPosition());
+/*if(bone.getName().equals("bone")) {
+    Logger.getGlobal().info("Frame position: "+bone.getRelativePosition().toString());
+}*/
             bone.setHeadPose(boneData.getHeadPose());
             bone.setHeadItem(boneData.getItems()[state]);
         });
