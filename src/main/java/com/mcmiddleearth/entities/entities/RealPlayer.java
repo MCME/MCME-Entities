@@ -1,13 +1,17 @@
 package com.mcmiddleearth.entities.entities;
 
+import com.comphenix.protocol.PacketType;
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.goal.GoalDistance;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
+import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
+import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.graalvm.compiler.lir.aarch64.AArch64Move;
 
 import java.util.Set;
 import java.util.UUID;
@@ -112,10 +116,10 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
         return false;
     }
 
-    @Override
+    /*@Override
     public boolean onGround() {
         return false;
-    }
+    }*/
 
     @Override
     public int getHealth() {
@@ -147,7 +151,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     }
 
     @Override
-    public void playAnimation(AnimationType type) {
+    public void playAnimation(ActionType type) {
 
     }
 
@@ -183,5 +187,43 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     @Override
     public Vector getMouth() {
         return new Vector(0,1.8,0);
+    }
+
+    @Override
+    public MovementType getMovementType() {
+        if(getBukkitPlayer().isFlying()) {
+            return MovementType.FLYING;
+        } else if(getBukkitPlayer().isGliding()) {
+            return MovementType.GLIDING;
+        } else if(getBukkitPlayer().isSwimming()) {
+            return MovementType.SWIMMING;
+        } else if(getBukkitPlayer().isSneaking()) {
+            return MovementType.SNEAKING;
+        } else if(getBukkitPlayer().isOnGround()) {
+            return MovementType.WALKING;
+        } else {
+            return MovementType.FALLING;
+        }
+    }
+
+    @Override
+    public MovementSpeed getMovementSpeed() {
+        if(getBukkitPlayer().isSprinting()) {
+            return MovementSpeed.SPRINT;
+        } else if(getBukkitPlayer().isSneaking()) {
+            return MovementSpeed.SLOW;
+        } else {
+            return MovementSpeed.WALK;
+        }
+    }
+
+    @Override
+    public boolean onGround() {
+        return getBukkitPlayer().isOnGround();
+    }
+
+    @Override
+    public ActionType getActionType() {
+        return null;
     }
 }

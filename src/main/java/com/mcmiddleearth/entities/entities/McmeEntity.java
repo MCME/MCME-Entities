@@ -2,6 +2,8 @@ package com.mcmiddleearth.entities.entities;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
+import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
+import com.mcmiddleearth.entities.ai.movement.MovementType;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -40,7 +42,7 @@ public interface McmeEntity {
 
     public boolean hasRotationUpdate();
 
-    public boolean onGround();
+    //public boolean onGround();
 
     public float getRotation();
 
@@ -57,7 +59,7 @@ public interface McmeEntity {
 
     public boolean isTerminated();
 
-    public void playAnimation(AnimationType type);
+    public void playAnimation(ActionType type);
 
     public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor);
     public void attack(McmeEntity target);
@@ -67,4 +69,12 @@ public interface McmeEntity {
     public void finalise();
 
     public Vector getMouth();
+
+    public boolean onGround();
+
+    public MovementType getMovementType();
+
+    public MovementSpeed getMovementSpeed();
+
+    public ActionType getActionType();
 }

@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
+import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationTree;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationType;
 import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimationEntityAnimationChangedEvent;
 import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimationEntityStateChangedEvent;
@@ -20,7 +21,9 @@ import java.util.logging.Logger;
 
 public class BakedAnimationEntity extends CompositeEntity {
 
-    private final Map<String, BakedAnimation> animations = new HashMap<>();
+    //private final Map<String, BakedAnimation> animations = new HashMap<>();
+
+    private final BakedAnimationTree animationTree = new BakedAnimationTree(null);
 
     private final Map<String, Integer> states = new HashMap<>();
 
@@ -28,12 +31,15 @@ public class BakedAnimationEntity extends CompositeEntity {
 
     private int currentState;
 
-    private final File bakedAnimationFolder = new File(EntitiesPlugin.getInstance().getDataFolder(),"animation");
+    private boolean manualAnimationControl = false;
+
+    private static final File bakedAnimationFolder = new File(EntitiesPlugin.getInstance().getDataFolder(),"animation");
 
 
     public BakedAnimationEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException {
         super(entityId, factory);
 //Logger.getGlobal().info("Baked Animation Get location "+getLocation());
+        manualAnimationControl = factory.getManualAnimationControl();
         File animationFile = new File(bakedAnimationFolder, factory.getDataFile());
         try (FileReader reader = new FileReader(animationFile)) {
 //long start = System.currentTimeMillis();
@@ -44,7 +50,7 @@ public class BakedAnimationEntity extends CompositeEntity {
             JsonObject animationData = data.get("animations").getAsJsonObject();
 //start = System.currentTimeMillis();
             animationData.entrySet().forEach(entry
-                    -> animations.put(entry.getKey(), BakedAnimation.loadAnimation(entry.getValue().getAsJsonObject(),
+                    -> animationTree.addAnimation(entry.getKey(), BakedAnimation.loadAnimation(entry.getValue().getAsJsonObject(),
                     itemMaterial, this)));
 //Logger.getGlobal().info("Animation loading: "+(System.currentTimeMillis()-start));
         } catch (IOException e) {
@@ -55,10 +61,18 @@ public class BakedAnimationEntity extends CompositeEntity {
 
     @Override
     public void doTick() {
+        if(!manualAnimationControl) {
+            BakedAnimation expected = animationTree.getAnimation(this);
+            if(currentAnimation!=expected) {
+                currentAnimation = expected;
+                if(currentAnimation!=null)
+                    currentAnimation.reset();
+            }
+        }
         if(currentAnimation!=null) {
             if (currentAnimation.isFinished()) {
                 if (currentAnimation.getType().equals(BakedAnimationType.CHAIN)) {
-                    currentAnimation = animations.get(currentAnimation.getNext());
+                    currentAnimation = animationTree.getAnimation(currentAnimation.getNext());
                     currentAnimation.reset();
                 }
             }
@@ -71,7 +85,7 @@ public class BakedAnimationEntity extends CompositeEntity {
         BakedAnimationEntityAnimationChangedEvent event = new BakedAnimationEntityAnimationChangedEvent(this, name);
         EntitiesPlugin.getEntityServer().handleEvent(event);
         if(!event.isCancelled()) {
-            BakedAnimation newAnim = animations.get(event.getNextAnimationKey());
+            BakedAnimation newAnim = animationTree.getAnimation(event.getNextAnimationKey());
             if (newAnim != null) {
                 currentAnimation = newAnim;
                 currentAnimation.reset();
@@ -100,4 +114,20 @@ public class BakedAnimationEntity extends CompositeEntity {
         return states;
     }
 
+    public void setAnimationFrame(String animation, int frameIndex) {
+Logger.getGlobal().info("set Animation Frame "+animation + " "+ frameIndex);
+        BakedAnimation anim = animationTree.getAnimation(animation);
+        if (anim != null) {
+Logger.getGlobal().info("Apply Frame");
+            anim.applyFrame(frameIndex);
+        }
+    }
+
+    public boolean isManualAnimationControl() {
+        return manualAnimationControl;
+    }
+
+    public void setManualAnimationControl(boolean manualAnimationControl) {
+        this.manualAnimationControl = manualAnimationControl;
+    }
 }

@@ -9,7 +9,7 @@ public class SimpleLivingEntity extends SimpleEntity {
 
     protected SimpleEntityAnimationPacket animationPacket;
 
-    private AnimationType animation = null;
+    private ActionType animation = null;
 
     public SimpleLivingEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException {
         super(entityId, factory);
@@ -40,7 +40,7 @@ public class SimpleLivingEntity extends SimpleEntity {
     }
 
     @Override
-    public void playAnimation(AnimationType type) {
+    public void playAnimation(ActionType type) {
         this.animation = type;
     }
 

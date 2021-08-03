@@ -104,7 +104,12 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                         .executes(context -> setGoal(context.getSource())))
                 .then(HelpfulLiteralBuilder.literal("animate")
                         .then(HelpfulRequiredArgumentBuilder.argument("animationId", word())
-                                .executes(context -> animateEntity(context.getSource(), context.getArgument("animationId",String.class)))));
+                                .executes(context -> animateEntity(context.getSource(), context.getArgument("animationId",String.class)))))
+                .then(HelpfulLiteralBuilder.literal("frame")
+                        .then(HelpfulRequiredArgumentBuilder.argument("animationId", word())
+                            .then(HelpfulRequiredArgumentBuilder.argument("frameId",integer())
+                                .executes(context -> applyAnimationFrame(context.getSource(), context.getArgument("animationId", String.class),
+                                                                                              context.getArgument("frameId", Integer.class))))));
         return commandNodeBuilder;
     }
 
@@ -159,6 +164,19 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
 
     private int removeEntity(McmeCommandSender sender, Set<McmeEntity> entities) {
         EntityAPI.removeEntity(entities);
+        return 0;
+    }
+
+    private int applyAnimationFrame(McmeCommandSender sender, String animation, int frameId) {
+//Logger.getGlobal().info("Apply Frame command");
+        RealPlayer player = ((RealPlayer)sender);
+        player.getSelectedEntities().forEach(entity -> {
+            if (entity instanceof BakedAnimationEntity) {
+                ((BakedAnimationEntity) entity).setManualAnimationControl(true);
+                ((BakedAnimationEntity) entity).setAnimationFrame(animation,frameId);
+            }
+        });
+
         return 0;
     }
 

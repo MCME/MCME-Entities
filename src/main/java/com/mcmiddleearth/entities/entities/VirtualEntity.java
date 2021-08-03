@@ -1,11 +1,11 @@
 package com.mcmiddleearth.entities.entities;
 
-import com.fasterxml.uuid.UUIDGenerator;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
+import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
 import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
@@ -65,6 +65,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private boolean teleported;
 
     private MovementType movementType;
+    private boolean sneaking = false;
+    private MovementSpeed movementSpeed = MovementSpeed.STAND;
+
+    private ActionType actionType = ActionType.IDLE;
 
     private GoalVirtualEntity goal;
 
@@ -233,14 +237,6 @@ Logger.getGlobal().info("stop talking");
         this.velocity = velocity;
     }
 
-    public void setMovementType(MovementType movementType) {
-        if(!this.movementType.equals(MovementType.FALLING)
-              && movementType.equals(MovementType.FALLING)) {
-            movementEngine.setFallStart(boundingBox.getMin().getY());
-        }
-        this.movementType = movementType;
-    }
-
     public void setHeadRotation(float yaw, float pitch) {
         // getLocation().setYaw(yaw);
         headYaw = yaw;
@@ -299,8 +295,42 @@ Logger.getGlobal().info("stop talking");
         return velocity;
     }
 
+    public boolean isSneaking() {
+        return sneaking;
+    }
+
+    public void setSneaking(boolean sneaking) {
+        this.sneaking = sneaking;
+    }
+
+    @Override
+    public MovementSpeed getMovementSpeed() {
+        return movementSpeed;
+    }
+
+    public void setMovementSpeed(MovementSpeed movementSpeed) {
+        this.movementSpeed = movementSpeed;
+    }
+
     public MovementType getMovementType() {
         return movementType;
+    }
+
+    public void setMovementType(MovementType movementType) {
+        if(!this.movementType.equals(MovementType.FALLING)
+                && movementType.equals(MovementType.FALLING)) {
+            movementEngine.setFallStart(boundingBox.getMin().getY());
+        }
+        this.movementType = movementType;
+    }
+
+    public boolean onGround() {
+        return movementType.equals(MovementType.SNEAKING)
+                || movementType.equals(MovementType.WALKING);
+    }
+
+    public ActionType getActionType() {
+        return actionType;
     }
 
     @Override
@@ -318,10 +348,10 @@ Logger.getGlobal().info("stop talking");
         return null;
     }
 
-    @Override
+    /*@Override
     public boolean onGround() {
         return true;
-    }
+    }*/
 
     public EntityBoundingBox getBoundingBox() {
         return boundingBox;
@@ -398,10 +428,10 @@ Logger.getGlobal().info("stop talking");
             if (health <= 0) {
                 EntitiesPlugin.getEntityServer().handleEvent(new McmeEntityDeathEvent(this));
                 dead = true;
-                playAnimation(AnimationType.DEATH);
+                playAnimation(ActionType.DEATH);
                 //Logger.getGlobal().info("Dead!");
             } else {
-                playAnimation(AnimationType.HURT);
+                playAnimation(ActionType.HURT);
             }
         }
     }
@@ -431,7 +461,7 @@ Logger.getGlobal().info("stop talking");
         VirtualEntityAttackEvent event = new VirtualEntityAttackEvent(this,target);
         EntitiesPlugin.getEntityServer().handleEvent(event);
         if(!event.isCancelled()) {
-            playAnimation(AnimationType.ATTACK);
+            playAnimation(ActionType.ATTACK);
             target.receiveAttack(this, 2, 1);
             attackCoolDown = 40;
         }
@@ -461,7 +491,7 @@ Logger.getGlobal().info("stop talking");
     }
 
     @Override
-    public void playAnimation(AnimationType type) { }
+    public void playAnimation(ActionType type) { }
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
@@ -527,6 +557,7 @@ Logger.getGlobal().info("stop talking");
     public boolean isInvertWhiteList() {
         return invertWhiteList;
     }
+
 
     /*Location loc;
     public void _test_spawn_(Player player) {

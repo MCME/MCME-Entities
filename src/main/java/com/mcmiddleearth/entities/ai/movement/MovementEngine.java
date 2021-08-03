@@ -43,6 +43,7 @@ public class MovementEngine {
                     entity.setMovementType(MovementType.FALLING);
                     break;
                 case WALKING:
+                case SNEAKING:
                     entity.setVelocity(new Vector(0, 0, 0));
                     return;
             }
@@ -75,7 +76,11 @@ public class MovementEngine {
                         if(fallHeight>entity.getFallDepth()+0.5) {
                             entity.damage((int) (fallHeight - entity.getFallDepth()));
                         }
-                        entity.setMovementType(MovementType.WALKING);
+                        if(entity.isSneaking()) {
+                            entity.setMovementType(MovementType.SNEAKING);
+                        } else {
+                            entity.setMovementType(MovementType.WALKING);
+                        }
                     } else {
 if (velocity.getY()<-10) {
     Logger.getGlobal().info("Warning high fall velocity: "+velocity.getY());
@@ -92,6 +97,7 @@ if (velocity.getY()<-10) {
 //Logger.getGlobal().info("falling entity vel: "+entity.getVelocity());
                 break;
             case WALKING:
+            case SNEAKING:
             default:
                 velocity = direction.normalize().multiply(getGenericSpeed());
                 velocity.setY(0);

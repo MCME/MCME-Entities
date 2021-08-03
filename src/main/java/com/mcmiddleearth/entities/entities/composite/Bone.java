@@ -2,7 +2,9 @@ package com.mcmiddleearth.entities.entities.composite;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
-import com.mcmiddleearth.entities.entities.AnimationType;
+import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
+import com.mcmiddleearth.entities.ai.movement.MovementType;
+import com.mcmiddleearth.entities.entities.ActionType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.McmeEntityType;
 import com.mcmiddleearth.entities.protocol.packets.*;
@@ -241,10 +243,10 @@ Logger.getGlobal().info("Teleport bone!");
         return rotationUpdate || parent.hasRotationUpdate();
     }
 
-    @Override
+    /*@Override
     public boolean onGround() {
         return false;
-    }
+    }**/
 
     @Override
     public float getRotation() {
@@ -320,7 +322,7 @@ Logger.getGlobal().info("Teleport bone!");
     }
 
     @Override
-    public void playAnimation(AnimationType type) {
+    public void playAnimation(ActionType type) {
 
     }
 
@@ -360,5 +362,25 @@ Logger.getGlobal().info("Teleport bone!");
     @Override
     public Vector getMouth() {
         return new Vector(0,0,0);
+    }
+
+    @Override
+    public MovementType getMovementType() {
+        return MovementType.FLYING;
+    }
+
+    @Override
+    public boolean onGround() {
+        return false;
+    }
+
+    @Override
+    public MovementSpeed getMovementSpeed() {
+        return MovementSpeed.STAND;
+    }
+
+    @Override
+    public ActionType getActionType() {
+        return ActionType.IDLE;
     }
 }

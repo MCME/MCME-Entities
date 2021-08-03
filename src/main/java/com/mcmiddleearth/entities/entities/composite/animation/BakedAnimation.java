@@ -79,6 +79,13 @@ public class BakedAnimation {
         return type;
     }
 
+    public void applyFrame(int frameIndex) {
+        Frame frame = frames.get(frameIndex);
+        if(frame!=null) {
+            frame.apply(entity.getState());
+        }
+    }
+
     public static BakedAnimation loadAnimation(JsonObject data, Material itemMaterial, BakedAnimationEntity entity) {
         Map<String, Integer> states = new HashMap<>();
         BakedAnimationType type;
@@ -98,4 +105,5 @@ public class BakedAnimation {
 //Logger.getGlobal().info("Frame loading: "+(System.currentTimeMillis()-start));
         return animation;
     }
+
 }

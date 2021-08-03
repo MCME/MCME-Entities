@@ -52,6 +52,8 @@ public class VirtualEntityFactory {
 
     private Vector mouth = new Vector(0,1.7,0);
 
+    private boolean manualAnimationControl = false;
+
     public VirtualEntityFactory(McmeEntityType type, Location location) {
         invertWhitelist = false;
         uniqueId = UuidGenerator.fast_random();//getRandomV2();
@@ -149,6 +151,15 @@ public class VirtualEntityFactory {
     public VirtualEntityFactory withHeadPitchCenter(Vector pitchCenter) {
         this.headPitchCenter = pitchCenter;
         return this;
+    }
+
+    public VirtualEntityFactory withManualAnimationControl(boolean manualControl) {
+        manualAnimationControl = manualControl;
+        return this;
+    }
+
+    public boolean getManualAnimationControl() {
+        return manualAnimationControl;
     }
 
     public Vector getHeadPitchCenter() {
