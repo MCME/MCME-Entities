@@ -9,7 +9,7 @@ public class BoneInitPacket extends BoneMetaPacket {
     WrappedDataWatcher watcher = new WrappedDataWatcher();
 
     public BoneInitPacket(Bone bone) {
-        super(bone);
+        super(bone,0);
 
 //long start = System.currentTimeMillis();
         writeInit(watcher);
@@ -27,7 +27,7 @@ public class BoneInitPacket extends BoneMetaPacket {
 
     @Override
     public void update() {
-        if(bone.isHasHeadPitchUpdate()) {
+        if(bone.isHasHeadPoseUpdate()) {
             writeHeadPose(watcher);
             posePacket.getWatchableCollectionModifier().write(0,watcher.getWatchableObjects());
         }

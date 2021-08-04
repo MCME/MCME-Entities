@@ -75,12 +75,12 @@ public class VirtualEntityAttributeInstance implements AttributeInstance {
     }
 
     private void calculateValue() {
-Logger.getGlobal().info("base: "+baseValue);
+//Logger.getGlobal().info("base: "+baseValue);
         AtomicDouble add = new AtomicDouble();
         AtomicDouble multiplyBase = new AtomicDouble(1);
         AtomicReference<Double> multiply = new AtomicReference<>((double) 1);
         modifiers.forEach(modifier -> {
-Logger.getGlobal().info("modifier: "+modifier.getOperation()+" "+modifier.getAmount());
+//Logger.getGlobal().info("modifier: "+modifier.getOperation()+" "+modifier.getAmount());
             switch(modifier.getOperation()) {
                 case ADD_NUMBER:
                     add.addAndGet(modifier.getAmount());
@@ -92,8 +92,8 @@ Logger.getGlobal().info("modifier: "+modifier.getOperation()+" "+modifier.getAmo
                     multiply.updateAndGet(v -> (double) (v * (1 + modifier.getAmount())));
             }
         });
-Logger.getGlobal().info("add: "+add.get()+" multiplybase: "+multiplyBase.get()+" mutiply: "+multiply.get());
+//Logger.getGlobal().info("add: "+add.get()+" multiplybase: "+multiplyBase.get()+" mutiply: "+multiply.get());
         value = (baseValue+add.get()) * multiplyBase.get() * multiply.get();
-Logger.getGlobal().info("value: "+value);
+//Logger.getGlobal().info("value: "+value);
     }
 }

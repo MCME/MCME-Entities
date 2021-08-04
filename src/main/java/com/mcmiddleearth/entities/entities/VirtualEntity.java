@@ -95,6 +95,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private boolean isTerminated = false;
 
     private int attackCoolDown = 40;
+    private int hurtCoolDown = 0;
 
     private Set<McmeEntity> attackers = new HashSet<>();
 
@@ -157,6 +158,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                     case WALKING:
                         goal.doTick();
                 }*/
+                movementSpeed = goal.getMovementSpeed();
                 movementEngine.calculateMovement(goal.getDirection());
                 if(goal.hasRotation()) {
 //Logger.getGlobal().info("rotation: "+ goal.getRotation());
@@ -171,10 +173,19 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             }
             move();
             attackCoolDown = Math.max(0, --attackCoolDown);
+            hurtCoolDown = Math.max(0, --hurtCoolDown);
+            if(attackCoolDown<30 && actionType.equals(ActionType.ATTACK)) {
+//Logger.getGlobal().info("unset attack");
+                actionType = ActionType.IDLE;
+            }
+            if(hurtCoolDown==0 && actionType.equals(ActionType.HURT)) {
+                actionType = ActionType.IDLE;
+            }
         }
         tickCounter++;
 //Logger.getGlobal().info("+");
         if(isDead() && !isTerminated) {
+            actionType = ActionType.DEATH;
             deathCounter++;
             if(deathCounter>20) {
                 terminate();
@@ -183,7 +194,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 //Logger.getGlobal().info("speechCounterr: "+speechCounter);
         speechCounter = Math.max(-1, --speechCounter);
         if(speechCounter == 0) {
-Logger.getGlobal().info("stop talking");
+//Logger.getGlobal().info("stop talking");
             isTalking = false;
             removeSpeechBalloons();
         }
@@ -326,7 +337,7 @@ Logger.getGlobal().info("stop talking");
 
     public boolean onGround() {
         return movementType.equals(MovementType.SNEAKING)
-                || movementType.equals(MovementType.WALKING);
+                || movementType.equals(MovementType.UPRIGHT);
     }
 
     public ActionType getActionType() {
@@ -451,6 +462,8 @@ Logger.getGlobal().info("stop talking");
         Vector normal = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize();
         Vector knockBack = normal.multiply(-length).add(new Vector(0,length*2,0));
         setMovementType(MovementType.FALLING);
+        actionType = ActionType.HURT;
+        hurtCoolDown = 10;
 //Logger.getGlobal().info("Set Velocity: "+ knockBack.getX()+" "+knockBack.getY()+" "+knockBack.getZ());
         setVelocity(knockBack);
         attackers.add(damager);
@@ -458,12 +471,16 @@ Logger.getGlobal().info("stop talking");
 
     @Override
     public void attack(McmeEntity target) {
-        VirtualEntityAttackEvent event = new VirtualEntityAttackEvent(this,target);
-        EntitiesPlugin.getEntityServer().handleEvent(event);
-        if(!event.isCancelled()) {
-            playAnimation(ActionType.ATTACK);
-            target.receiveAttack(this, 2, 1);
-            attackCoolDown = 40;
+        if(attackCoolDown==0 && hurtCoolDown == 0) {
+            VirtualEntityAttackEvent event = new VirtualEntityAttackEvent(this, target);
+            EntitiesPlugin.getEntityServer().handleEvent(event);
+            if (!event.isCancelled()) {
+                actionType = ActionType.ATTACK;
+//Logger.getGlobal().info("Attack");
+                playAnimation(ActionType.ATTACK);
+                target.receiveAttack(this, 2, 1);
+                attackCoolDown = 40;
+            }
         }
     }
 
@@ -558,6 +575,9 @@ Logger.getGlobal().info("stop talking");
         return invertWhiteList;
     }
 
+    public boolean hasId(int entityId) {
+        return this.getEntityId() == entityId;
+    }
 
     /*Location loc;
     public void _test_spawn_(Player player) {

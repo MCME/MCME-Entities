@@ -33,7 +33,7 @@ public class VirtualEntityFactory {
 
     private Location location;
 
-    private MovementType movementType = MovementType.WALKING;
+    private MovementType movementType = MovementType.UPRIGHT;
 
     private final Map<Attribute, AttributeInstance> attributes;
 
@@ -53,6 +53,8 @@ public class VirtualEntityFactory {
     private Vector mouth = new Vector(0,1.7,0);
 
     private boolean manualAnimationControl = false;
+
+    private int headPoseDelay = 2;
 
     public VirtualEntityFactory(McmeEntityType type, Location location) {
         invertWhitelist = false;
@@ -133,6 +135,10 @@ public class VirtualEntityFactory {
         return this;
     }
 
+    public String getDataFile() {
+        return this.dataFile;
+    }
+
     public VirtualEntityFactory withLocation(Location location) {
         this.location = location;
         return this;
@@ -153,6 +159,10 @@ public class VirtualEntityFactory {
         return this;
     }
 
+    public Vector getHeadPitchCenter() {
+        return headPitchCenter;
+    }
+
     public VirtualEntityFactory withManualAnimationControl(boolean manualControl) {
         manualAnimationControl = manualControl;
         return this;
@@ -162,12 +172,13 @@ public class VirtualEntityFactory {
         return manualAnimationControl;
     }
 
-    public Vector getHeadPitchCenter() {
-        return headPitchCenter;
+    public VirtualEntityFactory withHeadPoseDelay(int headPoseDelay) {
+        this.headPoseDelay = headPoseDelay;
+        return this;
     }
 
-    public String getDataFile() {
-        return this.dataFile;
+    public int getHeadPoseDelay() {
+        return headPoseDelay;
     }
 
     public VirtualEntityGoalFactory getGoalFactory() {

@@ -17,6 +17,7 @@ import com.mcmiddleearth.entities.entities.*;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -58,10 +59,12 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                         .then(HelpfulRequiredArgumentBuilder.argument("type", word())
                                 .then(HelpfulRequiredArgumentBuilder.argument("goal", word())
                                         .executes(context -> spawnEntity(context.getSource(), context.getArgument("type", String.class), null,
-                                                context.getArgument("goal",String.class)))
+                                                context.getArgument("goal",String.class),0))
                                         .then(HelpfulRequiredArgumentBuilder.argument("name", word())
-                                                .executes(context -> spawnEntity(context.getSource(), context.getArgument("type", String.class),
-                                                        context.getArgument("name", String.class), context.getArgument("goal",String.class)))))))
+                                                .then(HelpfulRequiredArgumentBuilder.argument("delay", integer())
+                                                    .executes(context -> spawnEntity(context.getSource(), context.getArgument("type", String.class),
+                                                        context.getArgument("name", String.class), context.getArgument("goal",String.class),
+                                                        context.getArgument("delay",Integer.class))))))))
                 .then(HelpfulLiteralBuilder.literal("army")
                     .then(HelpfulRequiredArgumentBuilder.argument("type", word())
                         .then(HelpfulRequiredArgumentBuilder.argument("size", integer())
@@ -113,10 +116,11 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         return commandNodeBuilder;
     }
 
-    private int spawnEntity(McmeCommandSender sender, String type, String name, String goal) {
+    private int spawnEntity(McmeCommandSender sender, String type, String name, String goal, int delay) {
         VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(type), ((RealPlayer)sender).getLocation())
                 .withName(name)
                 .withDataFile(name)
+                .withHeadPoseDelay(delay)
                 .withHeadPitchCenter(new Vector(0,0,0.3))
                 .withGoalType(GoalType.valueOf(goal.toUpperCase()))
                 .withTargetLocation(((RealPlayer)sender).getLocation().add(new Vector(20,0,20)))
@@ -221,6 +225,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         RealPlayer player = ((RealPlayer)sender);
         player.getSelectedEntities().forEach(entity -> {
             if (entity instanceof BakedAnimationEntity) {
+                ((BakedAnimationEntity)entity).setManualAnimationControl(true);
                 ((BakedAnimationEntity) entity).setAnimation(animationId);
             }
         });

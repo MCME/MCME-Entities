@@ -2,6 +2,7 @@ package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
+import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
 import com.mcmiddleearth.entities.events.events.goal.GoalFinishedEvent;
@@ -32,6 +33,8 @@ public abstract class GoalVirtualEntity implements Goal{
     private final int updateRandom;
 
     private boolean isFinished = false;
+
+    protected MovementSpeed movementSpeed = MovementSpeed.STAND;
 
     public GoalVirtualEntity(GoalType type, VirtualEntity entity) {
         this.type = type;
@@ -76,6 +79,11 @@ public abstract class GoalVirtualEntity implements Goal{
             currentHeadGoal.doTick();
         }
         headGoalTicks++;
+    }
+
+    @Override
+    public MovementSpeed getMovementSpeed() {
+        return movementSpeed;
     }
 
     public void addHeadGoal(HeadGoal headGoal) {

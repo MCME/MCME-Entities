@@ -1,6 +1,5 @@
 package com.mcmiddleearth.entities.entities;
 
-import com.comphenix.protocol.PacketType;
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.goal.GoalDistance;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
@@ -11,7 +10,6 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.graalvm.compiler.lir.aarch64.AArch64Move;
 
 import java.util.Set;
 import java.util.UUID;
@@ -99,6 +97,11 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     @Override
     public int getEntityId() {
         return 0;
+    }
+
+    @Override
+    public boolean hasId(int entityId) {
+        return false;
     }
 
     @Override
@@ -200,7 +203,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
         } else if(getBukkitPlayer().isSneaking()) {
             return MovementType.SNEAKING;
         } else if(getBukkitPlayer().isOnGround()) {
-            return MovementType.WALKING;
+            return MovementType.UPRIGHT;
         } else {
             return MovementType.FALLING;
         }

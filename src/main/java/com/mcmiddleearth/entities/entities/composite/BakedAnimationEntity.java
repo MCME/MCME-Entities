@@ -40,7 +40,7 @@ public class BakedAnimationEntity extends CompositeEntity {
         super(entityId, factory);
 //Logger.getGlobal().info("Baked Animation Get location "+getLocation());
         manualAnimationControl = factory.getManualAnimationControl();
-        File animationFile = new File(bakedAnimationFolder, factory.getDataFile());
+        File animationFile = new File(bakedAnimationFolder, factory.getDataFile()+".json");
         try (FileReader reader = new FileReader(animationFile)) {
 //long start = System.currentTimeMillis();
             JsonObject data = new JsonParser().parse(reader).getAsJsonObject();
@@ -49,13 +49,30 @@ public class BakedAnimationEntity extends CompositeEntity {
             Material itemMaterial = Material.valueOf(modelData.get("head_item").getAsString().toUpperCase());
             JsonObject animationData = data.get("animations").getAsJsonObject();
 //start = System.currentTimeMillis();
-            animationData.entrySet().forEach(entry
-                    -> animationTree.addAnimation(entry.getKey(), BakedAnimation.loadAnimation(entry.getValue().getAsJsonObject(),
-                    itemMaterial, this)));
+            animationData.entrySet().forEach(entry -> {
+                String[] split;
+                if(entry.getKey().contains(factory.getDataFile()+".")) {
+                    split = entry.getKey().split(factory.getDataFile() + "\\.");
+                } else {
+                    split = entry.getKey().split("animations\\.");
+//Logger.getGlobal().info("Length: "+split.length);
+                }
+                String animationKey;
+                if(split.length>1) {
+                    animationKey = split[1];
+                } else {
+//Logger.getGlobal().info("DataFile: "+factory.getDataFile());
+                    animationKey = entry.getKey();
+                }
+//Logger.getGlobal().info("AnimationKey: "+animationKey);
+                animationTree.addAnimation(animationKey, BakedAnimation.loadAnimation(entry.getValue().getAsJsonObject(),
+                        itemMaterial, this, animationKey));
+            });
 //Logger.getGlobal().info("Animation loading: "+(System.currentTimeMillis()-start));
         } catch (IOException e) {
             e.printStackTrace();
         }
+//animationTree.debug();
         createPackets();
     }
 
@@ -64,6 +81,7 @@ public class BakedAnimationEntity extends CompositeEntity {
         if(!manualAnimationControl) {
             BakedAnimation expected = animationTree.getAnimation(this);
             if(currentAnimation!=expected) {
+Logger.getGlobal().info("Switch: "+(expected == null?"none":expected.getName()));
                 currentAnimation = expected;
                 if(currentAnimation!=null)
                     currentAnimation.reset();
@@ -115,10 +133,10 @@ public class BakedAnimationEntity extends CompositeEntity {
     }
 
     public void setAnimationFrame(String animation, int frameIndex) {
-Logger.getGlobal().info("set Animation Frame "+animation + " "+ frameIndex);
+//Logger.getGlobal().info("set Animation Frame "+animation + " "+ frameIndex);
         BakedAnimation anim = animationTree.getAnimation(animation);
         if (anim != null) {
-Logger.getGlobal().info("Apply Frame");
+//Logger.getGlobal().info("Apply Frame");
             anim.applyFrame(frameIndex);
         }
     }

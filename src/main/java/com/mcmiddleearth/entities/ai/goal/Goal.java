@@ -1,5 +1,7 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
+
 public interface Goal {
 
     void update();
@@ -9,4 +11,6 @@ public interface Goal {
     int getUpdateInterval();
 
     boolean isFinished();
+
+    MovementSpeed getMovementSpeed();
 }

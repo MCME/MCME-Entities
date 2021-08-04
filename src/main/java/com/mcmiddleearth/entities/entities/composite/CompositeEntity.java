@@ -24,6 +24,8 @@ public abstract class CompositeEntity extends VirtualEntity {
 
     private Vector headPitchCenter;
 
+    private int headPoseDelay;
+
     //private boolean rotationUpdate;
     private float currentYaw, currentPitch, currentHeadYaw;
     private static final float maxRotationStep = 10f;
@@ -32,9 +34,10 @@ public abstract class CompositeEntity extends VirtualEntity {
         super(factory);
         firstEntityId = entityId;
         headPitchCenter = factory.getHeadPitchCenter();
+        headPoseDelay = factory.getHeadPoseDelay();
         if(getDisplayName()!=null) {
             displayNameBone = new Bone("displayName",this,new EulerAngle(0,0,0),
-                                       factory.getDisplayNamePosition(),null,false);
+                                       factory.getDisplayNamePosition(),null,false, 0);
             displayNameBone.setDisplayName(factory.getDisplayName());
             bones.add(displayNameBone);
         }
@@ -194,4 +197,12 @@ public abstract class CompositeEntity extends VirtualEntity {
         }
     }
 
+    public int getHeadPoseDelay() {
+        return headPoseDelay;
+    }
+
+    @Override
+    public boolean hasId(int entityId) {
+        return this.firstEntityId <= entityId && this.firstEntityId+getEntityQuantity() > entityId;
+    }
 }

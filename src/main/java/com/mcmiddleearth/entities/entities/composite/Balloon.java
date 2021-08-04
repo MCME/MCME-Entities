@@ -14,7 +14,7 @@ public class Balloon extends Bone{
     private float yaw;
 
     public Balloon(String name, CompositeEntity parent, EulerAngle headPose, Vector relativePosition, ItemStack headItem, Player viewer) {
-        super(name, parent, headPose, relativePosition, headItem, false);
+        super(name, parent, headPose, relativePosition, headItem, false, 0);
         this.viewer = viewer;
     }
 

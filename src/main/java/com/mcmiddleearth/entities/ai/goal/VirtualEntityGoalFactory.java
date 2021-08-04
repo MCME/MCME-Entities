@@ -49,7 +49,7 @@ public class VirtualEntityGoalFactory {
         Pathfinder pathfinder;
         GoalVirtualEntity goal;
         switch(movementType) {
-            case WALKING: pathfinder = new WalkingPathfinder(entity);
+            case UPRIGHT: pathfinder = new WalkingPathfinder(entity);
                 break;
             default:
                 pathfinder = new WalkingPathfinder(entity);

@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
@@ -19,15 +20,17 @@ public class GoalEntityTargetAttack extends GoalEntityTarget {
 //Logger.getGlobal().info("delete path as entity is close.");
             EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(),this));
             setIsMoving(false);//deletePath();
+            movementSpeed = MovementSpeed.STAND;
             setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
                     .subtract(getEntity().getLocation().toVector())).getYaw());
 //Logger.getGlobal().info("Cooldown: "+getEntity().getAttackCoolDown());
-            if(getEntity().getAttackCoolDown()==0) {
+            //if(getEntity().getAttackCoolDown()==0) {
 //Logger.getGlobal().info("ATTACK");
                 getEntity().attack(target);
-            }
+            //}
         } else {
             setIsMoving(true);
+            movementSpeed = MovementSpeed.WALK;
         }
         if(target.isDead()) {
             setFinished();

@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.entities.composite.animation;
 
 import com.google.common.base.Joiner;
+import com.mcmiddleearth.entities.entities.ActionType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 
@@ -46,19 +47,19 @@ public class BakedAnimationTree {
     }
 
     public BakedAnimation getAnimation(String[] path) {
-Logger.getGlobal().info("path: "+Joiner.on('.').join(path));
+//Logger.getGlobal().info("path: "+Joiner.on('.').join(path));
         if(path.length==0) {
             return null;
         } else {
             BakedAnimationTree child = children.get(path[0]);
-Logger.getGlobal().info("child: "+child);
+//Logger.getGlobal().info("child: "+child);
             if(child == null) {
                 return null;
             } else {
                 if(path.length==1) {
                     return child.animation;
                 } else {
-Logger.getGlobal().info("rekurse");
+//Logger.getGlobal().info("rekurse");
                     return child.getAnimation(subPath(path));
                 }
             }
@@ -95,7 +96,15 @@ Logger.getGlobal().info("rekurse");
         } else if(entity.isInteracting()) {
             path = path + ".interact";
         }*/
-        return searchAnimation(path/*.split("\\.")*/).getBestMatch();
+        SearchResult searchResult = searchAnimation(path/*.split("\\.")*/);
+        BakedAnimation result = searchResult.getBestMatch();
+/*if(result == null ){// || entity.getActionType().equals(ActionType.ATTACK)) {
+    Logger.getGlobal().info("Path: "+Joiner.on('.').join(path));
+}
+/*if(entity.getActionType().equals(ActionType.ATTACK)) {
+    Logger.getGlobal().info("Attack result: "+(result == null?"null":result.getName()));
+}*/
+        return result;
     }
 
     private SearchResult searchAnimation(String[] path) {
@@ -129,7 +138,22 @@ Logger.getGlobal().info("rekurse");
 
     private SearchResult searchAlternative(String[] path) {
         while(path.length>0) {
-            for (Map.Entry<String, BakedAnimationTree> entry : children.entrySet()) {
+            BakedAnimationTree next = children.get(path[0]);
+            if(next != null) {
+                if(path.length == 1) {
+                    return new SearchResult(next.animation,null,false);
+                } else {
+                    path = subPath(path);
+                    SearchResult alternative = next.searchAlternative(path);
+                    if (alternative!=null && alternative.getAnimation() != null) {
+                        alternative.setExactMatch(false);
+                        return alternative;
+                    }
+                }
+            } else {
+                path = subPath(path);
+            }
+            /*for (Map.Entry<String, BakedAnimationTree> entry : children.entrySet()) {
                 //if (entry.getValue() != next) {
                     SearchResult alternative = entry.getValue().searchAnimation(path);
                     if (alternative.getAnimation() != null) {
@@ -142,7 +166,7 @@ Logger.getGlobal().info("rekurse");
                 path = Arrays.copyOfRange(path, 1, path.length - 1);
             } else {
                 path = new String[0];
-            }
+            }*/
         }
         return null;
     }
@@ -186,6 +210,14 @@ Logger.getGlobal().info("rekurse");
         } else {
             return Arrays.copyOfRange(path, 1, path.length);
         }
+    }
+
+    public void debug() {
+        Logger.getGlobal().info("Node: "+this.toString()+" "+(animation==null?"null":animation.getName()));
+        children.forEach((key,value)->{
+            Logger.getGlobal().info("child:"+ this.toString()+" -> "+key);
+            value.debug();
+        });
     }
 
 }

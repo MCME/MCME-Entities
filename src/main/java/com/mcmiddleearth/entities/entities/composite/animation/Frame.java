@@ -30,7 +30,7 @@ public class Frame {
     }
 
     public static Frame loadFrame(BakedAnimationEntity entity, BakedAnimation animation,
-                                  JsonObject data, Material itemMaterial) {
+                                  JsonObject data, Material itemMaterial, int headPoseDelay) {
         Set<Map.Entry<String, JsonElement>> entries = data.get("bones").getAsJsonObject().entrySet();
 //long start = System.currentTimeMillis();
         Frame frame = new Frame();
@@ -40,7 +40,7 @@ public class Frame {
             if(bone == null) {
 //long boneStart = System.currentTimeMillis();
                 bone = new Bone(entry.getKey(), entity, boneData.getHeadPose(),
-                                boneData.getPosition(), boneData.getItems()[0],entry.getKey().startsWith("head"));
+                                boneData.getPosition(), boneData.getItems()[0],entry.getKey().startsWith("head"), headPoseDelay);
 //Logger.getGlobal().info("Bone creation: "+(System.currentTimeMillis()-boneStart));
                 entity.getBones().add(bone);
                 /*if(bone.getName().startsWith("head")) {

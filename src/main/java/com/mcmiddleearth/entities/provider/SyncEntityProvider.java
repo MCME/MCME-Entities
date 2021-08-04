@@ -55,7 +55,7 @@ public class SyncEntityProvider implements EntityProvider {
 
     @Override
     public McmeEntity getEntity(int entityId) {
-        return entities.stream().filter(entity -> entity.getEntityId() == entityId).findFirst().orElse(null);
+        return entities.stream().filter(entity -> entity.hasId(entityId)).findFirst().orElse(null);
     }
 
     @Override

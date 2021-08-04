@@ -77,4 +77,6 @@ public interface McmeEntity {
     public MovementSpeed getMovementSpeed();
 
     public ActionType getActionType();
+
+    public boolean hasId(int entityId);
 }

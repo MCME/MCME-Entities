@@ -37,7 +37,7 @@ public class Bone implements McmeEntity {
 
     private final UUID uniqueId;
 
-    private boolean hasItemUpdate, hasHeadPitchUpdate;//, rotationUpdate;
+    private boolean hasItemUpdate, hasHeadPoseUpdate;//, rotationUpdate;
     private boolean rotationUpdate;
 
     private final AbstractPacket spawnPacket;
@@ -52,7 +52,7 @@ public class Bone implements McmeEntity {
     private boolean isHeadBone;
 
     public Bone(String name, CompositeEntity parent, EulerAngle headPose,
-                Vector relativePosition, ItemStack headItem, boolean isHeadBone) {
+                Vector relativePosition, ItemStack headItem, boolean isHeadBone, int headPoseDelay) {
 //long start = System.currentTimeMillis();
         this.name = name;
         this.isHeadBone = isHeadBone;
@@ -80,7 +80,7 @@ public class Bone implements McmeEntity {
 //Logger.getGlobal().info("move packet: "+(System.currentTimeMillis()-start));
         initPacket = new BoneInitPacket(this);
 //Logger.getGlobal().info("init packet: "+(System.currentTimeMillis()-start));
-        metaPacket = new BoneMetaPacket(this);
+        metaPacket = new BoneMetaPacket(this, headPoseDelay);
 //Logger.getGlobal().info("meta packet: "+(System.currentTimeMillis()-start));
         namePacket = new DisplayNamePacket(this.entityId);
 //Logger.getGlobal().info("name packet: "+(System.currentTimeMillis()-start));
@@ -91,7 +91,7 @@ public class Bone implements McmeEntity {
 
     public void move() {
 //Logger.getGlobal().info("move bone to: "+getLocation());
-        if(hasHeadPitchUpdate) {
+        if(hasHeadPoseUpdate) {
             //currentPitch = turn(currentPitch, pitch);
             rotatedHeadPose = RotationMatrix.rotateXEulerAngleDegree(headPose,pitch);
         }
@@ -116,7 +116,7 @@ public class Bone implements McmeEntity {
 
     public void teleport() {
 Logger.getGlobal().info("Teleport bone!");
-        if(hasHeadPitchUpdate) {
+        if(hasHeadPoseUpdate) {
             //currentYaw = yaw;
             //currentPitch = pitch;
             rotatedHeadPose = RotationMatrix.rotateXEulerAngleDegree(headPose, pitch);
@@ -132,7 +132,7 @@ Logger.getGlobal().info("Teleport bone!");
             }
             rotationUpdate = false;
         }*/
-        hasHeadPitchUpdate = false;
+        hasHeadPoseUpdate = false;
         rotationUpdate = false;
         hasItemUpdate = false;
         //rotationUpdate = false;
@@ -229,6 +229,11 @@ Logger.getGlobal().info("Teleport bone!");
     }
 
     @Override
+    public boolean hasId(int entityId) {
+        return this.entityId == entityId;
+    }
+
+    @Override
     public int getEntityQuantity() {
         return 1;
     }
@@ -265,7 +270,7 @@ Logger.getGlobal().info("Teleport bone!");
     public void setPitch(float pitch) {
         this.pitch = pitch;
         rotationUpdate = true;
-        hasHeadPitchUpdate = true;
+        hasHeadPoseUpdate = true;
     }
 
     @Override
@@ -284,7 +289,7 @@ Logger.getGlobal().info("Teleport bone!");
 
     public void setHeadPose(EulerAngle headPose) {
         if(!headPose.equals(this.headPose)) {
-            hasHeadPitchUpdate = true;
+            hasHeadPoseUpdate = true;
             this.headPose = headPose;
         }
     }
@@ -293,8 +298,8 @@ Logger.getGlobal().info("Teleport bone!");
         return rotatedHeadPose;
     }
 
-    public boolean isHasHeadPitchUpdate() {
-        return hasHeadPitchUpdate;
+    public boolean isHasHeadPoseUpdate() {
+        return hasHeadPoseUpdate;
     }
 
     public boolean isHasItemUpdate() {
@@ -383,4 +388,5 @@ Logger.getGlobal().info("Teleport bone!");
     public ActionType getActionType() {
         return ActionType.IDLE;
     }
+
 }

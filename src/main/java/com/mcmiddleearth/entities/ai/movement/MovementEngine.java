@@ -1,8 +1,6 @@
 package com.mcmiddleearth.entities.ai.movement;
 
-import com.comphenix.protocol.wrappers.Vector3F;
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.EntityAPI;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.provider.BlockProvider;
@@ -11,7 +9,6 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-import java.awt.geom.Arc2D;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -42,7 +39,7 @@ public class MovementEngine {
                 case GLIDING:
                     entity.setMovementType(MovementType.FALLING);
                     break;
-                case WALKING:
+                case UPRIGHT:
                 case SNEAKING:
                     entity.setVelocity(new Vector(0, 0, 0));
                     return;
@@ -79,7 +76,7 @@ public class MovementEngine {
                         if(entity.isSneaking()) {
                             entity.setMovementType(MovementType.SNEAKING);
                         } else {
-                            entity.setMovementType(MovementType.WALKING);
+                            entity.setMovementType(MovementType.UPRIGHT);
                         }
                     } else {
 if (velocity.getY()<-10) {
@@ -96,7 +93,7 @@ if (velocity.getY()<-10) {
                 entity.setVelocity(velocity);
 //Logger.getGlobal().info("falling entity vel: "+entity.getVelocity());
                 break;
-            case WALKING:
+            case UPRIGHT:
             case SNEAKING:
             default:
                 velocity = direction.normalize().multiply(getGenericSpeed());

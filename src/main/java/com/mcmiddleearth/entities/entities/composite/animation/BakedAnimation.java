@@ -27,8 +27,11 @@ public class BakedAnimation {
 
     private final BakedAnimationEntity entity;
 
-    public BakedAnimation(BakedAnimationEntity entity, BakedAnimationType type, String next, int interval) {
+    private final String name;
+
+    public BakedAnimation(BakedAnimationEntity entity, BakedAnimationType type, String name, String next, int interval) {
         this.entity = entity;
+        this.name = name;
         this.type = type;
         this.next = next;
         this.interval = interval;
@@ -71,6 +74,10 @@ public class BakedAnimation {
         frames.add(frame);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public String getNext() {
         return next;
     }
@@ -86,7 +93,7 @@ public class BakedAnimation {
         }
     }
 
-    public static BakedAnimation loadAnimation(JsonObject data, Material itemMaterial, BakedAnimationEntity entity) {
+    public static BakedAnimation loadAnimation(JsonObject data, Material itemMaterial, BakedAnimationEntity entity, String name) {
         Map<String, Integer> states = new HashMap<>();
         BakedAnimationType type;
         try {
@@ -96,11 +103,11 @@ public class BakedAnimation {
         }
         int interval = (data.get("interval") == null? 1 : data.get("interval").getAsInt());
         String next = (data.has("next")?data.get("next").getAsString():null);
-        BakedAnimation animation = new BakedAnimation(entity, type, next, interval);
+        BakedAnimation animation = new BakedAnimation(entity, type, name, next, interval);
         JsonArray frameData = data.get("frames").getAsJsonArray();
 //long start = System.currentTimeMillis();
         for(int i = 0; i< frameData.size(); i++) {
-            animation.addFrame(Frame.loadFrame(entity,animation,frameData.get(i).getAsJsonObject(),itemMaterial));
+            animation.addFrame(Frame.loadFrame(entity,animation,frameData.get(i).getAsJsonObject(),itemMaterial, entity.getHeadPoseDelay()));
         }
 //Logger.getGlobal().info("Frame loading: "+(System.currentTimeMillis()-start));
         return animation;

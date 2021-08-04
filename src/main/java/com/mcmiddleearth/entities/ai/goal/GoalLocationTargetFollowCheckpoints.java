@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
@@ -21,6 +22,7 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
         this.checkpoints = checkpoints;
         this.loop = loop;
         currentCheckpoint = 0;
+        movementSpeed = MovementSpeed.WALK;
         setPathTarget(checkpoints[0].toVector());
     }
 
@@ -41,6 +43,7 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
                 setPathTarget(checkpoints[currentCheckpoint].toVector());
             } else {
                 setFinished();
+                movementSpeed = MovementSpeed.STAND;
             }
         }
         super.update();

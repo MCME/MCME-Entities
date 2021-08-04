@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
@@ -15,6 +16,7 @@ public class GoalLocationTargetRandomCheckpoints extends GoalLocationTarget {
         super(type, entity, pathfinder, checkpoints[0]);
         this.checkpoints = checkpoints;
         setPathTarget(checkpoints[0].toVector());
+        movementSpeed = MovementSpeed.WALK;
     }
 
     @Override

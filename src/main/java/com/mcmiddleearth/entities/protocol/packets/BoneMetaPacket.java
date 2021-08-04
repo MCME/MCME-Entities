@@ -22,7 +22,9 @@ public class BoneMetaPacket extends AbstractPacket {
 
     private boolean hasPoseUpdate, hasItemUpdate;
 
-    public BoneMetaPacket(Bone bone) {
+    private List<WrappedDataWatcher> headPoseQueue = new ArrayList<>();
+
+    public BoneMetaPacket(Bone bone, int headPoseDelay) {
         this.bone = bone;
         posePacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         posePacket.getIntegers().write(0,bone.getEntityId());
@@ -30,19 +32,29 @@ public class BoneMetaPacket extends AbstractPacket {
         equipPacket = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
         equipPacket.getIntegers().write(0,bone.getEntityId());
 
+        for(int i = 0; i < headPoseDelay; i++) {
+            headPoseQueue.add(null);
+        }
+        //headPoseQueue.add(null);
         update();
     }
 
     @Override
     public void update() {
-        if(bone.isHasHeadPitchUpdate()) {
+        if(bone.isHasHeadPoseUpdate()) {
             WrappedDataWatcher watcher = new WrappedDataWatcher();
             writeHeadPose(watcher);
-            posePacket.getWatchableCollectionModifier().write(0,watcher.getWatchableObjects());
+            headPoseQueue.add(watcher);
+        } else {
+            headPoseQueue.add(null);
+        }
+        if(headPoseQueue.get(0)!=null) {
+            posePacket.getWatchableCollectionModifier().write(0,headPoseQueue.get(0).getWatchableObjects());
             hasPoseUpdate = true;
         } else {
             hasPoseUpdate = false;
         }
+        headPoseQueue.remove(0);
         if(bone.isHasItemUpdate()) {
             writeHeadItem();
             hasItemUpdate = true;
