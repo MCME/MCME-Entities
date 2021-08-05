@@ -1,12 +1,10 @@
 package com.mcmiddleearth.entities.provider;
 
-import com.mcmiddleearth.entities.entities.McmeEntityType;
+import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.Location;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 public interface EntityProvider {

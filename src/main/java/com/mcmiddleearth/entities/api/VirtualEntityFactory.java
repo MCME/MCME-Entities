@@ -1,9 +1,8 @@
-package com.mcmiddleearth.entities.entities;
+package com.mcmiddleearth.entities.api;
 
 import com.mcmiddleearth.entities.ai.goal.GoalType;
-import com.mcmiddleearth.entities.ai.goal.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
-import com.mcmiddleearth.entities.ai.movement.MovementType;
+import com.mcmiddleearth.entities.entities.*;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
@@ -19,6 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * VirtualEntityFactory class is used to provide all required information during spawn process of an entity.
+ */
 public class VirtualEntityFactory {
 
     private final McmeEntityType type;
@@ -225,6 +227,10 @@ public class VirtualEntityFactory {
 
     public Vector getMouth() { return mouth; }
 
+    /**
+     * Attributes are not yet implemented.
+     * @return
+     */
     public Map<Attribute, AttributeInstance> getAttributes() {
         Map<Attribute,AttributeInstance> result = new HashMap<>();
         attributes.forEach((attribute, instance)
@@ -234,6 +240,12 @@ public class VirtualEntityFactory {
         return result;
     }
 
+    /**
+     * For internal use by the entity server only.
+     * @param entityId
+     * @return
+     * @throws InvalidLocationException
+     */
     public McmeEntity build(int entityId) throws InvalidLocationException {
         if(type.isCustomType()) {
             switch(type.getCustomType()) {

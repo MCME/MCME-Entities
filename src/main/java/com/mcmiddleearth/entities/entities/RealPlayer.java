@@ -1,10 +1,9 @@
 package com.mcmiddleearth.entities.entities;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
+import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.ai.goal.GoalDistance;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
-import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
-import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Location;

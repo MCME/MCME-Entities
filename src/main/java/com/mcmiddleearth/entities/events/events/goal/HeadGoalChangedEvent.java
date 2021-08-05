@@ -2,9 +2,7 @@ package com.mcmiddleearth.entities.events.events.goal;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
-import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
-import com.mcmiddleearth.entities.events.Cancelable;
 
 public class HeadGoalChangedEvent extends GoalVirtualEntityEvent{
 

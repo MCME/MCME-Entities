@@ -1,12 +1,5 @@
 package com.mcmiddleearth.entities.events.listener;
 
-import com.mcmiddleearth.entities.EntityAPI;
-import com.mcmiddleearth.entities.events.events.McmeEntityRemoveEvent;
-import com.mcmiddleearth.entities.events.events.player.VirtualPlayerInteractEvent;
-import com.mcmiddleearth.entities.events.handler.EntityEventHandler;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.inventory.EquipmentSlot;
-
 public class EntitySelectionListener implements McmeEventListener {
 
     /*@EntityEventHandler

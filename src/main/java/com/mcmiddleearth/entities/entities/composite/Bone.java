@@ -2,11 +2,11 @@ package com.mcmiddleearth.entities.entities.composite;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
-import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
-import com.mcmiddleearth.entities.ai.movement.MovementType;
-import com.mcmiddleearth.entities.entities.ActionType;
+import com.mcmiddleearth.entities.api.MovementSpeed;
+import com.mcmiddleearth.entities.api.MovementType;
+import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.entities.McmeEntityType;
+import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.protocol.packets.*;
 import com.mcmiddleearth.entities.util.RotationMatrix;
 import com.mcmiddleearth.entities.util.UuidGenerator;

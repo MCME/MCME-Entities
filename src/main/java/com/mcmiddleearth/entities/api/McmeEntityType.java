@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.entities;
+package com.mcmiddleearth.entities.api;
 
 import org.bukkit.entity.EntityType;
 
@@ -6,6 +6,11 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This class provides information about which type of entity should be created in the spawning process.
+ *
+ *
+ */
 public class McmeEntityType {
 
     private final boolean isCustomType;
@@ -20,6 +25,13 @@ public class McmeEntityType {
         BONE;
     }
 
+    /**
+     * BAKED_ANIMATION represents an animated entity with animations provided by Animated Java. It requires a
+     * data file set in the factory that must be placed in animation folder of the plugin.
+     *
+     * SPEECH_BALLOON and BONE are for internal use only and should not be spawned by external plugins.
+     * @param customType custom type to spawn for now BAKED_ANIMATION only.
+     */
     public McmeEntityType(CustomEntityType customType) {
         setCustom(customType);
         isCustomType = true;
@@ -32,11 +44,19 @@ public class McmeEntityType {
         }
     }
 
+    /**
+     * Most bukkit entity types can be used here. Some types that require special spawning process might fail.
+     * @param bukkitEntityType bukkit entity type to spawn
+     */
     public McmeEntityType(EntityType bukkitEntityType) {
         this.bukkitEntityType = bukkitEntityType;
         isCustomType = false;
     }
 
+    /**
+     * Tries to create a matching entity type from a string input.
+     * @param type Text to parse
+     */
     public McmeEntityType(String type) {
         bukkitEntityType = null;
         try {

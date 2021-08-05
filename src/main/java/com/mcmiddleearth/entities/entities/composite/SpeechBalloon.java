@@ -1,9 +1,9 @@
 package com.mcmiddleearth.entities.entities.composite;
 
 import com.google.common.base.Joiner;
-import com.mcmiddleearth.entities.ai.movement.MovementType;
+import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.entities.McmeEntityType;
+import com.mcmiddleearth.entities.api.McmeEntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

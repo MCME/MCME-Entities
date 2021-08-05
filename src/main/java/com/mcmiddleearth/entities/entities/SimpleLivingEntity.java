@@ -1,5 +1,7 @@
 package com.mcmiddleearth.entities.entities;
 
+import com.mcmiddleearth.entities.api.ActionType;
+import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.SimpleEntityAnimationPacket;
 import com.mcmiddleearth.entities.protocol.packets.SimpleEntityStatusPacket;

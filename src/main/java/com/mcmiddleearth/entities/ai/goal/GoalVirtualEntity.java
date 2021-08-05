@@ -2,20 +2,17 @@ package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
-import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
+import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
-import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
 import com.mcmiddleearth.entities.events.events.goal.GoalFinishedEvent;
 import com.mcmiddleearth.entities.events.events.goal.HeadGoalChangedEvent;
-import jdk.javadoc.internal.doclets.formats.html.markup.Head;
 import org.bukkit.util.Vector;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public abstract class GoalVirtualEntity implements Goal{
+public abstract class GoalVirtualEntity implements Goal {
 
     private final GoalType type;
 

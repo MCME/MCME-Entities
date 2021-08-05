@@ -1,6 +1,6 @@
-package com.mcmiddleearth.entities.ai.goal;
+package com.mcmiddleearth.entities.api;
 
-import com.mcmiddleearth.entities.ai.movement.MovementType;
+import com.mcmiddleearth.entities.ai.goal.*;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;

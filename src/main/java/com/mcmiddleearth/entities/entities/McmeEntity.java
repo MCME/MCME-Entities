@@ -1,16 +1,15 @@
 package com.mcmiddleearth.entities.entities;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
+import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
-import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
-import com.mcmiddleearth.entities.ai.movement.MovementType;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
 import java.util.UUID;
 
-public interface McmeEntity {
+public interface McmeEntity extends Entity {
 
     public UUID getUniqueId();
 

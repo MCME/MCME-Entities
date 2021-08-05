@@ -1,12 +1,9 @@
 package com.mcmiddleearth.entities.ai.movement;
 
-import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.entities.McmeEntityType;
+import com.mcmiddleearth.entities.api.McmeEntityType;
 import org.bukkit.Location;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-
-import java.util.logging.Logger;
 
 public class EntityBoundingBox {
 

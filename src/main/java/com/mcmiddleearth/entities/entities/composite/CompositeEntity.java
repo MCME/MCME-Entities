@@ -1,8 +1,8 @@
 package com.mcmiddleearth.entities.entities.composite;
 
-import com.mcmiddleearth.entities.entities.McmeEntityType;
+import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
-import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
+import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.*;
 import org.bukkit.Location;
@@ -11,7 +11,6 @@ import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public abstract class CompositeEntity extends VirtualEntity {
 

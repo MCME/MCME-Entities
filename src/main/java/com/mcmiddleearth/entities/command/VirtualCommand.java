@@ -7,19 +7,16 @@ import com.mcmiddleearth.command.SimpleTabCompleteRequest;
 import com.mcmiddleearth.command.TabCompleteRequest;
 import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
-import com.mcmiddleearth.entities.EntityAPI;
+import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.ai.goal.*;
-import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWatch;
 import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.*;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
-import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,7 +26,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -166,7 +162,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         return 0;
     }
 
-    private int removeEntity(McmeCommandSender sender, Set<McmeEntity> entities) {
+    private int removeEntity(McmeCommandSender sender, Set<? extends Entity> entities) {
         EntityAPI.removeEntity(entities);
         return 0;
     }
@@ -271,7 +267,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        McmeCommandSender wrappedSender = EntityAPI.wrapCommandSender(sender);
+        McmeCommandSender wrappedSender = EntitiesPlugin.wrapCommandSender(sender);
         execute(wrappedSender, args);
         return true;
     }
@@ -279,7 +275,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
 //Logger.getGlobal().info("tabComplete 1");
-        TabCompleteRequest request = new SimpleTabCompleteRequest(EntityAPI.wrapCommandSender(sender),
+        TabCompleteRequest request = new SimpleTabCompleteRequest(EntitiesPlugin.wrapCommandSender(sender),
                                                                   String.format("/%s %s", alias, Joiner.on(' ').join(args)).trim());
         onTabComplete(request);
 //Logger.getGlobal().info("tabComplete 1");

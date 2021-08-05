@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.ai.movement;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.provider.BlockProvider;

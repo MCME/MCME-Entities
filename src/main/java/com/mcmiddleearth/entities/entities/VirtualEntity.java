@@ -2,11 +2,10 @@ package com.mcmiddleearth.entities.entities;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.Goal;
+import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
-import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
-import com.mcmiddleearth.entities.ai.movement.MovementType;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
@@ -27,7 +26,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
@@ -70,7 +68,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private ActionType actionType = ActionType.IDLE;
 
-    private GoalVirtualEntity goal;
+    private Goal goal;
 
     private final McmeEntityType type;
 

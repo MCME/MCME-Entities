@@ -4,8 +4,8 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.mcmiddleearth.entities.EntityAPI;
-import com.mcmiddleearth.entities.ai.goal.GoalDistance;
+import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.api.EntityAPI;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
@@ -19,8 +19,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import java.util.logging.Logger;
-
 public class VirtualEntityUseListener extends EntityListener {
 
     public VirtualEntityUseListener(Plugin plugin, EntityServer entityServer) {
@@ -30,7 +28,7 @@ public class VirtualEntityUseListener extends EntityListener {
     @Override
     public void onPacketReceiving(PacketEvent event) {
         PacketContainer packet = event.getPacket();
-        RealPlayer player = EntityAPI.getOrCreateMcmePlayer(event.getPlayer());
+        RealPlayer player = EntitiesPlugin.getEntityServer().getOrCreateMcmePlayer(event.getPlayer());
         int entityId = packet.getIntegers().read(0);
         McmeEntity entity = entityServer.getEntity(entityId);
         if(entity instanceof VirtualEntity) {

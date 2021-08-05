@@ -1,10 +1,9 @@
-package com.mcmiddleearth.entities.entities;
+package com.mcmiddleearth.entities.api;
 
 public enum ActionType {
 
     ATTACK,
     INTERACT,
-    //WALK,
     HURT,
     DEATH,
     IDLE;

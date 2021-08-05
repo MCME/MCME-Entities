@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.ai.movement;
+package com.mcmiddleearth.entities.api;
 
 public enum MovementType {
 

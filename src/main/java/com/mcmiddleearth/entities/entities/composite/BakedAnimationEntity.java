@@ -3,7 +3,7 @@ package com.mcmiddleearth.entities.entities.composite;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
+import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationTree;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationType;

@@ -1,7 +1,7 @@
 package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.ai.movement.MovementSpeed;
+import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;

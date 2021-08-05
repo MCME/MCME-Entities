@@ -1,8 +1,5 @@
 package com.mcmiddleearth.entities.entities.composite.animation;
 
-import com.google.common.base.Joiner;
-import com.mcmiddleearth.entities.entities.ActionType;
-import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 
 import java.util.Arrays;

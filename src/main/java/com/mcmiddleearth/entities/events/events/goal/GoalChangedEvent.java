@@ -3,7 +3,6 @@ package com.mcmiddleearth.entities.events.events.goal;
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.events.Cancelable;
-import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 
 public class GoalChangedEvent extends GoalEvent implements Cancelable {
 

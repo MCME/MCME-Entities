@@ -1,9 +1,11 @@
 package com.mcmiddleearth.entities.server;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
-import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
+import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.Cancelable;
@@ -125,16 +127,16 @@ Logger.getGlobal().info("Start new server task");
     }
 
     @Override
-    public void removeEntity(McmeEntity entity) {
+    public void removeEntity(Entity entity) {
 //Logger.getGlobal().info("Server: remove Entity");
         if(!(entity instanceof SpeechBalloon)) {
-            handleEvent(new McmeEntityRemoveEvent(entity));
+            handleEvent(new McmeEntityRemoveEvent((McmeEntity) entity));
         }
         if(entity instanceof VirtualEntity) {
             ((VirtualEntity)entity).removeAllViewers();
         }
-        entity.finalise();
-        entityProvider.removeEntity(entity);
+        ((McmeEntity)entity).finalise();
+        entityProvider.removeEntity((McmeEntity)entity);
         playerProvider.getMcmePlayers().forEach(player -> player.getSelectedEntities().remove(entity));
     }
 
@@ -148,7 +150,7 @@ Logger.getGlobal().info("Start new server task");
     }
 
     @Override
-    public void removeEntity(Collection<McmeEntity> entities) {
+    public void removeEntity(Collection<? extends Entity> entities) {
         entities.forEach(this::removeEntity);
     }
 
@@ -323,6 +325,18 @@ Logger.getGlobal().info("Start new server task");
                 }
             }.runTaskTimer(EntitiesPlugin.getInstance(),1,1);
         }
+    }
+
+    public Collection<RealPlayer> getMcmePlayers() {
+        return playerProvider.getMcmePlayers();
+    }
+
+    public RealPlayer getOrCreateMcmePlayer(Player player) {
+        return playerProvider.getOrCreateMcmePlayer(player);
+    }
+
+    public RealPlayer getMcmePlayer(UUID uniqueId) {
+        return playerProvider.getMcmePlayer(uniqueId);
     }
 
 }

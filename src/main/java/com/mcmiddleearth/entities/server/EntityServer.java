@@ -1,8 +1,10 @@
 package com.mcmiddleearth.entities.server;
 
+import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
-import com.mcmiddleearth.entities.entities.VirtualEntityFactory;
+import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
@@ -27,9 +29,9 @@ public interface EntityServer {
 
     public McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException;
 
-    public void removeEntity(McmeEntity entity);
+    public void removeEntity(Entity entity);
 
-    public void removeEntity(Collection<McmeEntity> entities);
+    public void removeEntity(Collection<? extends Entity> entities);
 
     public McmeEntity getEntity(UUID uniqueId);
 
@@ -55,4 +57,10 @@ public interface EntityServer {
                                      SpeechBalloonLayout layout) throws InvalidLocationException;
 
     //public boolean isPassable(int x, int y, int z);
+    public Collection<RealPlayer> getMcmePlayers();
+
+    public RealPlayer getOrCreateMcmePlayer(Player player);
+
+    public RealPlayer getMcmePlayer(UUID uniqueId);
+
 }

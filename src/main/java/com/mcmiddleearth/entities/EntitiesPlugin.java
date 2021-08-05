@@ -2,20 +2,18 @@ package com.mcmiddleearth.entities;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.mcmiddleearth.command.AbstractCommandHandler;
-import com.mcmiddleearth.entities._research.*;
+import com.mcmiddleearth.command.McmeCommandSender;
+import com.mcmiddleearth.entities.api.EntityAPI;
+import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import com.mcmiddleearth.entities.command.EntitiesCommand;
 import com.mcmiddleearth.entities.command.VirtualCommand;
-import com.mcmiddleearth.entities.events.listener.EntitySelectionListener;
 import com.mcmiddleearth.entities.events.listener.PlayerListener;
 import com.mcmiddleearth.entities.protocol.listener.VirtualEntityUseListener;
 import com.mcmiddleearth.entities.server.EntityServer;
 import com.mcmiddleearth.entities.server.SyncEntityServer;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.*;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,4 +91,15 @@ public final class EntitiesPlugin extends JavaPlugin {
         }
 
     }
+
+    public static McmeCommandSender wrapCommandSender(CommandSender sender) {
+        if(sender instanceof Player) {
+            return getEntityServer().getPlayerProvider().getOrCreateMcmePlayer((Player) sender);
+        } else if(sender instanceof ConsoleCommandSender) {
+            return new BukkitCommandSender((ConsoleCommandSender)sender);
+        }
+        return null;
+    }
+
+
 }
