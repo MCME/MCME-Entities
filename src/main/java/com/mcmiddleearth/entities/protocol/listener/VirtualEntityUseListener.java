@@ -5,7 +5,6 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.api.EntityAPI;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
@@ -56,10 +55,10 @@ public class VirtualEntityUseListener extends EntityListener {
                     if(player.getBukkitPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK)) {
                         if(hand.equals(EquipmentSlot.OFF_HAND)) {
                             if (isSneaking) {
-                                player.removeFromSelection(entity);
+                                player.removeFromSelectedEntities(entity);
                                 player.sendMessage(new ComponentBuilder("Removed from selection").create());
                             } else {
-                                player.addToSelection(entity);
+                                player.addToSelectedEntities(entity);
                                 player.sendMessage(new ComponentBuilder("Added to selection").create());
                             }
                         }

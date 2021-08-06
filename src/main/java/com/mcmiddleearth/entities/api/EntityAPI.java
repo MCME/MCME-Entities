@@ -91,6 +91,15 @@ public class EntityAPI {
     }
 
     /**
+     * Get all entities by their class.
+     * @param clazz requested entity class
+     * @return collection of found entities
+     */
+    public Collection<McmeEntity> getEntities(Class<? extends Entity> clazz) {
+        return entityServer.getEntities(clazz);
+    }
+
+    /**
      * Get an entity by it's name. There may be entities without names, there may also be several entities with same
      * names.
      * @param name name of the entity to get

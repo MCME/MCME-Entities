@@ -2,10 +2,9 @@ package com.mcmiddleearth.entities.entities.composite.animation;
 
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 public class BakedAnimationTree {
@@ -216,5 +215,15 @@ public class BakedAnimationTree {
             value.debug();
         });
     }
+
+    public List<String> getAnimationKeys() {
+        List<String> result = new ArrayList<>();
+        if(animation != null) {
+            result.add(animation.getName());
+        }
+        children.forEach((key, child) -> result.addAll(child.getAnimationKeys()));
+        return result.stream().sorted().collect(Collectors.toList());
+    }
+
 
 }

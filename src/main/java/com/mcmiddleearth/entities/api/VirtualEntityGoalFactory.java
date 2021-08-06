@@ -2,6 +2,7 @@ package com.mcmiddleearth.entities.api;
 
 import com.mcmiddleearth.entities.ai.goal.*;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.ai.pathfinding.SimplePathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
@@ -49,10 +50,12 @@ public class VirtualEntityGoalFactory {
         Pathfinder pathfinder;
         GoalVirtualEntity goal;
         switch(movementType) {
-            case UPRIGHT: pathfinder = new WalkingPathfinder(entity);
+            case UPRIGHT:
+            case SNEAKING:
+                pathfinder = new WalkingPathfinder(entity);
                 break;
             default:
-                pathfinder = new WalkingPathfinder(entity);
+                pathfinder = new SimplePathfinder();
         }
         switch(goalType) {
             case WATCH_ENTITY:

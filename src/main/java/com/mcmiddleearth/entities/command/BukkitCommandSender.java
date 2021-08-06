@@ -1,18 +1,31 @@
 package com.mcmiddleearth.entities.command;
 
 import com.mcmiddleearth.command.McmeCommandSender;
+import com.mcmiddleearth.entities.api.McmeEntityType;
+import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class BukkitCommandSender implements McmeCommandSender {
 
     CommandSender sender;
 
-    Set<McmeEntity> selection = new HashSet<>();
+    Set<McmeEntity> selectedEntities = new HashSet<>();
+
+    McmeEntity selectedTargetEntity = null;
+
+    List<Location> selectedPoints = new ArrayList<>();
+
+    VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(McmeEntityType.CustomEntityType.BAKED_ANIMATION),null);
 
     public BukkitCommandSender(CommandSender sender) {
         this.sender = sender;
@@ -20,7 +33,7 @@ public class BukkitCommandSender implements McmeCommandSender {
 
     @Override
     public void sendMessage(BaseComponent[] baseComponents) {
-        sender.sendMessage(baseComponents);
+        sender.sendMessage(new ComponentBuilder("[Entities] ").color(ChatColor.AQUA).append(baseComponents[0]).create());
     }
 
     public CommandSender getCommandSender() {
@@ -28,24 +41,61 @@ public class BukkitCommandSender implements McmeCommandSender {
     }
 
     public Set<McmeEntity> getSelectedEntities() {
-        return new HashSet<McmeEntity>(selection);
+        return new HashSet<McmeEntity>(selectedEntities);
     }
 
-    public void clearSelection() {
-        selection.clear();
+    public void clearSelectedEntities() {
+        selectedEntities.clear();
     }
 
-    public void addToSelection(McmeEntity entity) {
-        selection.add(entity);
+    public void setSelectedEntities(Set<McmeEntity> entities) { this.selectedEntities = entities; }
+
+    public void addToSelectedEntities(McmeEntity entity) {
+        selectedEntities.add(entity);
     }
 
-    public void removeFromSelection(McmeEntity entity) {
-        selection.remove(entity);
+    public void removeFromSelectedEntities(McmeEntity entity) {
+        selectedEntities.remove(entity);
     }
 
-    public void setSelection(McmeEntity entity) {
-        clearSelection();
-        addToSelection(entity);
+    public void setSelectedEntities(McmeEntity entity) {
+        clearSelectedEntities();
+        addToSelectedEntities(entity);
     }
 
+    public List<Location> getSelectedPoints() {
+        return selectedPoints;
+    }
+
+    public void setSelectedPoints(List<Location> selectedPoints) {
+        this.selectedPoints = selectedPoints;
+    }
+
+    public void setSelectedPoints(Location point) {
+        selectedPoints.clear();
+        selectedPoints.add(point);
+    }
+    public void clearSelectedPoints() {
+        selectedPoints.clear();
+    }
+
+    public void addToSelectedPoints(Location  point) {
+        selectedPoints.add(point);
+    }
+
+    public void removeFromSelectedPoints(Location point) {
+        selectedPoints.remove(point);
+    }
+
+    public VirtualEntityFactory getEntityFactory() {
+        return factory;
+    }
+
+    public McmeEntity getSelectedTargetEntity() {
+        return selectedTargetEntity;
+    }
+
+    public void setSelectedTargetEntity(McmeEntity target) {
+        this.selectedTargetEntity = target;
+    }
 }

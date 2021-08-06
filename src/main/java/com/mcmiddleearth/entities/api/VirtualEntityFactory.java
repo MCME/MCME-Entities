@@ -14,16 +14,16 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * VirtualEntityFactory class is used to provide all required information during spawn process of an entity.
  */
 public class VirtualEntityFactory {
 
-    private final McmeEntityType type;
+    private McmeEntityType type;
 
     private boolean invertWhitelist;
 
@@ -75,6 +75,13 @@ public class VirtualEntityFactory {
         this.uniqueId = uniqueId;
         this.name = name;
         this.attributes = attributes;
+    }
+
+    public static Collection<String> availableProperties() {
+        return Stream.of("type","invertWhitelist","uniqueId", "name", "dataFile", "displayName","displayNamePosition",
+                "location","movementType","goalType","targetLocation","targetEntity","headPitchCenter",
+                "speechBalloonLayout","mouth","manualAnimation","headPoseDelay").map(String::toLowerCase)
+                .sorted().collect(Collectors.toList());
     }
 
     public VirtualEntityFactory withUuid(UUID uuid) {
@@ -197,8 +204,17 @@ public class VirtualEntityFactory {
         return movementType;
     }
 
+    public VirtualEntityFactory withEntityType(McmeEntityType type) {
+        this.type = type;
+        return this;
+    }
     public McmeEntityType getType() {
         return type;
+    }
+
+    public VirtualEntityFactory withInvertWhiteList(boolean invert) {
+        this.invertWhitelist = invert;
+        return this;
     }
 
     public boolean isInvertWhitelist() {
@@ -220,7 +236,7 @@ public class VirtualEntityFactory {
     public Vector getDisplayNamePosition() { return displayNamePosition; }
 
     public Location getLocation() {
-        return location.clone();
+        return (location!=null?location.clone():null);
     }
 
     public SpeechBalloonLayout getSpeechBalloonLayout() { return speechBalloonLayout; }

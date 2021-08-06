@@ -1,10 +1,12 @@
 package com.mcmiddleearth.entities.api;
 
+import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.entity.EntityType;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * This class provides information about which type of entity should be created in the spawning process.
@@ -13,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class McmeEntityType {
 
-    private final boolean isCustomType;
+    private boolean isCustomType;
 
     private CustomEntityType customType;
 
@@ -57,23 +59,30 @@ public class McmeEntityType {
      * Tries to create a matching entity type from a string input.
      * @param type Text to parse
      */
-    public McmeEntityType(String type) {
-        bukkitEntityType = null;
+    public static McmeEntityType valueOf(String type) {
+    //public McmeEntityType(String type) {
+        if(type == null || type.equals(""))  return null;
+        McmeEntityType entityType = new McmeEntityType(EntityType.BAT);
+        entityType.bukkitEntityType = null;
         try {
-            bukkitEntityType = EntityType.valueOf(type.toUpperCase());
+            entityType.bukkitEntityType = EntityType.valueOf(type.toUpperCase());
         } catch(Exception ignore) {}
-        if(bukkitEntityType==null) {
+        if(entityType.bukkitEntityType==null) {
             CustomEntityType customType = null;
             try {
                 customType = CustomEntityType.valueOf(type.toUpperCase());
-                setCustom(customType);
+                entityType.customType = customType;
+                if(customType.equals(CustomEntityType.BONE)) {
+                    entityType.bukkitEntityType = EntityType.ARMOR_STAND;
+                }
             } catch(Exception exception) {
-                Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING, "Invalid entity type!", exception);
+                return null;
             }
-            isCustomType = true;
+            entityType.isCustomType = true;
         } else {
-            this.isCustomType = false;
+            entityType.isCustomType = false;
         }
+        return entityType;
     }
 
     public boolean isCustomType() {
@@ -105,4 +114,11 @@ public class McmeEntityType {
         return Objects.hash(isCustomType, customType, bukkitEntityType);
     }
 
+    public static Collection<String> availableTypes() {
+        Collection<String> result = Arrays.stream(EntityType.values())
+                .map(type -> type.name().toLowerCase()).collect(Collectors.toList());
+        result.addAll(Arrays.stream(CustomEntityType.values())
+                .map(type -> type.name().toLowerCase()).collect(Collectors.toList()));
+        return result.stream().sorted().collect(Collectors.toList());
+    }
 }

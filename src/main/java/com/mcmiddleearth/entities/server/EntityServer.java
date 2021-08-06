@@ -33,6 +33,8 @@ public interface EntityServer {
 
     public void removeEntity(Collection<? extends Entity> entities);
 
+    public Collection<McmeEntity> getEntities(Class<? extends Entity> clazz);
+
     public McmeEntity getEntity(UUID uniqueId);
 
     public McmeEntity getEntity(String name);

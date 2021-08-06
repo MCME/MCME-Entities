@@ -155,6 +155,11 @@ Logger.getGlobal().info("Start new server task");
     }
 
     @Override
+    public Collection<McmeEntity> getEntities(Class<? extends Entity> clazz) {
+        return entityProvider.getEntities().stream().filter(clazz::isInstance).collect(Collectors.toList());
+    }
+
+    @Override
     public McmeEntity getEntity(UUID uniqueId) {
         return entityProvider.getEntity(uniqueId);
     }

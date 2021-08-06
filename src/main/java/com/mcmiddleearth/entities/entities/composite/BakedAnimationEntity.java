@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -147,5 +148,9 @@ Logger.getGlobal().info("Switch: "+(expected == null?"none":expected.getName()))
 
     public void setManualAnimationControl(boolean manualAnimationControl) {
         this.manualAnimationControl = manualAnimationControl;
+    }
+
+    public List<String> getAnimations() {
+        return animationTree.getAnimationKeys();
     }
 }
