@@ -9,6 +9,7 @@ import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 import com.mcmiddleearth.entities.events.listener.McmeEventListener;
+import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.BlockProvider;
 import com.mcmiddleearth.entities.provider.PlayerProvider;
@@ -27,7 +28,7 @@ public interface EntityServer {
 
     public void doTick();
 
-    public McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException;
+    public McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException;
 
     public void removeEntity(Entity entity);
 

@@ -7,7 +7,9 @@ import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
+import com.mcmiddleearth.entities.util.Constrain;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -35,6 +37,8 @@ public class VirtualEntityFactory {
 
     private Location location;
 
+    private Entity spawnLocationEntity = null;
+
     private MovementType movementType = MovementType.UPRIGHT;
 
     private final Map<Attribute, AttributeInstance> attributes;
@@ -44,6 +48,8 @@ public class VirtualEntityFactory {
     private GoalType goalType;
 
     private Location targetLocation;
+
+    private Location[] checkpoints;
 
     private McmeEntity targetEntity;
 
@@ -139,6 +145,10 @@ public class VirtualEntityFactory {
         return this;
     }
 
+    public McmeEntity getTargetEntity() {
+        return targetEntity;
+    }
+
     public VirtualEntityFactory withDataFile(String filename) {
         this.dataFile = filename;
         return this;
@@ -150,6 +160,12 @@ public class VirtualEntityFactory {
 
     public VirtualEntityFactory withLocation(Location location) {
         this.location = location;
+        spawnLocationEntity = null;
+        return this;
+    }
+
+    public VirtualEntityFactory useEntityForSpawnLocation(Entity entity) {
+        this.spawnLocationEntity = entity;
         return this;
     }
 
@@ -193,6 +209,7 @@ public class VirtualEntityFactory {
     public VirtualEntityGoalFactory getGoalFactory() {
         return new VirtualEntityGoalFactory().withTargetEntity(targetEntity)
                 .withTargetLocation(targetLocation)
+                .withCheckpoints(checkpoints)
                 .withGoalType(goalType);
     }
 
@@ -236,12 +253,24 @@ public class VirtualEntityFactory {
     public Vector getDisplayNamePosition() { return displayNamePosition; }
 
     public Location getLocation() {
+        if(spawnLocationEntity!=null) {
+            return spawnLocationEntity.getLocation().clone();
+        }
         return (location!=null?location.clone():null);
     }
 
     public SpeechBalloonLayout getSpeechBalloonLayout() { return speechBalloonLayout; }
 
     public Vector getMouth() { return mouth; }
+
+    public VirtualEntityFactory withCheckpoints(Location[] checkpoints) {
+        this.checkpoints = checkpoints;
+        return this;
+    }
+
+    public Location[] getCheckpoints() {
+        return checkpoints;
+    }
 
     /**
      * Attributes are not yet implemented.
@@ -262,7 +291,7 @@ public class VirtualEntityFactory {
      * @return
      * @throws InvalidLocationException
      */
-    public McmeEntity build(int entityId) throws InvalidLocationException {
+    public McmeEntity build(int entityId) throws InvalidLocationException, InvalidDataException {
         if(type.isCustomType()) {
             switch(type.getCustomType()) {
                 case BAKED_ANIMATION:

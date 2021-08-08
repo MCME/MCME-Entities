@@ -6,6 +6,9 @@ import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
 import org.bukkit.Location;
+import sun.rmi.runtime.Log;
+
+import java.util.logging.Logger;
 
 public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
 
@@ -30,6 +33,11 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
         if(isFinished()) {
             return;
         }
+//Logger.getGlobal().info("ent "+getEntity().getLocation().toVector());
+//Logger.getGlobal().info("tar" +getTarget().toVector());
+//if(getPath() != null) Logger.getGlobal().info("pat "+getPath().getEnd());
+
+//Logger.getGlobal().info("distance: "+getEntity().getLocation().toVector().distanceSquared(getTarget().toVector()));
         if(isCloseToTarget(GoalDistance.POINT)) {
             EntitiesPlugin.getEntityServer().handleEvent(new GoalCheckpointReachedEvent(getEntity(),this));
             currentCheckpoint++;

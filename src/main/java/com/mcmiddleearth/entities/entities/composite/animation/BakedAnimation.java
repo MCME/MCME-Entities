@@ -87,7 +87,9 @@ public class BakedAnimation {
     }
 
     public void applyFrame(int frameIndex) {
+//Logger.getGlobal().info("1");
         Frame frame = frames.get(frameIndex);
+//Logger.getGlobal().info("apply frame: "+frameIndex +" -> "+frame);
         if(frame!=null) {
             frame.apply(entity.getState());
         }

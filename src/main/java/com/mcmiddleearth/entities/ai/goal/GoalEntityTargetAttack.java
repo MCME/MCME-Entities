@@ -7,6 +7,8 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
 
+import java.util.logging.Logger;
+
 public class GoalEntityTargetAttack extends GoalEntityTarget {
 
     public GoalEntityTargetAttack(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
@@ -16,6 +18,7 @@ public class GoalEntityTargetAttack extends GoalEntityTarget {
     @Override
     public void doTick() {
         super.doTick();
+//if(getPath()!=null) Logger.getGlobal().info("Path: \n"+getPath().getStart()+" \n"+getPath().getEnd()+" \n"+getPath().getTarget());
         if(isCloseToTarget(GoalDistance.ATTACK)) {
 //Logger.getGlobal().info("delete path as entity is close.");
             EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(),this));

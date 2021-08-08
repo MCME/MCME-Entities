@@ -15,7 +15,7 @@ public class GoalLocationTargetRandomCheckpoints extends GoalLocationTarget {
                                                Location[] checkpoints) {
         super(type, entity, pathfinder, checkpoints[0]);
         this.checkpoints = checkpoints;
-        setPathTarget(checkpoints[0].toVector());
+        setPathTarget(checkpoints[random.nextInt(checkpoints.length)].toVector());
         movementSpeed = MovementSpeed.WALK;
     }
 

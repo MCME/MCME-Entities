@@ -15,6 +15,7 @@ import com.mcmiddleearth.entities.events.events.McmeEntitySpawnEvent;
 import com.mcmiddleearth.entities.events.handler.EntityEventHandler;
 import com.mcmiddleearth.entities.events.handler.McmeEntityEventHandler;
 import com.mcmiddleearth.entities.events.listener.McmeEventListener;
+import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.*;
 import org.bukkit.Bukkit;
@@ -118,7 +119,7 @@ Logger.getGlobal().info("Start new server task");
     }
 
     @Override
-    public McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException {
+    public McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         McmeEntity result = factory.build(lastEntityId+1);
         lastEntityId += result.getEntityQuantity();
         entityProvider.addEntity(result);

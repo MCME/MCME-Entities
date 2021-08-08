@@ -147,10 +147,10 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
         return (Player) getCommandSender();
     }
 
-    @Override
+    /*@Override
     public void sendMessage(BaseComponent[] baseComponents) {
         getBukkitPlayer().sendMessage(baseComponents);
-    }
+    }*/
 
     @Override
     public void playAnimation(ActionType type) {

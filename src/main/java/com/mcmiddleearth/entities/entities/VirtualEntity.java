@@ -13,6 +13,7 @@ import com.mcmiddleearth.entities.events.events.McmeEntityDamagedEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityDeathEvent;
 import com.mcmiddleearth.entities.events.events.goal.GoalChangedEvent;
 import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityAttackEvent;
+import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import com.mcmiddleearth.entities.protocol.packets.DisplayNamePacket;
@@ -26,6 +27,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
@@ -68,7 +70,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private ActionType actionType = ActionType.IDLE;
 
-    private Goal goal;
+    private Goal goal = null;
 
     private final McmeEntityType type;
 
@@ -106,7 +108,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private Vector mouth;
 
-    public VirtualEntity(VirtualEntityFactory factory) throws InvalidLocationException {
+    public VirtualEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         this.type = factory.getType();
         this.location = factory.getLocation();
         this.velocity = new Vector(0, 0, 0);
@@ -118,7 +120,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.boundingBox = factory.getBoundingBox();
         this.boundingBox.setLocation(location);
         this.movementEngine = new MovementEngine(this);
+//Logger.getGlobal().info("This location: "+this.getLocation());
         this.goal = factory.getGoalFactory().build(this);
+//Logger.getGlobal().info("this goal: "+getGoal());
         this.health = 20;
         this.namePacket = new DisplayNamePacket(this.getEntityId());
         this.defaultSpeechBalloonLayout = factory.getSpeechBalloonLayout();

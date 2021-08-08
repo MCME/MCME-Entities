@@ -18,6 +18,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import java.util.logging.Logger;
+
 public class VirtualEntityUseListener extends EntityListener {
 
     public VirtualEntityUseListener(Plugin plugin, EntityServer entityServer) {
@@ -49,20 +51,24 @@ public class VirtualEntityUseListener extends EntityListener {
 //Logger.getLogger(this.getClass().getName()).info("Y: " + vector.getY());
 //Logger.getLogger(this.getClass().getName()).info("Z: " + vector.getZ());
                     throwEvent(new VirtualPlayerInteractAtEvent(player, (VirtualEntity)entity, vector, hand, isSneaking));
-                    break;
-                case INTERACT:
-//Logger.getGlobal().info("interact!");
+//Logger.getGlobal().info("interact! "+player.getName());
                     if(player.getBukkitPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK)) {
-                        if(hand.equals(EquipmentSlot.OFF_HAND)) {
+//Logger.getGlobal().info("hand! "+hand.name());
+                        if(hand.equals(EquipmentSlot.HAND)) {
+//Logger.getGlobal().info("off hand!");
                             if (isSneaking) {
+//Logger.getGlobal().info("sneak!");
                                 player.removeFromSelectedEntities(entity);
                                 player.sendMessage(new ComponentBuilder("Removed from selection").create());
                             } else {
+//Logger.getGlobal().info("no sneak!");
                                 player.addToSelectedEntities(entity);
                                 player.sendMessage(new ComponentBuilder("Added to selection").create());
                             }
                         }
                     }
+                    break;
+                case INTERACT:
                     throwEvent(new VirtualPlayerInteractEvent(player, (VirtualEntity)entity, hand, isSneaking));
                     break;
                 case ATTACK:

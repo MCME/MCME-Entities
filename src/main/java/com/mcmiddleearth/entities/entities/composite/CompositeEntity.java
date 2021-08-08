@@ -3,6 +3,7 @@ package com.mcmiddleearth.entities.entities.composite;
 import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
+import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.*;
 import org.bukkit.Location;
@@ -27,9 +28,9 @@ public abstract class CompositeEntity extends VirtualEntity {
 
     //private boolean rotationUpdate;
     private float currentYaw, currentPitch, currentHeadYaw;
-    private static final float maxRotationStep = 10f;
+    private static final float maxRotationStep = 40f;
 
-    public CompositeEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException {
+    public CompositeEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         super(factory);
         firstEntityId = entityId;
         headPitchCenter = factory.getHeadPitchCenter();
@@ -45,6 +46,7 @@ public abstract class CompositeEntity extends VirtualEntity {
     protected CompositeEntity(int entityId, McmeEntityType type, Location location) {
         super(type, location);
         firstEntityId = entityId;
+        headPitchCenter = new Vector(0,0,0);
     }
 
     protected void createPackets() {

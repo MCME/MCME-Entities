@@ -6,6 +6,7 @@ import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.events.listener.McmeEventListener;
+import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.PlayerProvider;
 import com.mcmiddleearth.entities.server.EntityServer;
@@ -69,7 +70,7 @@ public class EntityAPI {
      * @return the entity
      * @throws InvalidLocationException Is thrown if provided locations are not in the same world.
      */
-    public static McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException {
+    public static McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         return entityServer.spawnEntity(factory);
     }
 

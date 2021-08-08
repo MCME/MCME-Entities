@@ -7,9 +7,9 @@ public enum GoalType {
     WATCH_ENTITY,
     FOLLOW_ENTITY,
     ATTACK_CLOSE,
-    DIG,
-    WALK,
-    FLY,
+//    DIG,
+//    WALK,
+//    FLY,
     FOLLOW_CHECKPOINTS,
     RANDOM_CHECKPOINTS,
     GOTO_LOCATION;

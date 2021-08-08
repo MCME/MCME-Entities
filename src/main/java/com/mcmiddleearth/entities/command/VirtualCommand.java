@@ -13,16 +13,15 @@ import com.mcmiddleearth.entities.ai.goal.*;
 import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.api.*;
-import com.mcmiddleearth.entities.command.argument.AnimationIdArgument;
-import com.mcmiddleearth.entities.command.argument.EntityTypeArgument;
-import com.mcmiddleearth.entities.command.argument.FactoryPropertyArgument;
-import com.mcmiddleearth.entities.command.argument.GoalTypeArgument;
+import com.mcmiddleearth.entities.command.argument.*;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import sun.rmi.runtime.Log;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -58,45 +58,60 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                         .executes(context -> spawnEntity(context.getSource(),
                                 null,
                                 null,
-                                null))
+                                null, null))
                         .then(HelpfulRequiredArgumentBuilder.argument("type", new EntityTypeArgument())
                                 .executes(context -> spawnEntity(context.getSource(),
                                         context.getArgument("type", String.class),
                                         null,
-                                        null))
+                                        null, null))
                                 .then(HelpfulRequiredArgumentBuilder.argument("goal", new GoalTypeArgument())
                                         .executes(context -> spawnEntity(context.getSource(),
                                                 context.getArgument("type", String.class),
                                                 null,
-                                                context.getArgument("goal", String.class)))
-                                        .then(HelpfulRequiredArgumentBuilder.argument("name", word())
+                                                context.getArgument("goal", String.class), null))
+                                        .then(HelpfulRequiredArgumentBuilder.argument("dataFile", new AnimationFileArgument())
                                                 .executes(context -> spawnEntity(context.getSource(),
                                                                                  context.getArgument("type", String.class),
-                                                                                 context.getArgument("name", String.class),
-                                                                                 context.getArgument("goal", String.class)))))))
+                                                                                 null,
+                                                                                 context.getArgument("goal", String.class),
+                                                                                 context.getArgument("dataFile", String.class)))
+                                                .then(HelpfulRequiredArgumentBuilder.argument("name", word())
+                                                        .executes(context -> spawnEntity(context.getSource(),
+                                                                context.getArgument("type", String.class),
+                                                                context.getArgument("name", String.class),
+                                                                context.getArgument("goal", String.class),
+                                                                context.getArgument("dataFile", String.class))))))))
                 .then(HelpfulLiteralBuilder.literal("army")
                         .then(HelpfulRequiredArgumentBuilder.argument("size", integer())
                                 .executes(context -> spawnEntityArmy(context.getSource(),
                                         null,
                                         context.getArgument("size", Integer.class),
-                                        null, null))
+                                        null, null, null))
                                 .then(HelpfulRequiredArgumentBuilder.argument("type", new EntityTypeArgument())
                                         .executes(context -> spawnEntityArmy(context.getSource(),
                                                 context.getArgument("type", String.class),
                                                 context.getArgument("size", Integer.class),
-                                                null, null))
+                                                null, null, null))
                                         .then(HelpfulRequiredArgumentBuilder.argument("goal", new GoalTypeArgument())
                                                 .executes(context -> spawnEntityArmy(context.getSource(),
                                                         context.getArgument("type", String.class),
                                                         context.getArgument("size", Integer.class),
                                                         null,
-                                                        context.getArgument("goal", String.class)))
-                                                .then(HelpfulRequiredArgumentBuilder.argument("name", word())
+                                                        context.getArgument("goal", String.class), null))
+                                                .then(HelpfulRequiredArgumentBuilder.argument("dataFile", new AnimationFileArgument())
                                                         .executes(context -> spawnEntityArmy(context.getSource(),
                                                                 context.getArgument("type", String.class),
                                                                 context.getArgument("size", Integer.class),
-                                                                context.getArgument("name", String.class),
-                                                                context.getArgument("goal", String.class))))))))
+                                                                null,
+                                                                context.getArgument("goal", String.class),
+                                                                context.getArgument("dataFile", String.class)))
+                                                        .then(HelpfulRequiredArgumentBuilder.argument("name", word())
+                                                                .executes(context -> spawnEntityArmy(context.getSource(),
+                                                                        context.getArgument("type", String.class),
+                                                                        context.getArgument("size", Integer.class),
+                                                                        context.getArgument("name", String.class),
+                                                                        context.getArgument("goal", String.class),
+                                                                        context.getArgument("dataFile",String.class)))))))))
                 /*.then(HelpfulLiteralBuilder.literal("army")
                         .then(HelpfulRequiredArgumentBuilder.argument("type", word())
                                 .then(HelpfulRequiredArgumentBuilder.argument("size", integer())
@@ -115,7 +130,13 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                         .then(HelpfulLiteralBuilder.literal("entity")
                             .executes(context -> showSelection(context.getSource()))
                             .then(HelpfulLiteralBuilder.literal("target")
-                                .executes(context -> setSelectTargetEntity(context.getSource())))
+                                .executes(context -> setSelectTargetEntity(context.getSource()))
+                                .then(HelpfulLiteralBuilder.literal("@p")
+                                    .executes(context -> {
+                                        ((BukkitCommandSender)context.getSource()).setSelectedTargetEntity((RealPlayer)context.getSource());
+                                        context.getSource().sendMessage(new ComponentBuilder("Saved you as target entity!").create());
+                                        return 0;
+                                    })))
                             .then(HelpfulLiteralBuilder.literal("clear")
                                 .executes(context -> clearSelection(context.getSource()))))
                         .then(HelpfulLiteralBuilder.literal("location")
@@ -135,11 +156,10 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 .then(HelpfulLiteralBuilder.literal("path")
                         .executes(context -> findPath(context.getSource())))
                 .then(HelpfulLiteralBuilder.literal("setgoal")
-                        .then(HelpfulRequiredArgumentBuilder.argument("type", new GoalTypeArgument()))
-                        .executes(context -> setGoal(context.getSource(), context.getArgument("type", String.class), false))
-                        .then(HelpfulRequiredArgumentBuilder.argument("loop", word())
-                                .executes(context -> setGoal(context.getSource(), context.getArgument("type", String.class),
-                                        context.getArgument("loop", String.class).equals("true")))))
+                        .then(HelpfulRequiredArgumentBuilder.argument("type", new GoalTypeArgument())
+                            .executes(context -> setGoal(context.getSource(), context.getArgument("type", String.class), false))
+                            .then(HelpfulLiteralBuilder.literal("loop")
+                                .executes(context -> setGoal(context.getSource(), context.getArgument("type", String.class), true)))))
                 .then(HelpfulLiteralBuilder.literal("animate")
                         .then(HelpfulRequiredArgumentBuilder.argument("animationId", new AnimationIdArgument())
                                 .executes(context -> animateEntity(context.getSource(), context.getArgument("animationId", String.class)))))
@@ -151,7 +171,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         return commandNodeBuilder;
     }
 
-    private int spawnEntity(McmeCommandSender sender, String type, String name, String goal) {//, int delay) {
+    private int spawnEntity(McmeCommandSender sender, String type, String name, String goal, String dataFile) {//, int delay) {
         /*VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(type), ((RealPlayer)sender).getLocation())
                 .withName(name)
                 .withDataFile(name)
@@ -159,7 +179,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 .withHeadPitchCenter(new Vector(0,0,0.3))
                 .withGoalType(GoalType.valueOf(goal.toUpperCase()))
                 .withTargetEntity((RealPlayer)sender);*/
-        VirtualEntityFactory factory = getFactory(sender, type, name, goal);
+        VirtualEntityFactory factory = getFactory(sender, type, name, goal, dataFile);
         try {
             VirtualEntity entity = (VirtualEntity) EntityAPI.spawnEntity(factory);
             /*if(goal.equalsIgnoreCase("hold_position")) {
@@ -170,12 +190,14 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
             ((BukkitCommandSender)sender).setSelectedEntities(entity);
             sender.sendMessage(new ComponentBuilder("Spawning: " + type).create());
         } catch (InvalidLocationException e) {
-            sender.sendMessage(new ComponentBuilder("Can't spawn because of invalid location!").create());
+            sender.sendMessage(new ComponentBuilder("Can't spawn because of invalid or missing location!").create());
+        } catch (InvalidDataException e) {
+            sender.sendMessage(new ComponentBuilder(e.getMessage()).create());
         }
         return 0;
     }
 
-    private int spawnEntityArmy(McmeCommandSender sender, String type, int size, String name, String goal) {
+    private int spawnEntityArmy(McmeCommandSender sender, String type, int size, String name, String goal, String dataFile) {
 //Logger.getGlobal().info("Army: type: "+type+" size: "+size+" name: "+name+" goal: "+goal);
         /*VirtualEntityFactory factory = new VirtualEntityFactory(new McmeEntityType(type), ((RealPlayer) sender).getLocation())
                 .withTargetLocation(((RealPlayer) sender).getLocation().add(new Vector(20, 0, 20)))
@@ -185,7 +207,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 .withGoalType(GoalType.valueOf(goal.toUpperCase()))
                 .withTargetEntity((RealPlayer) sender);*/
         //((BukkitCommandSender)sender).clearSelection();
-        VirtualEntityFactory factory = getFactory(sender, type, name, goal);
+        VirtualEntityFactory factory = getFactory(sender, type, name, goal, dataFile);
         for (int i = 0; i < size; i++) {
             //factory.withLocation(((RealPlayer) sender).getLocation().add(new Vector(i * 2, 0, 0)));
             for (int j = 0; j < size; j++) {
@@ -193,8 +215,9 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                     ((BukkitCommandSender) sender).addToSelectedEntities(EntityAPI.spawnEntity(factory));
                     sender.sendMessage(new ComponentBuilder((size * size) + " entities spawned.").create());
                 } catch (InvalidLocationException e) {
-                    sender.sendMessage(new ComponentBuilder("Can't spawn because of invalid location!").create());
-                    e.printStackTrace();
+                    sender.sendMessage(new ComponentBuilder("Can't spawn because of invalid or missing location!").create());
+                } catch (InvalidDataException e) {
+                    sender.sendMessage(new ComponentBuilder(e.getMessage()).create());
                 }
                 factory.withLocation(factory.getLocation().add(new Vector(0, 0, 2)));
             }
@@ -202,8 +225,11 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
         return 0;
     }
 
-    private VirtualEntityFactory getFactory(McmeCommandSender sender, String type, String name, String goal) {
-        VirtualEntityFactory factory = ((BukkitCommandSender) sender).getEntityFactory();
+    private VirtualEntityFactory getFactory(McmeCommandSender sender, String type, String name, String goal, String dataFile) {
+        RealPlayer player = (RealPlayer) sender;
+        VirtualEntityFactory factory = player.getEntityFactory();
+Logger.getGlobal().info("Factory: "+factory);
+Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name());
         McmeEntityType entityType = McmeEntityType.valueOf(type);
         if(entityType !=null)
         {
@@ -220,20 +246,36 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
             } catch (IllegalArgumentException ignore) {
             }
         }
+        if(dataFile!=null && !dataFile.equals("")) {
+            factory.withDataFile(dataFile);
+        }
         if(factory.getLocation()==null)
         {
-            factory.withLocation(((RealPlayer) sender).getLocation());
+            factory.useEntityForSpawnLocation(player);
+        }
+        if(player.getSelectedTargetEntity()!=null)
+        {
+            factory.withTargetEntity(player.getSelectedTargetEntity());
+        }
+        if(factory.getTargetEntity() == null) {
+            factory.withTargetEntity(player);
+        }
+//Logger.getGlobal().info("Factory tar type: "+factory.getTargetEntity());
+        if(player.getSelectedPoints() != null && player.getSelectedPoints().size()>0) {
+            factory.withCheckpoints(player.getSelectedPoints().toArray(new Location[0]));
         }
         return factory;
     }
 
     private int removeEntity(McmeCommandSender sender, String name) {
-        Collection<? extends Entity> entities;
+        Collection<? extends Entity> entities = new HashSet<>();
         if(name !=null && name.equalsIgnoreCase("all")) {
             entities = EntitiesPlugin.getEntityServer().getEntities(VirtualEntity.class);
-        }
-        if(name != null) {
-            entities = Collections.singleton(EntityAPI.getEntity(name));
+        } else if(name != null) {
+            Entity entity = (EntityAPI.getEntity(name));
+            if(entity != null) {
+                entities = Collections.singleton(entity);
+            }
         } else {
             entities =  ((BukkitCommandSender) sender).getSelectedEntities();
         }
@@ -245,14 +287,17 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
     private int applyAnimationFrame(McmeCommandSender sender, String animation, int frameId) {
 //Logger.getGlobal().info("Apply Frame command");
         RealPlayer player = ((RealPlayer)sender);
-        player.getSelectedEntities().forEach(entity -> {
+        int counter = 0;
+        for(Entity entity :player.getSelectedEntities()) {
+//Logger.getGlobal().info("entity: "+entity.getClass().getSimpleName());
             if (entity instanceof BakedAnimationEntity) {
                 ((BakedAnimationEntity) entity).setManualAnimationControl(true);
                 ((BakedAnimationEntity) entity).setAnimationFrame(animation,frameId);
+                counter++;
             }
-        });
+        }
         sender.sendMessage(new ComponentBuilder("Displaying frame "+frameId+" of animation "+animation+" for "
-                                                     +player.getSelectedEntities().size()+" entities.").create());
+                                                     +counter+" entities.").create());
         return 0;
     }
 
@@ -325,6 +370,8 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
             sender.sendMessage(new ComponentBuilder("Invalid goal type!").create());
         } catch (InvalidLocationException e) {
             sender.sendMessage(new ComponentBuilder("Invalid location. All location must be same world!").create());
+        } catch (InvalidDataException e) {
+            sender.sendMessage(new ComponentBuilder(e.getMessage()).create());
         }
         return 0;
         /*
@@ -459,35 +506,40 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 try {
                     factory.withDisplayNamePosition(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
                 } catch (IllegalArgumentException ex) {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse display name position!").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse display name position!").color(ChatColor.RED).create());
                 }
                 break;
             case "location":
                 try {
-                    factory.withLocation(parseLocation(((RealPlayer)player).getBukkitPlayer(), value));
+                    if(value.equalsIgnoreCase("@p") && (player instanceof RealPlayer)) {
+                        factory.useEntityForSpawnLocation((RealPlayer)player);
+                    } else {
+                        factory.withLocation(parseLocation(((RealPlayer) player).getBukkitPlayer(), value));
+                    }
                 } catch (IllegalArgumentException ex) {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse location!").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse location!").color(ChatColor.RED).create());
                 }
                 break;
             case "movementtype":
                 try {
-                    factory.withMovementType(MovementType.valueOf(value));
+                    factory.withMovementType(MovementType.valueOf(value.toUpperCase()));
+Logger.getGlobal().info("Factory: "+factory);
                 } catch (IllegalArgumentException ex) {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse movement type").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse movement type").color(ChatColor.RED).create());
                 }
                 break;
             case "goaltype":
                 try {
-                    factory.withGoalType(GoalType.valueOf(value));
+                    factory.withGoalType(GoalType.valueOf(value.toUpperCase()));
                 } catch (IllegalArgumentException ex) {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse goal type").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse goal type").color(ChatColor.RED).create());
                 }
                 break;
             case "targetlocation":
                 try {
                     factory.withTargetLocation(parseLocation(((RealPlayer)player).getBukkitPlayer(), value));
                 } catch (IllegalArgumentException ex) {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse target location!").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse target location!").color(ChatColor.RED).create());
                 }
                 break;
             case "targetentity":
@@ -495,14 +547,14 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 if(target != null) {
                     factory.withTargetEntity(target);
                 } else {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Target entity not found!").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Target entity not found!").color(ChatColor.RED).create());
                 }
                 break;
             case "pitchcenter":
                 try {
                     factory.withHeadPitchCenter(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
                 } catch (IllegalArgumentException ex) {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse pitch center!").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse pitch center!").color(ChatColor.RED).create());
                 }
                 break;
             case "speechballoonlayout":
@@ -511,14 +563,14 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                     factory.withSpeechBalloonLayout(new SpeechBalloonLayout(SpeechBalloonLayout.Position.valueOf(split[0]),
                                                                             SpeechBalloonLayout.Width.valueOf(split[1])));
                 } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse speech balloon layout!").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse speech balloon layout!").color(ChatColor.RED).create());
                 }
                 break;
             case "mouth":
                 try {
                     factory.withMouth(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
                 } catch (IllegalArgumentException ex) {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse mouth position!").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse mouth position!").color(ChatColor.RED).create());
                 }
                 break;
             case "manualanimation":
@@ -528,11 +580,11 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 try {
                     factory.withHeadPoseDelay(Integer.parseInt(value));
                 } catch (NumberFormatException ex) {
-                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse integer for head pose delay!").create());
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse integer for head pose delay!").color(ChatColor.RED).create());
                 }
                 break;
             default:
-                sender.sendMessage(new ComponentBuilder("Property " + property +" could not be found.").create());
+                sender.sendMessage(new ComponentBuilder("Property " + property +" could not be found.").color(ChatColor.RED).create());
                 return 0;
         }
         sender.sendMessage(new ComponentBuilder(property + " set to " + value + ".").create());

@@ -65,7 +65,7 @@ public class BakedAnimationTree {
     public BakedAnimation getAnimation(BakedAnimationEntity entity) {
         String[] path = new String[] {
                 entity.getMovementType().name().toLowerCase(),
-                entity.getMovementSpeed().name().toLowerCase(),
+                entity.getMovementSpeedAnimation().name().toLowerCase(),
                 entity.getActionType().name().toLowerCase()
         };
         /*switch(entity.getMovementType()) {

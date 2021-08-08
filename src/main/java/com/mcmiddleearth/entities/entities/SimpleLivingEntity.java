@@ -2,6 +2,7 @@ package com.mcmiddleearth.entities.entities;
 
 import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
+import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.SimpleEntityAnimationPacket;
 import com.mcmiddleearth.entities.protocol.packets.SimpleEntityStatusPacket;
@@ -13,7 +14,7 @@ public class SimpleLivingEntity extends SimpleEntity {
 
     private ActionType animation = null;
 
-    public SimpleLivingEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException {
+    public SimpleLivingEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         super(entityId, factory);
         spawnPacket = new SimpleLivingEntitySpawnPacket(this);
         animationPacket = new SimpleEntityAnimationPacket(entityId);

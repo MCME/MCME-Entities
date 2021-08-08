@@ -58,7 +58,7 @@ Logger.getGlobal().info("Bone display name: "+line);
 
     @Override
     public void doTick() {
-//Logger.getGlobal().info("Set balloon loc: "+speaker.getLocation());
+Logger.getGlobal().info("Set balloon loc: "+speaker.getLocation());
         setLocation(speaker.getLocation());
         setRotation(speaker.getLocation().clone().setDirection(viewer.getLocation().toVector()
                                          .subtract(speaker.getLocation().toVector())).getYaw());
