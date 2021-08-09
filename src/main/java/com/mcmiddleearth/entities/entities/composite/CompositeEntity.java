@@ -3,6 +3,7 @@ package com.mcmiddleearth.entities.entities.composite;
 import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
+import com.mcmiddleearth.entities.entities.composite.bones.Bone;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.*;
@@ -26,9 +27,11 @@ public abstract class CompositeEntity extends VirtualEntity {
 
     private int headPoseDelay;
 
+    //private ActionType animation = null;
+
     //private boolean rotationUpdate;
-    private float currentYaw, currentPitch, currentHeadYaw;
-    private static final float maxRotationStep = 40f;
+    private float currentYaw, currentHeadPitch, currentHeadYaw;
+    protected float maxRotationStep = 40f;
 
     public CompositeEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         super(factory);
@@ -66,6 +69,23 @@ public abstract class CompositeEntity extends VirtualEntity {
         return super.getName();
     }
 
+/*    @Override
+    public void doTick() {
+        if(animation!=null) {
+            if (animation.equals(ActionType.HURT)) {
+                bones.forEach(bone -> {
+                    bone.getAnimationPacket().setAnimation(SimpleEntityAnimationPacket.AnimationType.TAKE_DAMAGE);
+                    getViewers().forEach(viewer -> {
+                        bone.getAnimationPacket().send(viewer);
+Logger.getGlobal().info("Sending animation: "+viewer.getName());
+                    });
+                });
+            }
+            animation = null;
+        }
+        super.doTick();
+    }*/
+
     @Override
     public void move() {
         checkHeadYaw();
@@ -93,23 +113,23 @@ public abstract class CompositeEntity extends VirtualEntity {
         bones.forEach(Bone::resetUpdateFlags);
     }
 
-    private void updateBodyBones() {
-        currentYaw = turn(currentYaw,getLocation().getYaw());
+    protected void updateBodyBones() {
+        currentYaw = turn(currentYaw,getLocation().getYaw(),maxRotationStep);
         bones.stream().filter(bone->!bone.isHeadBone()).forEach(bone-> {
             bone.setRotation(currentYaw);
         });
     }
 
     private void updateHeadBones() {
-        currentHeadYaw = turn(currentHeadYaw, getHeadYaw());
-        currentPitch = turn(currentPitch,getLocation().getPitch());
+        currentHeadYaw = turn(currentHeadYaw, getHeadYaw(),maxRotationStep);
+        currentHeadPitch = turn(currentHeadPitch,getLocation().getPitch(),maxRotationStep);
         bones.stream().filter(Bone::isHeadBone).forEach(bone-> {
             bone.setRotation(currentHeadYaw);
-            bone.setPitch(currentPitch);
+            bone.setPitch(currentHeadPitch);
         });
     }
 
-    private float turn(float currentAngle, float aimAngle) {
+    protected float turn(float currentAngle, float aimAngle, float maxStep) {
         float diff = aimAngle - currentAngle;
         while(diff < -180) {
             diff += 360;
@@ -117,12 +137,12 @@ public abstract class CompositeEntity extends VirtualEntity {
         while(diff > 180) {
             diff -= 360;
         }
-        if(Math.abs(diff)<maxRotationStep) {
+        if(Math.abs(diff)<maxStep) {
             return aimAngle;
         } else if(diff<0) {
-            return currentAngle - maxRotationStep;
+            return currentAngle - maxStep;
         } else {
-            return currentAngle + maxRotationStep;
+            return currentAngle + maxStep;
         }
     }
 
@@ -134,17 +154,18 @@ public abstract class CompositeEntity extends VirtualEntity {
         while(diff > 180) {
             diff -= 360;
         }
-        if(diff > 90) {
-            setHeadRotation(getLocation().getYaw()+90f,getLocation().getPitch());
+        float maxYaw = Math.min(90, 180 - 2 * Math.abs(getLocation().getPitch()));
+        if(diff > maxYaw) {//90) {
+            setHeadRotation(getLocation().getYaw()+maxYaw/*90f*/,getLocation().getPitch());
         }
         else if(diff < -90) {
-            setHeadRotation(getLocation().getYaw() - 90f, getLocation().getPitch());
+            setHeadRotation(getLocation().getYaw() - maxYaw/*90f*/, getLocation().getPitch());
         }
     }
 
     @Override
     public boolean hasLookUpdate() {
-        return currentPitch != getLocation().getPitch() || currentHeadYaw != getHeadYaw();
+        return currentHeadPitch != getLocation().getPitch() || currentHeadYaw != getHeadYaw();
     }
 
     @Override
@@ -206,4 +227,11 @@ public abstract class CompositeEntity extends VirtualEntity {
     public boolean hasId(int entityId) {
         return this.firstEntityId <= entityId && this.firstEntityId+getEntityQuantity() > entityId;
     }
+
+    /*@Override
+    public void playAnimation(ActionType type) {
+        this.animation = type;
+    }*/
+
+
 }

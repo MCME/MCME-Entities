@@ -7,8 +7,8 @@ import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloonEntity;
+import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.events.McmeEntityDamagedEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityDeathEvent;
 import com.mcmiddleearth.entities.events.events.goal.GoalChangedEvent;
@@ -27,7 +27,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
@@ -99,7 +98,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private Set<McmeEntity> attackers = new HashSet<>();
 
-    private Map<Player,SpeechBalloon> speechBallons = new HashMap<>();
+    private Map<Player, SpeechBalloonEntity> speechBallons = new HashMap<>();
     //private String[] speech;
     private boolean isTalking;
     private int speechCounter;
@@ -401,7 +400,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     public synchronized void removeViewer(Player player) {
         removePacket.send(player);
         viewers.remove(player);
-        SpeechBalloon balloon = speechBallons.get(player);
+        SpeechBalloonEntity balloon = speechBallons.get(player);
         if(balloon != null) {
             speechBallons.remove(player);
             EntitiesPlugin.getEntityServer().removeEntity(balloon);
@@ -463,7 +462,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         double length = 0.2+damage*knockBackFactor*knockBackPerDamage;
         Vector normal = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize();
         Vector knockBack = normal.multiply(-length).add(new Vector(0,length*2,0));
-        setMovementType(MovementType.FALLING);
+        if(isOnGround()) {
+            setMovementType(MovementType.FALLING);
+        }
         actionType = ActionType.HURT;
         hurtCoolDown = 10;
 //Logger.getGlobal().info("Set Velocity: "+ knockBack.getX()+" "+knockBack.getY()+" "+knockBack.getZ());
@@ -548,7 +549,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private void createSpeechBalloon(Player viewer) {
         try {
-            SpeechBalloon balloon = EntitiesPlugin.getEntityServer().spawnSpeechBalloon(this, viewer, currentSpeechBalloonLayout);
+            SpeechBalloonEntity balloon = EntitiesPlugin.getEntityServer().spawnSpeechBalloon(this, viewer, currentSpeechBalloonLayout);
             speechBallons.put(viewer,balloon);
         } catch (InvalidLocationException e) {
             e.printStackTrace();
@@ -581,6 +582,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         return this.getEntityId() == entityId;
     }
 
+    public boolean isOnGround() {
+        return movementType.equals(MovementType.SNEAKING)
+                || movementType.equals(MovementType.UPRIGHT);
+    }
     /*Location loc;
     public void _test_spawn_(Player player) {
         PacketContainer spawn = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);

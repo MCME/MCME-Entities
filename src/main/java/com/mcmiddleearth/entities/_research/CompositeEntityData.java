@@ -1,5 +1,6 @@
-package com.mcmiddleearth.entities.entities.composite;
+package com.mcmiddleearth.entities._research;
 
+import com.mcmiddleearth.entities._research.CompositeEntityBoneData;
 import org.bukkit.Location;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;

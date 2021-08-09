@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.entities.composite;
+package com.mcmiddleearth.entities._research;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

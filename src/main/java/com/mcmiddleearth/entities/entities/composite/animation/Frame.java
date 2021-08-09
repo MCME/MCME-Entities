@@ -3,13 +3,12 @@ package com.mcmiddleearth.entities.entities.composite.animation;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
-import com.mcmiddleearth.entities.entities.composite.Bone;
+import com.mcmiddleearth.entities.entities.composite.bones.Bone;
 import org.bukkit.Material;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class Frame {
 

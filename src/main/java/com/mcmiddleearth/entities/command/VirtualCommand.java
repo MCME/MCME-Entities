@@ -18,7 +18,7 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import net.md_5.bungee.api.ChatColor;
@@ -33,7 +33,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import sun.rmi.runtime.Log;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -252,6 +251,11 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
         if(factory.getLocation()==null)
         {
             factory.useEntityForSpawnLocation(player);
+        }
+        if(factory.getTargetLocation()==null) {
+            factory.withTargetLocation(player.getSelectedPoints().stream()
+                                       .findFirst().orElse(new Location(player.getLocation().getWorld(),
+                                                                        0,0,0)));
         }
         if(player.getSelectedTargetEntity()!=null)
         {
@@ -523,7 +527,7 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
             case "movementtype":
                 try {
                     factory.withMovementType(MovementType.valueOf(value.toUpperCase()));
-Logger.getGlobal().info("Factory: "+factory);
+//Logger.getGlobal().info("Factory: "+factory);
                 } catch (IllegalArgumentException ex) {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse movement type").color(ChatColor.RED).create());
                 }
@@ -550,7 +554,7 @@ Logger.getGlobal().info("Factory: "+factory);
                     sender.sendMessage(new ComponentBuilder("Invalid input! Target entity not found!").color(ChatColor.RED).create());
                 }
                 break;
-            case "pitchcenter":
+            case "headpitchcenter":
                 try {
                     factory.withHeadPitchCenter(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
                 } catch (IllegalArgumentException ex) {

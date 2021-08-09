@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.entities.composite;
+package com.mcmiddleearth.entities.entities.composite.bones;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
@@ -7,6 +7,7 @@ import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.api.McmeEntityType;
+import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
 import com.mcmiddleearth.entities.protocol.packets.*;
 import com.mcmiddleearth.entities.util.RotationMatrix;
 import com.mcmiddleearth.entities.util.UuidGenerator;
@@ -14,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import sun.rmi.runtime.Log;
 
 import java.util.Set;
 import java.util.UUID;
@@ -46,6 +48,7 @@ public class Bone implements McmeEntity {
     private final AbstractPacket metaPacket;
     private final AbstractPacket initPacket;
     private final AbstractPacket namePacket;
+    private final SimpleEntityAnimationPacket animationPacket;
 
     private String displayName;
 
@@ -84,10 +87,12 @@ public class Bone implements McmeEntity {
 //Logger.getGlobal().info("meta packet: "+(System.currentTimeMillis()-start));
         namePacket = new DisplayNamePacket(this.entityId);
 //Logger.getGlobal().info("name packet: "+(System.currentTimeMillis()-start));
+        animationPacket = new SimpleEntityAnimationPacket(this.entityId);
     }
 
     @Override
-    public void doTick() {}
+    public void doTick() {
+    }
 
     public void move() {
 //Logger.getGlobal().info("move bone to: "+getLocation());
@@ -100,6 +105,7 @@ public class Bone implements McmeEntity {
 //Logger.getGlobal().info("Pitch: "+name+" "+relativePosition.toString());
             //Vector pitchCenter = new Vector(0,0,0.3);
             //currentYaw = turn(currentYaw, yaw);
+//Logger.getGlobal().info("headpitchcenter: "+parent.getHeadPitchCenter());
              Vector newRelativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
                     .fastRotateX(relativePosition.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter()),-yaw);
             shift = newRelativePositionRotated.clone().subtract(this.relativePositionRotated);
@@ -115,7 +121,7 @@ public class Bone implements McmeEntity {
     }
 
     public void teleport() {
-Logger.getGlobal().info("Teleport bone!");
+//Logger.getGlobal().info("Teleport bone!");
         if(hasHeadPoseUpdate) {
             //currentYaw = yaw;
             //currentPitch = pitch;
@@ -170,6 +176,8 @@ Logger.getGlobal().info("Teleport bone!");
     public AbstractPacket getInitPacket() {
         return initPacket;
     }
+
+    public SimpleEntityAnimationPacket getAnimationPacket() { return animationPacket; }
 
     public boolean isHeadBone() {
         return isHeadBone;
@@ -327,11 +335,6 @@ Logger.getGlobal().info("Teleport bone!");
     }
 
     @Override
-    public void playAnimation(ActionType type) {
-
-    }
-
-    @Override
     public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor) {
 
     }
@@ -349,6 +352,11 @@ Logger.getGlobal().info("Teleport bone!");
     @Override
     public boolean isTerminated() {
         return parent.isTerminated();
+    }
+
+    @Override
+    public void playAnimation(ActionType type) {
+
     }
 
     public void setDisplayName(String displayName) {

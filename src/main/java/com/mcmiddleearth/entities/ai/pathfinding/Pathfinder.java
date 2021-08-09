@@ -10,4 +10,5 @@ public interface Pathfinder {
 
     Vector getTarget();
 
+    boolean isDirectWayClear(Vector target);
 }

@@ -4,6 +4,9 @@ import com.google.common.base.Joiner;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.api.McmeEntityType;
+import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloon;
+import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.entities.composite.bones.Bone;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,7 +15,7 @@ import org.bukkit.util.Vector;
 
 import java.util.logging.Logger;
 
-public class SpeechBalloon extends CompositeEntity {
+public class SpeechBalloonEntity extends CompositeEntity {
 
     private final McmeEntity speaker;
 
@@ -20,7 +23,7 @@ public class SpeechBalloon extends CompositeEntity {
 
     private final static double armorStandNameHeight = 2.3;
 
-    public SpeechBalloon(int entityId, McmeEntity speaker, Player viewer, SpeechBalloonLayout layout) {
+    public SpeechBalloonEntity(int entityId, McmeEntity speaker, Player viewer, SpeechBalloonLayout layout) {
         super(entityId, new McmeEntityType(McmeEntityType.CustomEntityType.SPEECH_BALLOON),speaker.getLocation());
         this.speaker = speaker;
         layout.layout();
@@ -34,7 +37,7 @@ Logger.getGlobal().info("Create Speech Balloon, viewer: "+viewer.getName()+" mes
             meta.setCustomModelData(layout.getBalloonModelData()/*1*/);
 Logger.getGlobal().info("BAlloon data: "+layout.getBalloonModelData());
             item.setItemMeta(meta);
-            Bone bone = new Balloon("balloon", this, new EulerAngle(0,
+            Bone bone = new SpeechBalloon("balloon", this, new EulerAngle(0,
                                                                    (layout.getPosition().equals(SpeechBalloonLayout.Position.LEFT)?180:0),
                                                                  0),
                     new Vector(speaker.getMouth().getX()+layout.getLayoutOffset().getX(),

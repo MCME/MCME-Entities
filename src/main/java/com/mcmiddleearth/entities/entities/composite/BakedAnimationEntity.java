@@ -109,7 +109,7 @@ public class BakedAnimationEntity extends CompositeEntity {
                 && (movementSpeedAnimation.equals(MovementSpeed.WALK) || movementSpeedAnimation.equals(MovementSpeed.SPRINT)
                 || movementSpeedAnimation.equals(MovementSpeed.SLOW))) {
             stopMovementCounter++;
-            if(stopMovementCounter>2) {
+            if(stopMovementCounter>3) {
                 movementSpeedAnimation = getMovementSpeed();
                 stopMovementCounter = 0;
             }

@@ -6,7 +6,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.mcmiddleearth.entities.entities.composite.Bone;
+import com.mcmiddleearth.entities.entities.composite.bones.Bone;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

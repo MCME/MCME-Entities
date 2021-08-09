@@ -22,12 +22,10 @@ public class GoalEntityTargetFollow extends GoalEntityTarget {
 //Logger.getGlobal().info("delete path as entity is close.");
             EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(),this));
             setIsMoving(false);//deletePath();
-            movementSpeed = MovementSpeed.STAND;
             setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
                                                          .subtract(getEntity().getLocation().toVector())).getYaw());
         } else {
             setIsMoving(true);
-            movementSpeed = MovementSpeed.WALK;
         }
     }
 

@@ -5,8 +5,8 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloonEntity;
+import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 import com.mcmiddleearth.entities.events.listener.McmeEventListener;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
@@ -56,8 +56,8 @@ public interface EntityServer {
 
     public void handleEvent(McmeEntityEvent event);
 
-    SpeechBalloon spawnSpeechBalloon(VirtualEntity virtualEntity, Player viewer,
-                                     SpeechBalloonLayout layout) throws InvalidLocationException;
+    SpeechBalloonEntity spawnSpeechBalloon(VirtualEntity virtualEntity, Player viewer,
+                                           SpeechBalloonLayout layout) throws InvalidLocationException;
 
     //public boolean isPassable(int x, int y, int z);
     public Collection<RealPlayer> getMcmePlayers();

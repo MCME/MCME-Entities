@@ -29,7 +29,9 @@ public class GoalEntityTargetAttack extends GoalEntityTarget {
 //Logger.getGlobal().info("Cooldown: "+getEntity().getAttackCoolDown());
             //if(getEntity().getAttackCoolDown()==0) {
 //Logger.getGlobal().info("ATTACK");
+            if(!isFinished()) {
                 getEntity().attack(target);
+            }
             //}
         } else {
             setIsMoving(true);

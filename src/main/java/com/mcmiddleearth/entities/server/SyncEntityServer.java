@@ -6,8 +6,8 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloon;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.entities.composite.SpeechBalloonEntity;
+import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.Cancelable;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityRemoveEvent;
@@ -130,7 +130,7 @@ Logger.getGlobal().info("Start new server task");
     @Override
     public void removeEntity(Entity entity) {
 //Logger.getGlobal().info("Server: remove Entity");
-        if(!(entity instanceof SpeechBalloon)) {
+        if(!(entity instanceof SpeechBalloonEntity)) {
             handleEvent(new McmeEntityRemoveEvent((McmeEntity) entity));
         }
         if(entity instanceof VirtualEntity) {
@@ -142,9 +142,9 @@ Logger.getGlobal().info("Start new server task");
     }
 
     @Override
-    public SpeechBalloon spawnSpeechBalloon(VirtualEntity speaker, Player viewer,
-                                            SpeechBalloonLayout layout) throws InvalidLocationException {
-        SpeechBalloon balloon =  new SpeechBalloon(lastEntityId+1, speaker, viewer, layout);
+    public SpeechBalloonEntity spawnSpeechBalloon(VirtualEntity speaker, Player viewer,
+                                                  SpeechBalloonLayout layout) throws InvalidLocationException {
+        SpeechBalloonEntity balloon =  new SpeechBalloonEntity(lastEntityId+1, speaker, viewer, layout);
         lastEntityId += balloon.getEntityQuantity();
         entityProvider.addEntity(balloon);
         return balloon;

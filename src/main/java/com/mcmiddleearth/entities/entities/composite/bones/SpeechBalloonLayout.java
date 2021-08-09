@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.entities.composite;
+package com.mcmiddleearth.entities.entities.composite.bones;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.util.ConfigurationUtil;

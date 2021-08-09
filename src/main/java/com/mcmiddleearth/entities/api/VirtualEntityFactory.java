@@ -6,10 +6,9 @@ import com.mcmiddleearth.entities.entities.*;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
-import com.mcmiddleearth.entities.entities.composite.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
-import com.mcmiddleearth.entities.util.Constrain;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -53,7 +52,7 @@ public class VirtualEntityFactory {
 
     private McmeEntity targetEntity;
 
-    private Vector headPitchCenter = new Vector(0,0,0);
+    private Vector headPitchCenter = new Vector(0,0.1,-0.03);
 
     private SpeechBalloonLayout speechBalloonLayout = new SpeechBalloonLayout(SpeechBalloonLayout.Position.RIGHT,
                                                                               SpeechBalloonLayout.Width.OPTIMAL);
@@ -138,6 +137,10 @@ public class VirtualEntityFactory {
     public VirtualEntityFactory withTargetLocation(Location target) {
         this.targetLocation = target;
         return this;
+    }
+
+    public Location getTargetLocation() {
+        return targetLocation;
     }
 
     public VirtualEntityFactory withTargetEntity(McmeEntity target) {

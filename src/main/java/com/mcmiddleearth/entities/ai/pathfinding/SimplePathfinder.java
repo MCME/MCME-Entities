@@ -22,4 +22,9 @@ public class SimplePathfinder implements Pathfinder {
     public Vector getTarget() {
         return target;
     }
+
+    @Override
+    public boolean isDirectWayClear(Vector target) {
+        return true;
+    }
 }

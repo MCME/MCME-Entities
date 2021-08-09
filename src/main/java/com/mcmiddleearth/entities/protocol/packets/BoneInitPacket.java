@@ -1,7 +1,7 @@
 package com.mcmiddleearth.entities.protocol.packets;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.mcmiddleearth.entities.entities.composite.Bone;
+import com.mcmiddleearth.entities.entities.composite.bones.Bone;
 import org.bukkit.entity.Player;
 
 public class BoneInitPacket extends BoneMetaPacket {

@@ -1,9 +1,11 @@
 package com.mcmiddleearth.entities.ai.pathfinding;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.ai.movement.RayTracer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.provider.BlockProvider;
 import org.bukkit.block.BlockFace;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.util.logging.Logger;
@@ -16,7 +18,7 @@ public class WalkingPathfinder implements Pathfinder{
 
     private Vector target;
 
-    private int maxPathLength = 50;
+    private int maxPathLength = 51; //needs to be odd number to avoid moving for and back between blocks when target not reachable
 
     private PathMarker leaveWall, current;
     private int leaveWallIndex = -1;
@@ -68,6 +70,9 @@ public class WalkingPathfinder implements Pathfinder{
 //path.getPoints().forEach(vector -> {
 //    System.out.println("x: " + vector.getBlockX() + " y: " + vector.getBlockY() + " z: " + vector.getBlockZ());}
 //);
+            if(path.isComplete()) {
+                path.addPoint(target);
+            }
             return path;
         } else {
             return null;
@@ -323,4 +328,63 @@ Logger.getGlobal().info("step: "+(step < maxPathLength) + "not complete: "+ !pat
             return "x: "+point.getX()+" y: "+point.getY()+" z: "+point.getZ();
         }
     }
+
+    @Override
+    public boolean isDirectWayClear(Vector target) {
+        Vector targetDirection = target.clone().subtract(entity.getLocation().toVector());
+//Logger.getGlobal().info("entity: "+getEntity().getLocation());
+//Logger.getGlobal().info("target: "+target);
+//Logger.getGlobal().info("Trace Vector: "+targetDirection);
+        RayTracer<Double> tracer = new RayTracer<>(entity.getLocation().toVector(),targetDirection,
+                (x,y,z) -> EntitiesPlugin.getEntityServer().getBlockProvider(entity.getLocation().getWorld().getUID())
+                        .blockTopY(x,y,z,entity.getJumpHeight()+1));
+        BoundingBox boundingBox = entity.getBoundingBox().getBoundingBox();
+//Logger.getGlobal().info("BB: min: "+boundingBox.getMin()+" max: "+boundingBox.getMax());
+        int jumpHeight = entity.getJumpHeight();
+        tracer.addRay(new Vector(boundingBox.getMinX(),boundingBox.getMinY(),boundingBox.getMinZ()));
+        tracer.addRay(new Vector(boundingBox.getMinX(),boundingBox.getMinY(),boundingBox.getMaxZ()));
+        tracer.addRay(new Vector(boundingBox.getMaxX(),boundingBox.getMinY(),boundingBox.getMinZ()));
+        tracer.addRay(new Vector(boundingBox.getMaxX(),boundingBox.getMinY(),boundingBox.getMaxZ()));
+        tracer.addRay(new Vector(boundingBox.getMinX(),boundingBox.getMaxY(),boundingBox.getMinZ()));
+        tracer.addRay(new Vector(boundingBox.getMinX(),boundingBox.getMaxY(),boundingBox.getMaxZ()));
+        tracer.addRay(new Vector(boundingBox.getMaxX(),boundingBox.getMaxY(),boundingBox.getMinZ()));
+        tracer.addRay(new Vector(boundingBox.getMaxX(),boundingBox.getMaxY(),boundingBox.getMaxZ()));
+        //tracer.trace();
+        tracer.initTrace();
+//Logger.getGlobal().info("Tracer: first "+tracer.first()+" last "+ tracer.last() + " stepX: "+tracer.stepX()+" stepZ: "+tracer.stepZ());
+        int i = tracer.first();
+        do {
+//Logger.getGlobal().info("trace step");
+            tracer.traceStep();
+            RayTracer<Double>.RayTraceResultColumn current = tracer.current();//get(i);
+            RayTracer<Double>.RayTraceResultColumn next = tracer.next();//get(i+1);
+//Logger.getGlobal().info("Current: x: "+current.getBlockX()+" first: "+current.first()+" last: "+ current.last());
+            int j = current.first();
+            do {
+/*if(current.hasNext(j)) {
+    Logger.getGlobal().info("compare: z: " + j+":  "+ current.get(j) + " - " + current.getNext(j));
+}
+if(next != null && next.has(j)) {
+    Logger.getGlobal().info("                              next: "+next.get(j)+" - "+current.get(j));
+}*/
+                if((current.hasNext(j) && current.getNext(j)-current.get(j)>jumpHeight)
+                        || (next!=null && (next.has(j) && next.get(j)-current.get(j) > jumpHeight))) {
+                    return false;
+                }
+                if(j != current.last()) {
+                    j += tracer.stepZ();
+                } else {
+                    break;
+                }
+            } while(true);
+            if(i != tracer.last()) {
+                i += tracer.stepX();
+            } else {
+                break;
+            }
+        } while(true);
+        return true;
+    }
+
+
 }

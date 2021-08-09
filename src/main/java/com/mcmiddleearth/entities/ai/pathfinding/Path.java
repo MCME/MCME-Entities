@@ -1,5 +1,6 @@
 package com.mcmiddleearth.entities.ai.pathfinding;
 
+import com.google.common.base.Joiner;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -149,6 +150,13 @@ public class Path {
         return to.getBlockY() - from.getBlockY() <= jumpHeight && from.getBlockY()-to.getBlockY() <= fallDepth
               && ((from.getBlockX() == to.getBlockX() && from.getBlockZ() <= to.getBlockZ()+1 && from.getBlockZ() >= to.getBlockZ()-1)
                 || (from.getBlockZ() == to.getBlockZ() && from.getBlockX() <= to.getBlockX()+1 && from.getBlockX() >= to.getBlockX()-1));
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        ordered.forEach(point -> builder.append(point.toString()).append("\n"));
+        return builder.toString();
     }
 
 

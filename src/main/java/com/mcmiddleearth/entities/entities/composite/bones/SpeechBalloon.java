@@ -1,19 +1,20 @@
-package com.mcmiddleearth.entities.entities.composite;
+package com.mcmiddleearth.entities.entities.composite.bones;
 
-import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.composite.bones.Bone;
+import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-public class Balloon extends Bone{
+public class SpeechBalloon extends Bone {
 
     private final Player viewer;
 
     private float yaw;
 
-    public Balloon(String name, CompositeEntity parent, EulerAngle headPose, Vector relativePosition, ItemStack headItem, Player viewer) {
+    public SpeechBalloon(String name, CompositeEntity parent, EulerAngle headPose, Vector relativePosition, ItemStack headItem, Player viewer) {
         super(name, parent, headPose, relativePosition, headItem, false, 0);
         this.viewer = viewer;
     }
