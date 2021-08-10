@@ -64,7 +64,7 @@ public class SimpleEntityMovePacket extends AbstractPacket {
             case STAND:
             case MOVE_LOOK:
                 dir = getShift();
-                byte yaw = getAngle(entity.getRotation());
+                byte yaw = getAngle(entity.getYaw());
                 byte pitch = getAngle(entity.getLocation().getPitch());
 //Logger.getGlobal().info("write packet: "+yaw+" "+pitch+" head: "+getAngle(entity.getLocation().getYaw()));
                 moveLook.getShorts()
@@ -108,6 +108,9 @@ public class SimpleEntityMovePacket extends AbstractPacket {
     }
 
     private Vector getShift() {
+/*if(entity.getName().equals("bone4")) {
+    Logger.getGlobal().info("Packet velo: "+entity.getVelocity());
+}*/
         return entity.getVelocity().clone().multiply(32*128);
     }
 

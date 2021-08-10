@@ -11,6 +11,7 @@ public enum GoalType {
 //    WALK,
 //    FLY,
     FOLLOW_CHECKPOINTS,
+    FOLLOW_CHECKPOINTS_WINGED,
     RANDOM_CHECKPOINTS,
     GOTO_LOCATION;
 }

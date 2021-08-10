@@ -51,4 +51,19 @@ public class GoalHoldPosition extends GoalVirtualEntity {
         addHeadGoal(new HeadGoalStare(yaw,pitch));
     }
 
+    @Override
+    public float getYaw() {
+        return yaw;
+    }
+
+    @Override
+    public float getPitch() {
+        return pitch;
+    }
+
+    @Override
+    public float getRoll() {
+        return 0;
+    }
+
 }

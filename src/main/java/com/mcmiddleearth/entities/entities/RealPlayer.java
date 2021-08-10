@@ -54,7 +54,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     }
 
     @Override
-    public float getRotation() {
+    public float getYaw() {
         return 0;
     }
 
@@ -227,5 +227,25 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     @Override
     public ActionType getActionType() {
         return null;
+    }
+
+    @Override
+    public float getPitch() {
+        return 0;
+    }
+
+    @Override
+    public float getRoll() {
+        return 0;
+    }
+
+    @Override
+    public float getHeadPitch() {
+        return 0;
+    }
+
+    @Override
+    public void setRotation(float yaw, float pitch, float roll) {
+
     }
 }

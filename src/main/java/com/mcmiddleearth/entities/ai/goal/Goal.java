@@ -27,5 +27,7 @@ public interface Goal {
 
     float getHeadPitch();
 
-    float getRotation();
+    float getYaw();
+    float getPitch();
+    float getRoll();
 }

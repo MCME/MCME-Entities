@@ -64,4 +64,22 @@ public class GoalWatchEntity extends GoalVirtualEntity {
         addHeadGoal(new HeadGoalWatch(target,getEntity()));
     }
 
+    @Override
+    public float getYaw() {
+        return getEntity().getLocation().clone()
+                .setDirection(target.getLocation().toVector().subtract(getEntity().getLocation().toVector()))
+                .getYaw();
+    }
+
+    @Override
+    public float getPitch() {
+        return getEntity().getLocation().clone()
+                .setDirection(target.getLocation().toVector().subtract(getEntity().getLocation().toVector()))
+                .getPitch();
+    }
+
+    @Override
+    public float getRoll() {
+        return 0;
+    }
 }

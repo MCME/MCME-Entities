@@ -21,19 +21,19 @@ import java.util.UUID;
 
 public class BoneTwoAxis extends Bone {//implements McmeEntity {
 
-    private final String name;
+    /*private final String name;
 
     private final int entityId;
 
     protected final CompositeEntity parent;
 
     protected Vector relativePosition, relativePositionRotated, velocity;
-    private EulerAngle headPose, rotatedHeadPose;
-    private float yaw, pitch;
+    private EulerAngle headPose, rotatedHeadPose;*/
+    protected float /*yaw,*/ pitch;
 
     //private float rotation;
 
-    private ItemStack headItem;
+    /*private ItemStack headItem;
 
     private final UUID uniqueId;
 
@@ -50,12 +50,14 @@ public class BoneTwoAxis extends Bone {//implements McmeEntity {
 
     private String displayName;
 
-    private boolean isHeadBone;
+    private boolean isHeadBone;*/
 
     public BoneTwoAxis(String name, CompositeEntity parent, EulerAngle headPose,
                        Vector relativePosition, ItemStack headItem, boolean isHeadBone, int headPoseDelay) {
 //long start = System.currentTimeMillis();
-        this.name = name;
+        super(name,parent,headPose, relativePosition,headItem, isHeadBone, headPoseDelay);
+        pitch = 0;
+        /*this.name = name;
         this.isHeadBone = isHeadBone;
         uniqueId = UuidGenerator.fast_nullUUID();//UuidGenerator.getRandomV2();
 //Logger.getGlobal().info("UUID: "+(System.currentTimeMillis()-start));
@@ -85,7 +87,7 @@ public class BoneTwoAxis extends Bone {//implements McmeEntity {
 //Logger.getGlobal().info("meta packet: "+(System.currentTimeMillis()-start));
         namePacket = new DisplayNamePacket(this.entityId);
 //Logger.getGlobal().info("name packet: "+(System.currentTimeMillis()-start));
-        animationPacket = new SimpleEntityAnimationPacket(this.entityId);
+        animationPacket = new SimpleEntityAnimationPacket(this.entityId);*/
     }
 
     @Override
@@ -104,8 +106,14 @@ public class BoneTwoAxis extends Bone {//implements McmeEntity {
             //Vector pitchCenter = new Vector(0,0,0.3);
             //currentYaw = turn(currentYaw, yaw);
 //Logger.getGlobal().info("headpitchcenter: "+parent.getHeadPitchCenter());
-             Vector newRelativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
-                    .fastRotateX(relativePosition.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter()),-yaw);
+            Vector newRelativePositionRotated;
+            if(isHeadBone()) {
+                newRelativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
+                        .fastRotateX(relativePosition.clone().subtract(parent.getHeadPitchCenter()), pitch).add(parent.getHeadPitchCenter()), -yaw);
+            } else {
+                newRelativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
+                        .fastRotateX(relativePosition, pitch), -yaw);
+            }
             shift = newRelativePositionRotated.clone().subtract(this.relativePositionRotated);
             relativePositionRotated = newRelativePositionRotated;
         } else {
@@ -125,24 +133,35 @@ public class BoneTwoAxis extends Bone {//implements McmeEntity {
             //currentPitch = pitch;
             rotatedHeadPose = RotationMatrix.rotateXEulerAngleDegree(headPose, pitch);
         }
-        relativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
-                    .fastRotateX(relativePosition.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter()),-yaw);
+        if(isHeadBone()) {
+            relativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
+                    .fastRotateX(relativePosition.clone().subtract(parent.getHeadPitchCenter()), pitch).add(parent.getHeadPitchCenter()), -yaw);
+        } else {
+            relativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
+                    .fastRotateX(relativePosition, pitch), -yaw);
+        }
     }
 
-    public void resetUpdateFlags() {
+    public void setPitch(float pitch) {
+        this.pitch = pitch;
+        rotationUpdate = true;
+        hasHeadPoseUpdate = true;
+    }
+
+    //public void resetUpdateFlags() {
         /*if(currentYaw == yaw) {
             if(currentPitch == pitch) {
                 hasHeadPitchUpdate = false;
             }
             rotationUpdate = false;
         }*/
-        hasHeadPoseUpdate = false;
+    /*    hasHeadPoseUpdate = false;
         rotationUpdate = false;
         hasItemUpdate = false;
         //rotationUpdate = false;
-    }
+    }*/
 
-    public ItemStack getHeadItem() {
+    /*public ItemStack getHeadItem() {
         return headItem;
     }
 
@@ -257,11 +276,11 @@ public class BoneTwoAxis extends Bone {//implements McmeEntity {
     /*@Override
     public boolean onGround() {
         return false;
-    }**/
+    }
 
     @Override
     public float getRotation() {
-        return /*parent.getRotation()+ */ yaw;
+        return /*parent.getRotation()+ *_/ yaw;
     }
 
     @Override
@@ -271,15 +290,9 @@ public class BoneTwoAxis extends Bone {//implements McmeEntity {
     public  void setRotation(float yaw) {
         this.yaw = yaw;//-parent.getRotation();
         rotationUpdate = true;
-    }
+    }*/
 
-    public void setPitch(float pitch) {
-        this.pitch = pitch;
-        rotationUpdate = true;
-        hasHeadPoseUpdate = true;
-    }
-
-    @Override
+    /*@Override
     public EntityBoundingBox getBoundingBox() {
         return null;
     }
@@ -393,6 +406,6 @@ public class BoneTwoAxis extends Bone {//implements McmeEntity {
     @Override
     public ActionType getActionType() {
         return ActionType.IDLE;
-    }
+    }*/
 
 }

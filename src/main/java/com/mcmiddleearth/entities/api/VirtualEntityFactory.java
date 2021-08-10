@@ -6,6 +6,7 @@ import com.mcmiddleearth.entities.entities.*;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
+import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
@@ -299,6 +300,8 @@ public class VirtualEntityFactory {
             switch(type.getCustomType()) {
                 case BAKED_ANIMATION:
                     return new BakedAnimationEntity(entityId, this);
+                case WINGED_FLIGHT:
+                    return new WingedFlightEntity(entityId, this);
                 default:
                     throw new RuntimeException("EntityType not implemented");
             }

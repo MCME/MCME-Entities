@@ -39,8 +39,10 @@ public abstract class GoalVirtualEntity implements Goal {
         updateRandom = random.nextInt(updateInterval);
     }
 
+    @Override
     public abstract Vector getDirection();
 
+    @Override
     public abstract boolean hasRotation();
 
     public abstract float getRotation();
@@ -57,6 +59,7 @@ public abstract class GoalVirtualEntity implements Goal {
         }
     }
 
+    @Override
     public float getHeadPitch() {
         if(currentHeadGoal!=null) {
             return currentHeadGoal.getHeadPitch();
@@ -65,12 +68,14 @@ public abstract class GoalVirtualEntity implements Goal {
         }
     }
 
+    @Override
     public void update(){
         if(currentHeadGoal==null || headGoals.size()>1 && headGoalTicks > currentHeadGoal.getDuration()*currentDurationFactor) {
             setRandomHeadGoal();
         }
     }
 
+    @Override
     public void doTick(){
         if(currentHeadGoal!=null) {
             currentHeadGoal.doTick();
@@ -139,6 +144,7 @@ public abstract class GoalVirtualEntity implements Goal {
         this.updateInterval = updateInterval;
     }
 
+    @Override
     public int getUpdateRandom() {
         return updateRandom;
     }

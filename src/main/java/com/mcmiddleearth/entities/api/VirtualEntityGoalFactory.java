@@ -103,6 +103,11 @@ public class VirtualEntityGoalFactory {
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
                 goal = new GoalLocationTargetFollowCheckpoints(goalType,entity,pathfinder,checkpoints,loop);
                 break;
+            case FOLLOW_CHECKPOINTS_WINGED:
+                Constrain.checkCheckpoints(checkpoints);
+                Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
+                goal = new GoalLocationTargetFollowCheckpointsWingedFlight(goalType,entity,pathfinder,checkpoints,loop);
+                break;
             case RANDOM_CHECKPOINTS:
                 Constrain.checkCheckpoints(checkpoints);
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());

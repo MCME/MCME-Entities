@@ -65,11 +65,16 @@ public interface Entity {
 
     public int getEntityId();
 
-    public float getRotation();
+    public float getYaw();
+    public float getPitch();
+    public float getRoll();
 
     public float getHeadYaw();
+    public float getHeadPitch();
 
     public void setRotation(float yaw);
+
+    public void setRotation(float yaw, float pitch, float roll);
 
     public EntityBoundingBox getBoundingBox();
 

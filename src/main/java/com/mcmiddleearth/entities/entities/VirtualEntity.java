@@ -163,7 +163,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 movementEngine.calculateMovement(goal.getDirection());
                 if(goal.hasRotation()) {
 //Logger.getGlobal().info("rotation: "+ goal.getRotation());
-                    setRotation(goal.getRotation());
+                    setRotation(goal.getYaw(),goal.getPitch(),goal.getRoll());
                 }
                 if(goal.hasHeadRotation()) {
 //Logger.getGlobal().info("head rotation: "+ goal.getHeadYaw()+" "+goal.getHeadPitch());
@@ -264,8 +264,29 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     @Override
-    public float getRotation() {
+    public void setRotation(float yaw, float pitch, float roll) {
+        location.setPitch(pitch);
+        setRotation(yaw);
+    }
+
+    @Override
+    public float getYaw() {
         return location.getYaw();//rotation;
+    }
+
+    @Override
+    public float getPitch() {
+        return 0;
+    }
+
+    @Override
+    public float getRoll() {
+        return 0;
+    }
+
+    @Override
+    public float getHeadPitch() {
+        return 0;
     }
 
     @Override

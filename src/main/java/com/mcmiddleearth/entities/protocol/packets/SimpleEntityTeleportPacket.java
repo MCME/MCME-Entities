@@ -25,12 +25,15 @@ public class SimpleEntityTeleportPacket extends AbstractPacket {
     @Override
     public void update() {
         Location location = entity.getLocation();
+/*if(entity.getName().equals("bone4")) {
+    Logger.getGlobal().info("Packet loc: "+location.toVector());
+}*/
         teleport.getDoubles()
                 .write(0, location.getX())
                 .write(1, location.getY())
                 .write(2, location.getZ());
         teleport.getBytes()
-                .write(0, (byte)(entity.getRotation()*256/360))
+                .write(0, (byte)(entity.getYaw()*256/360))
                 .write(1, (byte)(location.getPitch()*256/360));
         teleport.getBooleans().write(0,true);//entity.onGround());
     }

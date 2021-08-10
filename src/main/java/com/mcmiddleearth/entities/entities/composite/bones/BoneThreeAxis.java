@@ -6,7 +6,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-public class BoneThreeAxis extends Bone {
+import java.util.logging.Logger;
+
+public class BoneThreeAxis extends BoneTwoAxis {
+
+    private float roll;
 
     public BoneThreeAxis(String name, CompositeEntity parent, EulerAngle headPose, Vector relativePosition,
                          ItemStack headItem, boolean isHeadBone, int headPoseDelay) {
@@ -15,13 +19,21 @@ public class BoneThreeAxis extends Bone {
 
     public void move() {
         if(hasHeadPoseUpdate) {
-            rotatedHeadPose = RotationMatrix.rotateXZEulerAngleDegree(headPose,pitch);
+            rotatedHeadPose = RotationMatrix.rotateXZEulerAngleDegree(headPose,pitch,roll);
         }
         Vector shift;
         if(hasRotationUpdate()) {
-            Vector newRelativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
-                    .fastRotateX(relativePosition.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter()),-yaw);
+            Vector rotatedZ = RotationMatrix.fastRotateZ(relativePosition,-roll);
+            Vector rotatedZX = RotationMatrix.fastRotateX(rotatedZ,pitch);
+            Vector newRelativePositionRotated = RotationMatrix.fastRotateY(rotatedZX,-yaw);
             shift = newRelativePositionRotated.clone().subtract(this.relativePositionRotated);
+/*if(getName().equalsIgnoreCase("bone4")) {
+    Logger.getGlobal().info("Rotate 3 axis");
+    Logger.getGlobal().info("orig: " + relativePosition);
+    Logger.getGlobal().info("roll: " + rotatedZ);
+    Logger.getGlobal().info("pitc: " + rotatedZX);
+    Logger.getGlobal().info("newr: " + newRelativePositionRotated);
+}*/
             relativePositionRotated = newRelativePositionRotated;
         } else {
             shift = new Vector(0,0,0);
@@ -29,18 +41,36 @@ public class BoneThreeAxis extends Bone {
 
 
         velocity = parent.getVelocity().clone().add(shift);
+/*if(getName().equalsIgnoreCase("bone4")) {
+    Logger.getGlobal().info("velo: "+velocity);
+}*/
 
     }
 
     public void teleport() {
         if(hasHeadPoseUpdate) {
-            rotatedHeadPose = RotationMatrix.rotateXZEulerAngleDegree(headPose, pitch);
+            rotatedHeadPose = RotationMatrix.rotateXZEulerAngleDegree(headPose, pitch, roll);
         }
-        relativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
-                .fastRotateX(relativePosition.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter()),-yaw);
+        Vector rotatedZ = RotationMatrix.fastRotateZ(relativePosition,-roll);
+        Vector rotatedZX = RotationMatrix.fastRotateX(rotatedZ,pitch);
+        Vector newRelativePositionRotated = RotationMatrix.fastRotateY(rotatedZX,-yaw);
+/*if(getName().equalsIgnoreCase("bone4")) {
+    Logger.getGlobal().info("Rotate 3 axis");
+    Logger.getGlobal().info("orig: " + relativePosition);
+    Logger.getGlobal().info("roll: " + rotatedZ);
+    Logger.getGlobal().info("pitc: " + rotatedZX);
+    Logger.getGlobal().info("newr: " + newRelativePositionRotated);
+}*/
+        relativePositionRotated = newRelativePositionRotated;
+        /*relativePositionRotated = RotationMatrix.fastRotateY(RotationMatrix
+                .fastRotateX(RotationMatrix.fastRotateZ(relativePosition,roll),pitch),-yaw);*/
     }
 
     public void setRotation(float yaw, float pitch, float roll) {
-
+        this.yaw = yaw;
+        this.pitch = pitch;
+        this.roll = roll;
+        rotationUpdate = true;
+        hasHeadPoseUpdate = true;
     }
 }

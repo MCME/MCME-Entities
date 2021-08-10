@@ -84,9 +84,30 @@ public abstract class GoalLocationTarget extends GoalPath {
         super.doTick();
     }
 
+    @Override
     public void setDefaultHeadGoal() {
         clearHeadGoals();
         addHeadGoal(new HeadGoalLocationTarget(this, 10));
         addHeadGoal(new HeadGoalWaypointTarget(this, 40));
     }
+
+    @Override
+    public float getYaw() {
+        return getEntity().getLocation().clone()
+                .setDirection(target.toVector().subtract(getEntity().getLocation().toVector()))
+                .getYaw();
+    }
+
+    @Override
+    public float getPitch() {
+        return getEntity().getLocation().clone()
+                .setDirection(target.toVector().subtract(getEntity().getLocation().toVector()))
+                .getPitch();
+    }
+
+    @Override
+    public float getRoll() {
+        return 0;
+    }
+
 }
