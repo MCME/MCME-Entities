@@ -365,7 +365,7 @@ public class Bone implements McmeEntity {
     }
 
     @Override
-    public Set<McmeEntity> getAttackers() {
+    public Set<McmeEntity> getEnemies() {
         return null;
     }
 

@@ -68,7 +68,7 @@ public interface McmeEntity extends Entity {
     public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor);
     public void attack(McmeEntity target);
 
-    public Set<McmeEntity> getAttackers();
+    public Set<McmeEntity> getEnemies();
 
     public void finalise();
 

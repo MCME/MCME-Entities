@@ -32,6 +32,7 @@ public abstract class CompositeEntity extends VirtualEntity {
 
     //private boolean rotationUpdate;
     protected float currentYaw, currentHeadPitch, currentHeadYaw;
+
     protected float maxRotationStep = 40f;
 
     protected RotationMode rotationMode;
@@ -42,6 +43,7 @@ public abstract class CompositeEntity extends VirtualEntity {
         headPitchCenter = factory.getHeadPitchCenter();
         headPoseDelay = factory.getHeadPoseDelay();
         rotationMode = RotationMode.YAW;
+        maxRotationStep = factory.getMaxRotationStep();
         if(getDisplayName()!=null) {
             displayNameBone = new Bone("displayName",this,new EulerAngle(0,0,0),
                                        factory.getDisplayNamePosition(),null,false, 0);
@@ -240,6 +242,14 @@ Logger.getGlobal().info("Sending animation: "+viewer.getName());
     public void playAnimation(ActionType type) {
         this.animation = type;
     }*/
+
+    public float getMaxRotationStep() {
+        return maxRotationStep;
+    }
+
+    public void setMaxRotationStep(float maxRotationStep) {
+        this.maxRotationStep = maxRotationStep;
+    }
 
     public enum RotationMode {
         YAW, YAW_PITCH, YAW_PITCH_ROLL;

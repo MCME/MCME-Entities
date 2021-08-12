@@ -10,7 +10,7 @@ public class EntityBoundingBox {
     private Vector min, max, dMin, dMax;
 
     public EntityBoundingBox(double dx, double dz, double dyMin, double dyMax) {
-        dMin = new Vector(-dx,dyMin,-dz);
+        dMin = new Vector(-dx,-dyMin,-dz);
         dMax = new Vector(dx, dyMax,dz);
     }
 
@@ -26,6 +26,14 @@ public class EntityBoundingBox {
         max = location.toVector().add(dMax);
     }
 
+    public Vector getLocation() {
+        if(min!=null) {
+            return min.clone().subtract(dMin);
+        } else {
+            return null;
+        }
+    }
+
     public BoundingBox getBoundingBox() {
         return new BoundingBox(min.getX(),min.getY(),min.getZ(),max.getX(),max.getY(), max.getZ());
     }
@@ -36,6 +44,22 @@ public class EntityBoundingBox {
 
     public Vector getMax() {
         return max;
+    }
+
+    public double getDx() {
+        return dMax.getX();
+    }
+
+    public double getDz() {
+        return dMax.getZ();
+    }
+
+    public double getYMin() {
+        return -dMin.getY();
+    }
+
+    public double getYMax() {
+        return dMax.getY();
     }
 
     /*public boolean canMove(Vector velocity) {

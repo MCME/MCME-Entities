@@ -94,7 +94,7 @@ public interface Entity {
 
     public void attack(McmeEntity target);
 
-    public Set<McmeEntity> getAttackers();
+    public Set<McmeEntity> getEnemies();
 
     public Vector getMouth();
 

@@ -3,6 +3,7 @@ package com.mcmiddleearth.entities.ai.goal;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
 import com.mcmiddleearth.entities.api.MovementSpeed;
+import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalFinishedEvent;
 import com.mcmiddleearth.entities.events.events.goal.HeadGoalChangedEvent;
@@ -161,5 +162,21 @@ public abstract class GoalVirtualEntity implements Goal {
     public boolean isFinished() {
         return isFinished;
     }
+
+    public VirtualEntityGoalFactory getFactory() {
+        VirtualEntityGoalFactory factory = new VirtualEntityGoalFactory(type)
+                .
+    }
+
+
+    private final VirtualEntity entity;
+
+    private final Set<HeadGoal> headGoals = new HashSet<>();
+
+    private int updateInterval = 10;
+
+    private final int updateRandom;
+
+    protected MovementSpeed movementSpeed = MovementSpeed.STAND;
 
 }

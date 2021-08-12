@@ -53,7 +53,7 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
                                || (entity.getGoal() instanceof GoalEntityTargetDefend && ((GoalEntityTargetDefend) entity.getGoal()).target == protege
                                    && ((GoalEntityTargetDefend) entity.getGoal()).target != ((GoalEntityTargetDefend) entity.getGoal()).protege))
                 .collect(Collectors.toSet());
-        attackerSet.addAll(getEntity().getAttackers());
+        attackerSet.addAll(getEntity().getEnemies());
         if(attackerSet.isEmpty()) {
             setTarget(protege);
         } else {

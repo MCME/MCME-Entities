@@ -40,8 +40,6 @@ public class BakedAnimationEntity extends CompositeEntity {
 
     private boolean manualAnimationControl = false;
 
-    private static final File bakedAnimationFolder = new File(EntitiesPlugin.getInstance().getDataFolder(),"animation");
-
     private MovementSpeed movementSpeedAnimation;
     private int startMovementCounter, stopMovementCounter;
 
@@ -50,7 +48,7 @@ public class BakedAnimationEntity extends CompositeEntity {
 //Logger.getGlobal().info("Baked Animation Get location "+getLocation());
         manualAnimationControl = factory.getManualAnimationControl();
         movementSpeedAnimation = getMovementSpeed();
-        File animationFile = new File(bakedAnimationFolder, factory.getDataFile()+".json");
+        File animationFile = new File(EntitiesPlugin.getAnimationFolder(), factory.getDataFile()+".json");
         try (FileReader reader = new FileReader(animationFile)) {
 //long start = System.currentTimeMillis();
             JsonObject data = new JsonParser().parse(reader).getAsJsonObject();
@@ -87,7 +85,7 @@ public class BakedAnimationEntity extends CompositeEntity {
     }
 
     public static List<String> getDataFiles() {
-        return Arrays.stream(bakedAnimationFolder.listFiles(new FilenameFilter() {
+        return Arrays.stream(EntitiesPlugin.getAnimationFolder().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".json");

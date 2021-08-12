@@ -44,7 +44,7 @@ public class SyncEntityServer implements EntityServer {
 
     private int lastEntityId = 100000;
 
-    private int viewDistance = 20;
+    //private int viewDistance = 20;
 
     private final Map<Class<? extends McmeEntityEvent>, List<McmeEntityEventHandler>> eventHandlers = new HashMap<>();
 
@@ -95,20 +95,23 @@ Logger.getGlobal().info("Start new server task");
 //Logger.getGlobal().info("Server: tick 2 "+entityProvider.getEntities().isEmpty());
         new ArrayList<>(entityProvider.getEntities()).forEach(entity-> {
             if(entity instanceof VirtualEntity) {
+                VirtualEntity virtual = (VirtualEntity) entity;
+                Location loc = virtual.getLocation();
+                int viewDistance = virtual.getViewDistance();
                 Bukkit.getOnlinePlayers().forEach(player -> {
                     if (player.getLocation().getWorld().equals(entity.getLocation().getWorld())
-                            && player.getLocation().getX() < entity.getLocation().getX() + viewDistance
-                            && player.getLocation().getY() < entity.getLocation().getY() + viewDistance
-                            && player.getLocation().getZ() < entity.getLocation().getZ() + viewDistance
-                            && player.getLocation().getX() > entity.getLocation().getX() - viewDistance
-                            && player.getLocation().getY() > entity.getLocation().getY() - viewDistance
-                            && player.getLocation().getZ() > entity.getLocation().getZ() - viewDistance) {
-                        if(!((VirtualEntity)entity).isViewer(player)) {
-                            ((VirtualEntity) entity).addViewer(player);
+                            && player.getLocation().getX() < loc.getX() + viewDistance
+                            && player.getLocation().getY() < loc.getY() + viewDistance
+                            && player.getLocation().getZ() < loc.getZ() + viewDistance
+                            && player.getLocation().getX() > loc.getX() - viewDistance
+                            && player.getLocation().getY() > loc.getY() - viewDistance
+                            && player.getLocation().getZ() > loc.getZ() - viewDistance) {
+                        if(!virtual.isViewer(player)) {
+                            virtual.addViewer(player);
                         }
                     } else {
-                        if(((VirtualEntity)entity).isViewer(player)) {
-                            ((VirtualEntity) entity).removeViewer(player);
+                        if(virtual.isViewer(player)) {
+                            virtual.removeViewer(player);
                         }
                     }
                 });
@@ -268,13 +271,13 @@ Logger.getGlobal().info("Start new server task");
         }
     }
 
-    public int getViewDistance() {
+    /*public int getViewDistance() {
         return viewDistance;
     }
 
     public void setViewDistance(int viewDistance) {
         this.viewDistance = viewDistance;
-    }
+    }*/
 
     /*public boolean isPassable(World world, int x, int y, int z) {
         Block block = world.getBlockAt(x,y,z);

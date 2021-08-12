@@ -1,5 +1,10 @@
 package com.mcmiddleearth.entities.api;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializer;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.entities.ai.goal.*;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.SimplePathfinder;
@@ -11,21 +16,36 @@ import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.Constrain;
 import org.bukkit.Location;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 public class VirtualEntityGoalFactory {
 
-    private Location targetLocation;
-    private Location[] checkpoints;
+    private VirtualEntityGoalFactory defaults = new VirtualEntityGoalFactory(GoalType.NONE);
+
+    private MovementSpeed movementSpeed = MovementSpeed.STAND;
+
+    private GoalType goalType = GoalType.NONE;
+
+    private Location targetLocation = null;
+
+    private Location[] checkpoints = null;
+
+    private McmeEntity targetEntity = null;
+
     private boolean loop;
 
-    private McmeEntity targetEntity;
-
-    private GoalType goalType;
+    public VirtualEntityGoalFactory(GoalType goalType) {
+        this.goalType = goalType;
+    }
 
     public VirtualEntityGoalFactory withTargetLocation(Location target) {
         this.targetLocation = target;
         return this;
+    }
+
+    public Location getTargetLocation() {
+        return targetLocation;
     }
 
     public VirtualEntityGoalFactory withTargetEntity(McmeEntity target) {
@@ -33,9 +53,17 @@ public class VirtualEntityGoalFactory {
         return this;
     }
 
+    public McmeEntity getTargetEntity() {
+        return targetEntity;
+    }
+
     public VirtualEntityGoalFactory withGoalType(GoalType goalType) {
         this.goalType = goalType;
         return this;
+    }
+
+    public GoalType getGoalType() {
+        return goalType;
     }
 
     public VirtualEntityGoalFactory withCheckpoints(Location[] checkpoints) {
@@ -43,8 +71,25 @@ public class VirtualEntityGoalFactory {
         return this;
     }
 
+    public Location[] getCheckpoints() {
+        return checkpoints;
+    }
+
     public VirtualEntityGoalFactory withLoop(boolean loop) {
         this.loop = loop;
+        return this;
+    }
+
+    public boolean isLoop() {
+        return loop;
+    }
+
+    public MovementSpeed getMovementSpeed() {
+        return movementSpeed;
+    }
+
+    public VirtualEntityGoalFactory withMovementSpeed(MovementSpeed movementSpeed) {
+        this.movementSpeed = movementSpeed;
         return this;
     }
 
@@ -123,4 +168,5 @@ public class VirtualEntityGoalFactory {
         }
         return goal;
     }
+
 }

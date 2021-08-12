@@ -1,8 +1,10 @@
 package com.mcmiddleearth.entities.api;
 
-import com.mcmiddleearth.entities.ai.goal.GoalType;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
-import com.mcmiddleearth.entities.entities.*;
+import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.SimpleLivingEntity;
+import com.mcmiddleearth.entities.entities.SimpleNonLivingEntity;
+import com.mcmiddleearth.entities.entities.SimplePlayer;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
@@ -14,6 +16,7 @@ import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -25,33 +28,36 @@ import java.util.stream.Stream;
  */
 public class VirtualEntityFactory {
 
-    private McmeEntityType type;
+    private static final VirtualEntityFactory defaults = new VirtualEntityFactory(null,null,false,null,"",null);
 
-    private boolean invertWhitelist;
+    private McmeEntityType type = null;
 
-    private UUID uniqueId;
+    private Set<UUID> whitelist = null;
+    private boolean useWhitelistAsBlacklist = false;
 
-    private String name, dataFile, displayName;
+    private UUID uniqueId = null;
+
+    private String name = "", dataFile = "", displayName = "";
 
     private Vector displayNamePosition = new Vector(0,2,0);
 
-    private Location location;
+    private Location location = null;
+
+    private float roll = 0;
+
+    private float headYaw = 0, headPitch = 0;
 
     private Entity spawnLocationEntity = null;
 
+    private int health = 20;
+
     private MovementType movementType = MovementType.UPRIGHT;
 
-    private final Map<Attribute, AttributeInstance> attributes;
+    private Map<Attribute, AttributeInstance> attributes;
 
-    private EntityBoundingBox boundingBox;
+    private EntityBoundingBox boundingBox = EntityBoundingBox.getBoundingBox(new McmeEntityType(EntityType.SKELETON));
 
-    private GoalType goalType;
-
-    private Location targetLocation;
-
-    private Location[] checkpoints;
-
-    private McmeEntity targetEntity;
+    private VirtualEntityGoalFactory goalFactory = null;
 
     private Vector headPitchCenter = new Vector(0,0.1,-0.03);
 
@@ -64,8 +70,19 @@ public class VirtualEntityFactory {
 
     private int headPoseDelay = 2;
 
+    private int viewDistance = 32;
+
+    private float maxRotationStep = 40f;
+    private float maxRotationStepFlight = 2f;
+
+    private int updateInterval = 10;
+
+    private int jumpHeight = 1;
+    private float knockBackBase = 0.2f, knockBackPerDamage = 0.01f;
+
+    private Set<McmeEntity> enemies = null;
+
     public VirtualEntityFactory(McmeEntityType type, Location location) {
-        invertWhitelist = false;
         uniqueId = UuidGenerator.fast_random();//getRandomV2();
         this.type = type;
         this.location = location;
@@ -73,11 +90,11 @@ public class VirtualEntityFactory {
         boundingBox = EntityBoundingBox.getBoundingBox(type);
     }
 
-    private VirtualEntityFactory(McmeEntityType type, Location location, boolean invertWhitelist,
+    public VirtualEntityFactory(McmeEntityType type, Location location, boolean invertWhitelist,
                                  UUID uniqueId, String name, Map<Attribute, AttributeInstance> attributes) {
         this.type = type;
         this.location = location;
-        this.invertWhitelist = invertWhitelist;
+        this.useWhitelistAsBlacklist = invertWhitelist;
         this.uniqueId = uniqueId;
         this.name = name;
         this.attributes = attributes;
@@ -111,12 +128,17 @@ public class VirtualEntityFactory {
     }
 
     public VirtualEntityFactory withBlackList(boolean useBlacklist) {
-        this.invertWhitelist = useBlacklist;
+        this.useWhitelistAsBlacklist = useBlacklist;
         return this;
     }
 
     public VirtualEntityFactory withAttribute(Attribute attribute, double baseValue) {
         attributes.put(attribute, VirtualAttributeFactory.getAttributeInstance(attribute,baseValue));
+        return this;
+    }
+
+    public VirtualEntityFactory withAttributes(Map<Attribute,AttributeInstance> attributes) {
+        this.attributes = attributes;
         return this;
     }
 
@@ -130,27 +152,40 @@ public class VirtualEntityFactory {
         return this;
     }
 
-    public VirtualEntityFactory withGoalType(GoalType goalType) {
-        this.goalType = goalType;
+    public float getRoll() {
+        return roll;
+    }
+
+    public VirtualEntityFactory withRoll(float roll) {
+        this.roll = roll;
         return this;
     }
 
-    public VirtualEntityFactory withTargetLocation(Location target) {
-        this.targetLocation = target;
+    public float getHeadYaw() {
+        return headYaw;
+    }
+
+    public VirtualEntityFactory withHeadYaw(float headYaw) {
+        this.headYaw = headYaw;
         return this;
     }
 
-    public Location getTargetLocation() {
-        return targetLocation;
+    public float getHeadPitch() {
+        return headPitch;
     }
 
-    public VirtualEntityFactory withTargetEntity(McmeEntity target) {
-        this.targetEntity = target;
+    public VirtualEntityFactory withHeadPitch(float headPitch) {
+        this.headPitch = headPitch;
         return this;
     }
 
-    public McmeEntity getTargetEntity() {
-        return targetEntity;
+    public int getUpdateInterval() {
+        return updateInterval;
+    }
+
+    public VirtualEntityFactory setUpdateInterval(int updateInterval) {
+        this.updateInterval = updateInterval;
+        return this;
     }
 
     public VirtualEntityFactory withDataFile(String filename) {
@@ -177,6 +212,8 @@ public class VirtualEntityFactory {
         this.speechBalloonLayout = layout;
         return this;
     }
+
+    public SpeechBalloonLayout getSpeechBalloonLayout() { return speechBalloonLayout; }
 
     public VirtualEntityFactory withMouth(Vector mouth) {
         this.mouth = mouth;
@@ -210,11 +247,13 @@ public class VirtualEntityFactory {
         return headPoseDelay;
     }
 
+    public VirtualEntityFactory withGoalFactory(VirtualEntityGoalFactory factory) {
+        this.goalFactory = factory;
+        return  this;
+    }
+
     public VirtualEntityGoalFactory getGoalFactory() {
-        return new VirtualEntityGoalFactory().withTargetEntity(targetEntity)
-                .withTargetLocation(targetLocation)
-                .withCheckpoints(checkpoints)
-                .withGoalType(goalType);
+        return goalFactory;
     }
 
     public EntityBoundingBox getBoundingBox() {
@@ -233,13 +272,8 @@ public class VirtualEntityFactory {
         return type;
     }
 
-    public VirtualEntityFactory withInvertWhiteList(boolean invert) {
-        this.invertWhitelist = invert;
-        return this;
-    }
-
-    public boolean isInvertWhitelist() {
-        return invertWhitelist;
+    public boolean isBlackList() {
+        return useWhitelistAsBlacklist;
     }
 
     public UUID getUniqueId() {
@@ -263,18 +297,7 @@ public class VirtualEntityFactory {
         return (location!=null?location.clone():null);
     }
 
-    public SpeechBalloonLayout getSpeechBalloonLayout() { return speechBalloonLayout; }
-
     public Vector getMouth() { return mouth; }
-
-    public VirtualEntityFactory withCheckpoints(Location[] checkpoints) {
-        this.checkpoints = checkpoints;
-        return this;
-    }
-
-    public Location[] getCheckpoints() {
-        return checkpoints;
-    }
 
     /**
      * Attributes are not yet implemented.
@@ -287,6 +310,87 @@ public class VirtualEntityFactory {
                                                                             instance.getDefaultValue(),
                                                                             instance.getBaseValue())));
         return result;
+    }
+
+    public int getJumpHeight() {
+        return jumpHeight;
+    }
+
+    public VirtualEntityFactory withJumpHeight(int jumpHeight) {
+        this.jumpHeight = jumpHeight;
+        return this;
+    }
+
+    public float getKnockBackBase() {
+        return knockBackBase;
+    }
+
+    public VirtualEntityFactory withKnockBackBase(float knockBackBase) {
+        this.knockBackBase = knockBackBase;
+        return this;
+    }
+
+    public float getKnockBackPerDamage() {
+        return knockBackPerDamage;
+    }
+
+    public VirtualEntityFactory withKnockBackPerDamage(float knockBackPerDamage) {
+        this.knockBackPerDamage = knockBackPerDamage;
+        return this;
+    }
+
+    public int getViewDistance() {
+        return viewDistance;
+    }
+
+    public VirtualEntityFactory withViewDistance(int viewDistance) {
+        this.viewDistance = viewDistance;
+        return this;
+    }
+
+    public float getMaxRotationStep() {
+        return maxRotationStep;
+    }
+
+    public VirtualEntityFactory withMaxRotationStep(float maxRotationStep) {
+        this.maxRotationStep = maxRotationStep;
+        return this;
+    }
+
+    public float getMaxRotationStepFlight() {
+        return maxRotationStepFlight;
+    }
+
+    public VirtualEntityFactory withMaxRotationStepFlight(float maxRotationStepFlight) {
+        this.maxRotationStepFlight = maxRotationStepFlight;
+        return this;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public VirtualEntityFactory withHealth(int health) {
+        this.health = health;
+        return this;
+    }
+
+    public Set<UUID> getWhitelist() {
+        return whitelist;
+    }
+
+    public VirtualEntityFactory withWhitelist(Set<UUID> whitelist) {
+        this.whitelist = whitelist;
+        return this;
+    }
+
+    public Set<McmeEntity> getEnemies() {
+        return enemies;
+    }
+
+    public VirtualEntityFactory withEnemies(Set<McmeEntity> enemies) {
+        this.enemies = enemies;
+        return this;
     }
 
     /**
@@ -352,5 +456,6 @@ public class VirtualEntityFactory {
             }
         }
     }
+
 
 }

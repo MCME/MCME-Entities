@@ -28,14 +28,14 @@ public class SpeechBalloonEntity extends CompositeEntity {
         this.speaker = speaker;
         layout.layout();
         this.viewer = viewer;
-Logger.getGlobal().info("Create Speech Balloon, viewer: "+viewer.getName()+" message: "+ Joiner.on("-").join(layout.getLines()));
-        getWhiteList().add(viewer);
+//Logger.getGlobal().info("Create Speech Balloon, viewer: "+viewer.getName()+" message: "+ Joiner.on("-").join(layout.getLines()));
+        getWhiteList().add(viewer.getUniqueId());
         //create bones
         if(layout.hasBalloon()) {
             ItemStack item = new ItemStack(layout.getBalloonMaterial()/*Material.LIME_STAINED_GLASS*/);
             ItemMeta meta = item.getItemMeta();
             meta.setCustomModelData(layout.getBalloonModelData()/*1*/);
-Logger.getGlobal().info("BAlloon data: "+layout.getBalloonModelData());
+//Logger.getGlobal().info("BAlloon data: "+layout.getBalloonModelData());
             item.setItemMeta(meta);
             Bone bone = new SpeechBalloon("balloon", this, new EulerAngle(0,
                                                                    (layout.getPosition().equals(SpeechBalloonLayout.Position.LEFT)?180:0),

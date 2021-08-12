@@ -2,21 +2,30 @@ package com.mcmiddleearth.entities;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.command.McmeCommandSender;
+import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.api.EntityAPI;
+import com.mcmiddleearth.entities.api.VirtualEntityFactory;
+import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import com.mcmiddleearth.entities.command.EntitiesCommand;
 import com.mcmiddleearth.entities.command.VirtualCommand;
 import com.mcmiddleearth.entities.events.listener.PlayerListener;
+import com.mcmiddleearth.entities.json.*;
 import com.mcmiddleearth.entities.protocol.listener.VirtualEntityUseListener;
 import com.mcmiddleearth.entities.server.EntityServer;
 import com.mcmiddleearth.entities.server.SyncEntityServer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 public final class EntitiesPlugin extends JavaPlugin {
@@ -101,5 +110,21 @@ public final class EntitiesPlugin extends JavaPlugin {
         return null;
     }
 
+    public static GsonBuilder getEntitiesGsonBuilder() {
+        return new GsonBuilder()
+                .registerTypeAdapter(Location.class, new LocationAdapter().nullSafe())
+                .registerTypeAdapter(Vector.class, new VectorAdapter().nullSafe())
+                .registerTypeAdapter(VirtualEntityFactory.class, new VirtualEntityFactoryAdapter().nullSafe())
+                .registerTypeAdapter(VirtualEntityGoalFactory.class, new VirtualEntityGoalFactoryAdapter().nullSafe())
+                .registerTypeAdapter(EntityBoundingBox.class, new EntityBoundingBoxAdapter().nullSafe());
+    }
+
+    public static File getEntitiesFolder() {
+        return new File(instance.getDataFolder(),"entity");
+    }
+
+    public static File getAnimationFolder() {
+        return new File(instance.getDataFolder(), "animation");
+    }
 
 }

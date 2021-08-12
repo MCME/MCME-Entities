@@ -31,6 +31,8 @@ import java.util.*;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
+    private int viewDistance = 20;
+
     private UUID uniqueId;
 
     private String name;
@@ -38,9 +40,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private final Set<Player> viewers = new HashSet<>();
 
-    private final Set<Player> whiteList = new HashSet<>();
+    private Set<UUID> whiteList;
 
-    private boolean invertWhiteList = false;
+    private boolean useWhitelistAsBlacklist = false;
 
     protected int tickCounter = 0;
 
@@ -55,7 +57,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     //private float rotation; //remove and replace with location.yaw
 
-    private Vector velocity;
+    private Vector velocity = new Vector(0, 0, 0);
 
     private float headYaw;
 
@@ -64,12 +66,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private boolean teleported;
 
     private MovementType movementType;
-    private boolean sneaking = false;
     private MovementSpeed movementSpeed = MovementSpeed.STAND;
 
     private ActionType actionType = ActionType.IDLE;
 
-    private Goal goal = null;
+    private GoalVirtualEntity goal = null;
 
     private final McmeEntityType type;
 
@@ -79,13 +80,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private final MovementEngine movementEngine;
 
-    private final int updateInterval = 10;
+    private int updateInterval = 10;
 
-    private final int updateRandom = new Random().nextInt(10);
+    private final int updateRandom;
 
-    private final int jumpHeight = 1;
-    private final int fallDepth = 1; //if both values differ from each other pathfinding can easily get stuck.
-    private final float knockBackPerDamage = 0.01f;
+    private int jumpHeight = 1, fallDepth = 1; //if both values differ from each other pathfinding can easily get stuck.
+    private float knockBackBase = 0.2f, knockBackPerDamage = 0.01f;
 
     private int health;
     private boolean dead = false;
@@ -96,7 +96,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private int attackCoolDown = 40;
     private int hurtCoolDown = 0;
 
-    private Set<McmeEntity> attackers = new HashSet<>();
+    private Set<McmeEntity> enemies = new HashSet<>();
 
     private Map<Player, SpeechBalloonEntity> speechBallons = new HashMap<>();
     //private String[] speech;
@@ -108,13 +108,16 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private Vector mouth;
 
     public VirtualEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
+        this.updateInterval = factory.getUpdateInterval();
+        this.updateRandom = new Random().nextInt(updateInterval);
         this.type = factory.getType();
         this.location = factory.getLocation();
-        this.velocity = new Vector(0, 0, 0);
+        this.headYaw = factory.getHeadYaw();
         this.uniqueId = factory.getUniqueId();
         this.name = factory.getName();
         this.displayName = factory.getDisplayName();
-        this.invertWhiteList = factory.isInvertWhitelist();
+        this.useWhitelistAsBlacklist = factory.isBlackList();
+        this.whiteList = (factory.getWhitelist()!=null?factory.getWhitelist():new HashSet<>());
         this.movementType = factory.getMovementType();
         this.boundingBox = factory.getBoundingBox();
         this.boundingBox.setLocation(location);
@@ -122,16 +125,22 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 //Logger.getGlobal().info("This location: "+this.getLocation());
         this.goal = factory.getGoalFactory().build(this);
 //Logger.getGlobal().info("this goal: "+getGoal());
-        this.health = 20;
+        this.health = factory.getHealth();
         this.namePacket = new DisplayNamePacket(this.getEntityId());
         this.defaultSpeechBalloonLayout = factory.getSpeechBalloonLayout();
         this.mouth = factory.getMouth();
+        this.viewDistance = factory.getViewDistance();
+        this.jumpHeight = factory.getJumpHeight();
+        this.fallDepth = jumpHeight;
+        this.knockBackBase = factory.getKnockBackBase();
+        this.knockBackPerDamage = factory.getKnockBackPerDamage();
+        this.enemies = (factory.getEnemies()!=null?factory.getEnemies():new HashSet<>());
     }
 
     protected VirtualEntity(McmeEntityType type, Location location) {
+        this.updateRandom = new Random().nextInt(updateInterval);
         this.type = type;
         this.location = location;
-        this.velocity = new Vector(0, 0, 0);
         this.uniqueId = UuidGenerator.fast_random();//UuidGenerator.getRandomV2();
         this.boundingBox = new EntityBoundingBox(0,0,0,0);
         this.movementEngine = null;
@@ -329,12 +338,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public boolean isSneaking() {
-        return sneaking;
+        return movementType.equals(MovementType.SNEAKING);
     }
 
-    public void setSneaking(boolean sneaking) {
+    /*public void setSneaking(boolean sneaking) {
         this.sneaking = sneaking;
-    }
+    }*/
 
     @Override
     public MovementSpeed getMovementSpeed() {
@@ -404,8 +413,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public synchronized void addViewer(Player player) {
-        if(!invertWhiteList && !(whiteList.isEmpty() || whiteList.contains(player))
-                || invertWhiteList && whiteList.contains(player)) {
+        if(!useWhitelistAsBlacklist && !(whiteList.isEmpty() || whiteList.contains(player.getUniqueId()))
+                || useWhitelistAsBlacklist && whiteList.contains(player.getUniqueId())) {
             return;
         }
         spawnPacket.send(player);
@@ -431,6 +440,14 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     public void removeAllViewers() {
         List<Player> removal = new ArrayList<>(viewers);
         removal.forEach(this::removeViewer);
+    }
+
+    public int getViewDistance() {
+        return viewDistance;
+    }
+
+    public void setViewDistance(int viewDistance) {
+        this.viewDistance = viewDistance;
     }
 
     @Override
@@ -480,7 +497,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     @Override
     public void receiveAttack(McmeEntity damager, int damage, float knockBackFactor) {
         damage(damage);
-        double length = 0.2+damage*knockBackFactor*knockBackPerDamage;
+        double length = knockBackBase+damage*knockBackFactor*knockBackPerDamage;
         Vector normal = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize();
         Vector knockBack = normal.multiply(-length).add(new Vector(0,length*2,0));
         if(isOnGround()) {
@@ -490,7 +507,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         hurtCoolDown = 10;
 //Logger.getGlobal().info("Set Velocity: "+ knockBack.getX()+" "+knockBack.getY()+" "+knockBack.getZ());
         setVelocity(knockBack);
-        attackers.add(damager);
+        enemies.add(damager);
     }
 
     @Override
@@ -513,8 +530,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     @Override
-    public Set<McmeEntity> getAttackers() {
-        return attackers;
+    public Set<McmeEntity> getEnemies() {
+        return enemies;
     }
 
     @Override
@@ -591,12 +608,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         return mouth;
     }
 
-    public Set<Player> getWhiteList() {
+    public Set<UUID> getWhiteList() {
         return whiteList;
     }
 
-    public boolean isInvertWhiteList() {
-        return invertWhiteList;
+    public boolean isUseWhitelistAsBlacklist() {
+        return useWhitelistAsBlacklist;
     }
 
     public boolean hasId(int entityId) {
@@ -607,88 +624,25 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         return movementType.equals(MovementType.SNEAKING)
                 || movementType.equals(MovementType.UPRIGHT);
     }
-    /*Location loc;
-    public void _test_spawn_(Player player) {
-        PacketContainer spawn = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
-        loc = player.getLocation().add(new Vector(1,0,1));
-        spawn.getIntegers().write(0, 100005)
-                .write(1,73);
-        spawn.getUUIDs().write(0, UUID.randomUUID());
-        spawn.getDoubles()
-                .write(0, loc.getX())
-                .write(1, loc.getY())
-                .write(2, loc.getZ());
-        spawn.getBytes()
-                .write(0, (byte) 0) //yaw
-                .write(1, (byte) 0)//pitch
-                .write(2, (byte) 10); //head pitch
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket((Player) player, spawn);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
 
+    public VirtualEntityFactory getFactory() {
+        VirtualEntityFactory factory = new VirtualEntityFactory(type,location, useWhitelistAsBlacklist,uniqueId,name,attributes)
+                .withBoundingBox(boundingBox)
+                .withDisplayName(displayName)
+                .withMovementType(movementType)
+                .withViewDistance(viewDistance)
+                .withHealth(health)
+                .withHeadYaw(headYaw)
+                .withWhitelist(whiteList)
+                .withMouth(mouth)
+                .withKnockBackBase(knockBackBase)
+                .withKnockBackPerDamage(knockBackPerDamage)
+                .withJumpHeight(jumpHeight)
+                .withEnemies(enemies)
+                .withSpeechBalloonLayout(defaultSpeechBalloonLayout);
+        if(goal!=null) {
+            factory.withGoalFactory(goal.getFactory());
+        }
+        return factory;
     }
-
-    int _test_turn_ = 0;
-    public void _test_move_() {
-        PacketContainer move = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
-        move.getIntegers().write(0,100005);
-        move.getBytes()
-                .write(0, (byte)(_test_turn_*256/360))
-                .write(1, (byte) (_test_turn_/4*256/360));
-        move.getBooleans().write(0,true);
-        _test_turn_++;
-        if(_test_turn_==360) {
-            _test_turn_ = 0;
-        }
-        try {
-            for (Player viewer : viewers) {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(viewer, move);
-            }
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void _test_move_2() {
-        PacketContainer move = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
-        move.getIntegers().write(0,100005);
-        Player player = Bukkit.getPlayer("Eriol_Eandur");
-        Vector dir = player.getLocation().subtract(loc.toVector()).toVector();
-        dir.normalize().multiply(3);
-        loc.setDirection(dir);
-        dir.multiply(_test_turn_%2==0?1:-1);
-        move.getShorts()
-                .write(0, (short) dir.getBlockX())
-                .write(1, (short) dir.getBlockY())
-                .write(2, (short) dir.getBlockZ());
-        move.getBytes()
-                .write(0, (byte)(loc.getYaw()*256/360))
-                .write(1, (byte) (loc.getPitch()*256/360));
-        _test_turn_++;
-        if(_test_turn_==360) {
-            _test_turn_ = 0;
-        }
-
-        //move.getBytes()
-          //      .write(0, (byte)(loc.getYaw()*256/360))
-            //    .write(1, (byte) (loc.getPitch()*256/360));
-        move.getBooleans().write(0,true);
-
-        PacketContainer look = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-        look.getIntegers().write(0,100005);
-        look.getBytes().write(0,(byte)(loc.getYaw()*256/360));
-
-        dir.multiply(1.0/(32*128));
-        loc.add(dir);
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player,look);
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player,move);
-            //Logger.getGlobal().info("send movelook to : "+player.getName()+" "+move.getBytes().read(0)
-             //       +" "+move.getBytes().read(1));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }*/
 }

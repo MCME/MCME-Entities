@@ -1,6 +1,10 @@
 package com.mcmiddleearth.entities.command;
 
 import com.google.common.base.Joiner;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.command.AbstractCommandHandler;
 import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.command.SimpleTabCompleteRequest;
@@ -34,6 +38,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -121,6 +126,12 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                         .executes(context -> removeEntity((BukkitCommandSender) context.getSource(),null))
                         .then(HelpfulRequiredArgumentBuilder.argument("name", word())
                                 .executes(context -> removeEntity(context.getSource(),context.getArgument("name",String.class)))))
+                .then(HelpfulLiteralBuilder.literal("save")
+                        .then(HelpfulRequiredArgumentBuilder.argument("file", word())
+                                .executes(context -> saveEntities(context.getSource(), context.getArgument("file", String.class)))))
+                .then(HelpfulLiteralBuilder.literal("save")
+                        .then(HelpfulRequiredArgumentBuilder.argument("file", word())
+                                .executes(context -> loadEntities(context.getSource(), context.getArgument("file", String.class)))))
                 .then(HelpfulLiteralBuilder.literal("say")
                         .then(HelpfulRequiredArgumentBuilder.argument("side", word())
                                 .then(HelpfulRequiredArgumentBuilder.argument("text", greedyString())
@@ -288,6 +299,50 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
         return 0;
     }
 
+    private int loadEntities(McmeCommandSender sender, String fileName) {
+        File file = new File(EntitiesPlugin.getEntitiesFolder(),fileName+".json");
+        Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
+        int counter = 0;
+        try (JsonReader reader = gson.newJsonReader(new FileReader(file))) {
+            reader.beginArray();
+            while(reader.hasNext()) {
+                VirtualEntityFactory factory = gson.fromJson(reader, VirtualEntityFactory.class);
+                EntitiesPlugin.getEntityServer().spawnEntity(factory);
+                counter++;
+            }
+            reader.endArray();
+            sender.sendMessage(new ComponentBuilder(counter+" entities loaded.").create());
+        } catch (FileNotFoundException e) {
+            sender.sendMessage(new ComponentBuilder("File not found.").color(ChatColor.RED).create());
+        } catch (IOException e) {
+            sender.sendMessage(new ComponentBuilder("File input error.").color(ChatColor.RED).create());
+        } catch (InvalidDataException e) {
+            sender.sendMessage(new ComponentBuilder("Invalid entity data in file.").color(ChatColor.RED).create());
+        } catch (InvalidLocationException e) {
+            sender.sendMessage(new ComponentBuilder("Invalid location data in file.").color(ChatColor.RED).create());
+        }
+        return 0;
+    }
+
+    private int saveEntities(McmeCommandSender sender, String fileName) {
+        File file = new File(EntitiesPlugin.getEntitiesFolder(),fileName+".json");
+        Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
+        int counter = 0;
+        try (JsonWriter writer = gson.newJsonWriter(new FileWriter(file))) {
+            writer.beginArray();
+            for(Entity entity: ((BukkitCommandSender)sender).getSelectedEntities()) {
+                if(entity instanceof VirtualEntity) {
+                    gson.toJson(writer, entity.getFactory());
+                    counter++;
+                }
+            }
+            writer.endArray();
+            sender.sendMessage(new ComponentBuilder(counter + " entities save to file '"+file+"'.").create());
+        } catch (IOException e) {
+            sender.sendMessage(new ComponentBuilder("File output error.").color(ChatColor.RED).create());
+        }
+    }
+
     private int applyAnimationFrame(McmeCommandSender sender, String animation, int frameId) {
 //Logger.getGlobal().info("Apply Frame command");
         RealPlayer player = ((RealPlayer)sender);
@@ -363,8 +418,7 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
             }
             VirtualEntity entity = (VirtualEntity) mcmeEntity;
             GoalType goalType = GoalType.valueOf(type.toUpperCase());
-            VirtualEntityGoalFactory factory = new VirtualEntityGoalFactory()
-                    .withGoalType(goalType)
+            VirtualEntityGoalFactory factory = new VirtualEntityGoalFactory(goalType)
                     .withLoop(loop)
                     .withTargetEntity(player.getSelectedTargetEntity())
                     .withTargetLocation(player.getSelectedPoints().stream().findFirst().orElse(null))
