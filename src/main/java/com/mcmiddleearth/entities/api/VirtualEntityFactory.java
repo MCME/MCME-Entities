@@ -132,6 +132,10 @@ public class VirtualEntityFactory {
         return this;
     }
 
+    public boolean hasBlackList() {
+        return useWhitelistAsBlacklist;
+    }
+
     public VirtualEntityFactory withAttribute(Attribute attribute, double baseValue) {
         attributes.put(attribute, VirtualAttributeFactory.getAttributeInstance(attribute,baseValue));
         return this;
@@ -208,6 +212,10 @@ public class VirtualEntityFactory {
         return this;
     }
 
+    public Entity getSpawnLocationEntity() {
+        return spawnLocationEntity;
+    }
+
     public VirtualEntityFactory withSpeechBalloonLayout(SpeechBalloonLayout layout) {
         this.speechBalloonLayout = layout;
         return this;
@@ -270,10 +278,6 @@ public class VirtualEntityFactory {
     }
     public McmeEntityType getType() {
         return type;
-    }
-
-    public boolean isBlackList() {
-        return useWhitelistAsBlacklist;
     }
 
     public UUID getUniqueId() {
@@ -393,6 +397,10 @@ public class VirtualEntityFactory {
         return this;
     }
 
+    public static VirtualEntityFactory getDefaults() {
+        return defaults;
+    }
+
     /**
      * For internal use by the entity server only.
      * @param entityId
@@ -456,6 +464,5 @@ public class VirtualEntityFactory {
             }
         }
     }
-
 
 }

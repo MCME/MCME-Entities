@@ -27,4 +27,10 @@ public class HeadGoalLook extends HeadGoal {
         yaw = targetDir.getYaw();
         pitch = targetDir.getPitch();
     }
+
+    public Location getTarget() {
+        return target;
+    }
+
+
 }

@@ -8,6 +8,7 @@ import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
+import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationTree;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationType;
@@ -43,12 +44,15 @@ public class BakedAnimationEntity extends CompositeEntity {
     private MovementSpeed movementSpeedAnimation;
     private int startMovementCounter, stopMovementCounter;
 
+    private String animationFileName;
+
     public BakedAnimationEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         super(entityId, factory);
 //Logger.getGlobal().info("Baked Animation Get location "+getLocation());
         manualAnimationControl = factory.getManualAnimationControl();
         movementSpeedAnimation = getMovementSpeed();
-        File animationFile = new File(EntitiesPlugin.getAnimationFolder(), factory.getDataFile()+".json");
+        animationFileName = factory.getDataFile();
+        File animationFile = new File(EntitiesPlugin.getAnimationFolder(), animationFileName+".json");
         try (FileReader reader = new FileReader(animationFile)) {
 //long start = System.currentTimeMillis();
             JsonObject data = new JsonParser().parse(reader).getAsJsonObject();
@@ -194,4 +198,13 @@ public class BakedAnimationEntity extends CompositeEntity {
     public MovementSpeed getMovementSpeedAnimation() {
         return movementSpeedAnimation;
     }
+
+    @Override
+    public VirtualEntityFactory getFactory() {
+        VirtualEntityFactory factory = super.getFactory()
+                .withDataFile(animationFileName)
+                .withManualAnimationControl(manualAnimationControl);
+        return factory;
+    }
+
 }

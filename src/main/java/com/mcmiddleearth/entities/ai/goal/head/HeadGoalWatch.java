@@ -29,4 +29,8 @@ public class HeadGoalWatch extends HeadGoal {
         yaw = targetDir.getYaw();
         pitch = targetDir.getPitch();
     }
+
+    public McmeEntity getTarget() {
+        return target;
+    }
 }

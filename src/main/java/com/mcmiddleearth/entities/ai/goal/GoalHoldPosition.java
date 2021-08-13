@@ -4,6 +4,7 @@ import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalStare;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -13,14 +14,17 @@ public class GoalHoldPosition extends GoalVirtualEntity {
 
     private final float yaw, pitch;
 
+    private final Location targetLocation;
+
     private boolean hasRotation = true, tick = false;
 
-    public GoalHoldPosition(GoalType type, VirtualEntity entity, Location target) {
-        super(type, entity);
+    public GoalHoldPosition(VirtualEntity entity, VirtualEntityGoalFactory factory) {
+        super(entity, factory);
         Location orientation = getEntity().getLocation().clone()
-                .setDirection(target.toVector().subtract(getEntity().getLocation().toVector()));
+                .setDirection(factory.getTargetLocation().toVector().subtract(getEntity().getLocation().toVector()));
         yaw = orientation.getYaw();
         pitch = orientation.getPitch();
+        this.targetLocation = factory.getTargetLocation();
         setDefaultHeadGoal();
     }
 
@@ -66,4 +70,8 @@ public class GoalHoldPosition extends GoalVirtualEntity {
         return 0;
     }
 
+    @Override
+    public VirtualEntityGoalFactory getFactory() {
+        return super.getFactory().withTargetLocation(targetLocation);
+    }
 }

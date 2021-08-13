@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * This interface should not to be implemented directly.
@@ -62,6 +63,8 @@ public interface Entity {
      * @param goal
      */
     void setGoal(Goal goal);
+
+    public UUID getUniqueId();
 
     public int getEntityId();
 

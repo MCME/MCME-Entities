@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWatch;
+import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
@@ -15,9 +16,9 @@ public class GoalWatchEntity extends GoalVirtualEntity {
 
     private boolean secondUpdate = false;
 
-    public GoalWatchEntity(GoalType type, VirtualEntity entity, McmeEntity target) {
-        super(type, entity);
-        this.target = target;
+    public GoalWatchEntity(VirtualEntity entity, VirtualEntityGoalFactory factory) {
+        super(entity, factory);
+        this.target = factory.getTargetEntity();
         setDefaultHeadGoal();
     }
 
@@ -81,5 +82,10 @@ public class GoalWatchEntity extends GoalVirtualEntity {
     @Override
     public float getRoll() {
         return 0;
+    }
+
+    @Override
+    public VirtualEntityGoalFactory getFactory() {
+        return super.getFactory().withTargetEntity(target);
     }
 }

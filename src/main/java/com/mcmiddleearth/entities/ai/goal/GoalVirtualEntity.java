@@ -32,11 +32,13 @@ public abstract class GoalVirtualEntity implements Goal {
 
     private boolean isFinished = false;
 
-    protected MovementSpeed movementSpeed = MovementSpeed.STAND;
+    protected MovementSpeed movementSpeed;
 
-    public GoalVirtualEntity(GoalType type, VirtualEntity entity) {
-        this.type = type;
+    public GoalVirtualEntity(VirtualEntity entity, VirtualEntityGoalFactory factory) {
+        this.type = factory.getGoalType();
         this.entity = entity;
+        this.updateInterval = factory.getUpdateInterval();
+        movementSpeed = factory.getMovementSpeed();
         updateRandom = random.nextInt(updateInterval);
     }
 
@@ -165,18 +167,11 @@ public abstract class GoalVirtualEntity implements Goal {
 
     public VirtualEntityGoalFactory getFactory() {
         VirtualEntityGoalFactory factory = new VirtualEntityGoalFactory(type)
-                .
+                .withTargetEntity(entity)
+                .withHeadGoals(headGoals)
+                .withUpdateInterval(updateInterval)
+                .withMovementSpeed(movementSpeed);
+        return factory;
     }
-
-
-    private final VirtualEntity entity;
-
-    private final Set<HeadGoal> headGoals = new HashSet<>();
-
-    private int updateInterval = 10;
-
-    private final int updateRandom;
-
-    protected MovementSpeed movementSpeed = MovementSpeed.STAND;
 
 }

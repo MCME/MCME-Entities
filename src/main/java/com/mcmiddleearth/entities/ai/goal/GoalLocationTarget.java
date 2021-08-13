@@ -5,6 +5,7 @@ import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalLocationTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalLocationTargetChangedEvent;
 import org.bukkit.Location;
@@ -14,9 +15,9 @@ public abstract class GoalLocationTarget extends GoalPath {
 
     private Location target;
 
-    public GoalLocationTarget(GoalType type, VirtualEntity entity, Pathfinder pathfinder, Location target) {
-        super(type, entity, pathfinder);
-        this.target = target;
+    public GoalLocationTarget(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
+        super(entity, factory, pathfinder);
+        this.target = factory.getTargetLocation();
         setDefaultHeadGoal();
     }
 
@@ -110,4 +111,8 @@ public abstract class GoalLocationTarget extends GoalPath {
         return 0;
     }
 
+    @Override
+    public VirtualEntityGoalFactory getFactory() {
+        return super.getFactory().withTargetLocation(target);
+    }
 }

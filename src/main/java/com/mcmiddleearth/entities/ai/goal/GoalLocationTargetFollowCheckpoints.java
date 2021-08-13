@@ -3,6 +3,7 @@ package com.mcmiddleearth.entities.ai.goal;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
 import org.bukkit.Location;
@@ -18,14 +19,13 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
 
     private final boolean loop;
 
-    public GoalLocationTargetFollowCheckpoints(GoalType type, VirtualEntity entity, Pathfinder pathfinder,
-                                               Location[] checkpoints, boolean loop) {
-        super(type, entity, pathfinder, checkpoints[0]);
-        this.checkpoints = checkpoints;
-        this.loop = loop;
-        currentCheckpoint = 0;
-        movementSpeed = MovementSpeed.WALK;
-        setPathTarget(checkpoints[0].toVector());
+    public GoalLocationTargetFollowCheckpoints(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
+        super(entity, factory, pathfinder);
+        this.checkpoints = factory.getCheckpoints();
+        this.loop = factory.isLoop();
+        currentCheckpoint = factory.getStartCheckpoint();
+        setTarget(checkpoints[currentCheckpoint]);
+        setPathTarget(checkpoints[currentCheckpoint].toVector());
     }
 
     @Override
@@ -56,4 +56,11 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
         super.update();
     }
 
+    @Override
+    public VirtualEntityGoalFactory getFactory() {
+        return super.getFactory()
+                .withStartCheckpoint(currentCheckpoint)
+                .withCheckpoints(checkpoints)
+                .withLoop(loop);
+    }
 }

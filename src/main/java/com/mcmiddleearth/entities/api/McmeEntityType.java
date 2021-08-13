@@ -98,6 +98,14 @@ public class McmeEntityType {
         return bukkitEntityType;
     }
 
+    public String name() {
+        if(isCustomType) {
+            return customType.name().toLowerCase();
+        } else {
+            return bukkitEntityType.name().toLowerCase();
+        }
+    }
+
     @Override
     public boolean equals(Object other) {
         if ((other instanceof McmeEntityType) && this.isCustomType == ((McmeEntityType) other).isCustomType) {

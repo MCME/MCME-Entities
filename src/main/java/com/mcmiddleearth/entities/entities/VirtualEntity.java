@@ -59,7 +59,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private Vector velocity = new Vector(0, 0, 0);
 
-    private float headYaw;
+    private float headYaw, headPitch;
 
     private boolean lookUpdate, rotationUpdate;
 
@@ -113,10 +113,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.type = factory.getType();
         this.location = factory.getLocation();
         this.headYaw = factory.getHeadYaw();
+        this.headPitch = factory.getHeadPitch();
         this.uniqueId = factory.getUniqueId();
         this.name = factory.getName();
         this.displayName = factory.getDisplayName();
-        this.useWhitelistAsBlacklist = factory.isBlackList();
+        this.useWhitelistAsBlacklist = factory.hasBlackList();
         this.whiteList = (factory.getWhitelist()!=null?factory.getWhitelist():new HashSet<>());
         this.movementType = factory.getMovementType();
         this.boundingBox = factory.getBoundingBox();
@@ -261,7 +262,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     public void setHeadRotation(float yaw, float pitch) {
         // getLocation().setYaw(yaw);
         headYaw = yaw;
-        getLocation().setPitch(pitch);
+        headPitch = pitch;
         lookUpdate = true;
     }
 
@@ -285,7 +286,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public float getPitch() {
-        return 0;
+        return location.getPitch();
     }
 
     @Override
@@ -295,7 +296,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public float getHeadPitch() {
-        return 0;
+        return headPitch;
     }
 
     @Override
@@ -633,6 +634,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 .withViewDistance(viewDistance)
                 .withHealth(health)
                 .withHeadYaw(headYaw)
+                .withHeadPitch(headPitch)
                 .withWhitelist(whiteList)
                 .withMouth(mouth)
                 .withKnockBackBase(knockBackBase)

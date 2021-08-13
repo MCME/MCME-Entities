@@ -34,7 +34,7 @@ public class SimpleEntityTeleportPacket extends AbstractPacket {
                 .write(2, location.getZ());
         teleport.getBytes()
                 .write(0, (byte)(entity.getYaw()*256/360))
-                .write(1, (byte)(location.getPitch()*256/360));
+                .write(1, (byte)(entity.getHeadPitch()*256/360));
         teleport.getBooleans().write(0,true);//entity.onGround());
     }
 

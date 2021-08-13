@@ -9,7 +9,9 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public class SpeechBalloonLayout {
@@ -275,6 +277,38 @@ Logger.getGlobal().info("Lines: "+lines.length);
         return position;
     }
 
+    public Width getWidth() {
+        return width;
+    }
+
+    public int getLineLengthNarrow() {
+        return lineLengthNarrow;
+    }
+
+    public int getLineLengthWide() {
+        return lineLengthWide;
+    }
+
+    public double getWidthInBlocksNarrow() {
+        return widthInBlocksNarrow;
+    }
+
+    public double getWidthInBlocksWide() {
+        return widthInBlocksWide;
+    }
+
+    public Vector getBaseOffset() {
+        return baseOffset;
+    }
+
+    public Integer[] getModelDataWide() {
+        return modelDataWide;
+    }
+
+    public Integer[] getModelDataNarrow() {
+        return modelDataNarrow;
+    }
+
     public enum Position {
         LEFT, RIGHT, TOP;
     }
@@ -307,5 +341,35 @@ Logger.getGlobal().info("Lines: "+lines.length);
         clone.modelDataNarrow = this.modelDataNarrow;
         clone.modelDataWide = this.modelDataWide;
         return clone;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpeechBalloonLayout that = (SpeechBalloonLayout) o;
+        return hasBalloon == that.hasBalloon &&
+                Double.compare(that.linePitch, linePitch) == 0 &&
+                //isWide == that.isWide &&
+                lineLengthNarrow == that.lineLengthNarrow &&
+                lineLengthWide == that.lineLengthWide &&
+                Double.compare(that.widthInBlocksNarrow, widthInBlocksNarrow) == 0 &&
+                Double.compare(that.widthInBlocksWide, widthInBlocksWide) == 0 &&
+                balloonMaterial == that.balloonMaterial &&
+                Objects.equals(baseOffset, that.baseOffset) &&
+                Objects.equals(layoutOffset, that.layoutOffset) &&
+                Objects.equals(linePrefix, that.linePrefix) &&
+                Arrays.equals(modelDataWide, that.modelDataWide) &&
+                Arrays.equals(modelDataNarrow, that.modelDataNarrow) &&
+                width == that.width &&
+                position == that.position;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(hasBalloon, balloonMaterial, baseOffset, layoutOffset, linePrefix, linePitch, width, isWide, lineLengthNarrow, lineLengthWide, widthInBlocksNarrow, widthInBlocksWide, position);
+        result = 31 * result + Arrays.hashCode(modelDataWide);
+        result = 31 * result + Arrays.hashCode(modelDataNarrow);
+        return result;
     }
 }

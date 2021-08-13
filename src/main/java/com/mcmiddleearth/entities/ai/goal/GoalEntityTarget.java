@@ -4,6 +4,7 @@ import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalEntityTargetChangedEvent;
@@ -12,13 +13,13 @@ import org.bukkit.entity.Entity;
 
 public abstract class GoalEntityTarget extends GoalPath {
 
-    McmeEntity target;
+    protected McmeEntity target;
 
     //private float headYaw, headPitch;
 
-    public GoalEntityTarget(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
-        super(type, entity, pathfinder);
-        this.target = target;
+    public GoalEntityTarget(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
+        super(entity, factory, pathfinder);
+        this.target = factory.getTargetEntity();
         setDefaultHeadGoal();
     }
 
@@ -103,5 +104,10 @@ public abstract class GoalEntityTarget extends GoalPath {
     @Override
     public float getRoll() {
         return 0;
+    }
+
+    @Override
+    public VirtualEntityGoalFactory getFactory() {
+        return super.getFactory().withTargetEntity(target);
     }
 }

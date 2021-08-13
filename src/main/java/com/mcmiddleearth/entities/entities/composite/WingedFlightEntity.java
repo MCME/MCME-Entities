@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class WingedFlightEntity extends BakedAnimationEntity {
 
-    private float pitch;
+    //private float pitch;
     private float currentRoll, currentPitch;
 
     private float maxRotationStepFlight = 2f;
@@ -18,12 +18,14 @@ public class WingedFlightEntity extends BakedAnimationEntity {
     public WingedFlightEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         super(entityId, factory);
         maxRotationStepFlight = factory.getMaxRotationStepFlight();
+        //pitch = factory.getgetPitch();
+        currentRoll = factory.getRoll();
     }
 
     @Override
     protected void updateBodyBones() {
         if(getMovementType().equals(MovementType.FLYING) || getMovementType().equals(MovementType.GLIDING)) {
-            currentPitch = turn(currentPitch, pitch, maxRotationStepFlight);
+            currentPitch = turn(currentPitch, getLocation().getPitch(), maxRotationStepFlight);
             float yawDiff = getLocation().getYaw() - currentYaw;
             while (yawDiff < -180) yawDiff += 360;
             while (yawDiff > 180) yawDiff -= 360;
@@ -40,7 +42,7 @@ public class WingedFlightEntity extends BakedAnimationEntity {
                 ((BoneThreeAxis) bone).setRotation(currentYaw, currentPitch, -currentRoll);
             });
         } else {
-            pitch = 0;
+            getLocation().setPitch(0);
             currentPitch = 0;
             currentRoll = 0;
             super.updateBodyBones();
@@ -54,12 +56,12 @@ public class WingedFlightEntity extends BakedAnimationEntity {
 
     @Override
     public float getPitch() {
-        return pitch;
+        return getLocation().getPitch();
     }
 
     @Override
     public void setRotation(float yaw, float pitch, float roll) {
-        this.pitch = pitch;
+        this.getLocation().setPitch(pitch);
         super.setRotation(yaw,pitch,roll);
     }
     /*public void setPitch(float pitch) {
@@ -68,7 +70,7 @@ public class WingedFlightEntity extends BakedAnimationEntity {
 
     @Override
     public boolean hasRotationUpdate() {
-        return currentPitch!=pitch || currentYaw != getLocation().getYaw();
+        return currentPitch!=getPitch() || currentYaw != getLocation().getYaw();
     }
 
     @Override
@@ -91,4 +93,13 @@ public class WingedFlightEntity extends BakedAnimationEntity {
     public void setMaxRotationStepFlight(float maxRotationStepFlight) {
         this.maxRotationStepFlight = maxRotationStepFlight;
     }
+
+    @Override
+    public VirtualEntityFactory getFactory() {
+        VirtualEntityFactory factory = super.getFactory()
+                .withRoll(currentRoll);
+        return factory;
+    }
+
+
 }

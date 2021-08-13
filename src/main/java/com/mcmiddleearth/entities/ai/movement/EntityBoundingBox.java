@@ -5,6 +5,8 @@ import org.bukkit.Location;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
+import java.util.Objects;
+
 public class EntityBoundingBox {
 
     private Vector min, max, dMin, dMax;
@@ -60,6 +62,22 @@ public class EntityBoundingBox {
 
     public double getYMax() {
         return dMax.getY();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EntityBoundingBox that = (EntityBoundingBox) o;
+        return Objects.equals(min, that.min) &&
+                Objects.equals(max, that.max) &&
+                dMin.equals(that.dMin) &&
+                dMax.equals(that.dMax);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(min, max, dMin, dMax);
     }
 
     /*public boolean canMove(Vector velocity) {

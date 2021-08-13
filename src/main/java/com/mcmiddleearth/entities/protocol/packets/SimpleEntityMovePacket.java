@@ -65,7 +65,7 @@ public class SimpleEntityMovePacket extends AbstractPacket {
             case MOVE_LOOK:
                 dir = getShift();
                 byte yaw = getAngle(entity.getYaw());
-                byte pitch = getAngle(entity.getLocation().getPitch());
+                byte pitch = getAngle(entity.getHeadPitch());
 //Logger.getGlobal().info("write packet: "+yaw+" "+pitch+" head: "+getAngle(entity.getLocation().getYaw()));
                 moveLook.getShorts()
                         .write(0, (short) dir.getBlockX())

@@ -6,6 +6,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.entities.ai.goal.*;
+import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.SimplePathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
@@ -17,13 +18,14 @@ import com.mcmiddleearth.entities.util.Constrain;
 import org.bukkit.Location;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class VirtualEntityGoalFactory {
 
-    private VirtualEntityGoalFactory defaults = new VirtualEntityGoalFactory(GoalType.NONE);
+    private static final VirtualEntityGoalFactory defaults = new VirtualEntityGoalFactory(GoalType.NONE);
 
-    private MovementSpeed movementSpeed = MovementSpeed.STAND;
+    private MovementSpeed movementSpeed = MovementSpeed.WALK;
 
     private GoalType goalType = GoalType.NONE;
 
@@ -31,9 +33,15 @@ public class VirtualEntityGoalFactory {
 
     private Location[] checkpoints = null;
 
+    private int startCheckpoint = 0;
+
     private McmeEntity targetEntity = null;
 
     private boolean loop;
+
+    private Set<HeadGoal> headGoals = null;
+
+    private int updateInterval = 10;
 
     public VirtualEntityGoalFactory(GoalType goalType) {
         this.goalType = goalType;
@@ -75,6 +83,15 @@ public class VirtualEntityGoalFactory {
         return checkpoints;
     }
 
+    public int getStartCheckpoint() {
+        return startCheckpoint;
+    }
+
+    public VirtualEntityGoalFactory withStartCheckpoint(int startCheckpoint) {
+        this.startCheckpoint = startCheckpoint;
+        return this;
+    }
+
     public VirtualEntityGoalFactory withLoop(boolean loop) {
         this.loop = loop;
         return this;
@@ -91,6 +108,28 @@ public class VirtualEntityGoalFactory {
     public VirtualEntityGoalFactory withMovementSpeed(MovementSpeed movementSpeed) {
         this.movementSpeed = movementSpeed;
         return this;
+    }
+
+    public int getUpdateInterval() {
+        return updateInterval;
+    }
+
+    public VirtualEntityGoalFactory withUpdateInterval(int updateInterval) {
+        this.updateInterval = updateInterval;
+        return this;
+    }
+
+    public Set<HeadGoal> getHeadGoals() {
+        return headGoals;
+    }
+
+    public VirtualEntityGoalFactory withHeadGoals(Set<HeadGoal> headGoals) {
+        this.headGoals = headGoals;
+        return this;
+    }
+
+    public static VirtualEntityGoalFactory getDefaults() {
+        return defaults;
     }
 
     public GoalVirtualEntity build(VirtualEntity entity) throws InvalidLocationException, InvalidDataException {
@@ -116,55 +155,59 @@ public class VirtualEntityGoalFactory {
             case WATCH_ENTITY:
                 Constrain.checkEntity(targetEntity);
                 Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
-                goal = new GoalWatchEntity(goalType,entity,targetEntity);
+                goal = new GoalWatchEntity(entity,this);
                 break;
             case FOLLOW_ENTITY:
                 Constrain.checkEntity(targetEntity);
                 Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
-                goal = new GoalEntityTargetFollow(goalType,entity,pathfinder,targetEntity);
+                goal = new GoalEntityTargetFollow(entity,this, pathfinder);
                 break;
             case ATTACK_ENTITY:
                 Constrain.checkEntity(targetEntity);
                 Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
-                goal = new GoalEntityTargetAttack(goalType,entity,pathfinder,targetEntity);
+                goal = new GoalEntityTargetAttack(entity,this, pathfinder);
                 break;
             case ATTACK_CLOSE:
                 Constrain.checkEntity(targetEntity);
                 Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
-                goal = new GoalEntityTargetAttackClose(goalType,entity,pathfinder);
+                goal = new GoalEntityTargetAttackClose(entity, this, pathfinder);
                 break;
             case DEFEND_ENTITY:
                 Constrain.checkEntity(targetEntity);
                 Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
-                goal = new GoalEntityTargetDefend(goalType,entity,pathfinder,targetEntity);
+                goal = new GoalEntityTargetDefend(entity,this, pathfinder);
                 break;
             case GOTO_LOCATION:
                 Constrain.checkTargetLocation(targetLocation);
                 Constrain.checkSameWorld(targetLocation,entity.getLocation().getWorld());
-                goal = new GoalLocationTargetGoto(goalType,entity,pathfinder,targetLocation);
+                goal = new GoalLocationTargetGoto(entity,this, pathfinder);
                 break;
             case FOLLOW_CHECKPOINTS:
                 Constrain.checkCheckpoints(checkpoints);
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
-                goal = new GoalLocationTargetFollowCheckpoints(goalType,entity,pathfinder,checkpoints,loop);
+                goal = new GoalLocationTargetFollowCheckpoints(entity,this, pathfinder);
                 break;
             case FOLLOW_CHECKPOINTS_WINGED:
                 Constrain.checkCheckpoints(checkpoints);
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
-                goal = new GoalLocationTargetFollowCheckpointsWingedFlight(goalType,entity,pathfinder,checkpoints,loop);
+                goal = new GoalLocationTargetFollowCheckpointsWingedFlight(entity,this, pathfinder);
                 break;
             case RANDOM_CHECKPOINTS:
                 Constrain.checkCheckpoints(checkpoints);
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
-                goal = new GoalLocationTargetRandomCheckpoints(goalType,entity,pathfinder,checkpoints);
+                goal = new GoalLocationTargetRandomCheckpoints(entity,this, pathfinder);
                 break;
             case HOLD_POSITION:
                 Constrain.checkTargetLocation(targetLocation);
                 Constrain.checkSameWorld(targetLocation,entity.getLocation().getWorld());
-                goal = new GoalHoldPosition(goalType,entity,targetLocation);
+                goal = new GoalHoldPosition(entity,this);
                 break;
             default:
                 goal = null;
+        }
+        if(goal!=null && headGoals != null) {
+            goal.clearHeadGoals();
+            headGoals.forEach(goal::addHeadGoal);
         }
         return goal;
     }

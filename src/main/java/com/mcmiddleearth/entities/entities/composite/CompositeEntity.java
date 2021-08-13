@@ -255,4 +255,15 @@ Logger.getGlobal().info("Sending animation: "+viewer.getName());
         YAW, YAW_PITCH, YAW_PITCH_ROLL;
     }
 
+    public VirtualEntityFactory getFactory() {
+        VirtualEntityFactory factory = super.getFactory()
+            .withHeadPoseDelay(headPoseDelay)
+            .withHeadPitchCenter(headPitchCenter)
+            .withMaxRotationStep(maxRotationStep);
+        if(getDisplayName() != null && displayNameBone != null) {
+            factory.withDisplayNamePosition(displayNameBone.getRelativePosition());
+        }
+        return factory;
+    }
+
 }

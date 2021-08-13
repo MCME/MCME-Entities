@@ -5,6 +5,7 @@ import com.mcmiddleearth.entities.ai.movement.RayTracer;
 import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.api.MovementSpeed;
+import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -24,8 +25,8 @@ public abstract class GoalPath extends GoalVirtualEntity {
 
     private boolean isMoving = true;
 
-    public GoalPath(GoalType type, VirtualEntity entity, Pathfinder pathfinder) {
-        super(type, entity);
+    public GoalPath(VirtualEntity entity, VirtualEntityGoalFactory goalFactory, Pathfinder pathfinder) {
+        super(entity, goalFactory);
         this.pathfinder = pathfinder;
     }
 
@@ -146,4 +147,5 @@ Logger.getGlobal().info("Path target reached!");
     public Vector getWaypoint() {
         return waypoint;
     }
+
 }

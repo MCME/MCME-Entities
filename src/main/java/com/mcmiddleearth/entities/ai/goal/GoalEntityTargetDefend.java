@@ -3,6 +3,7 @@ package com.mcmiddleearth.entities.ai.goal;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
@@ -16,9 +17,9 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
 
     McmeEntity protege;
 
-    public GoalEntityTargetDefend(GoalType type, VirtualEntity entity, Pathfinder pathfinder, McmeEntity target) {
-        super(type, entity, pathfinder, target);
-        this.protege = target;
+    public GoalEntityTargetDefend(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
+        super(entity, factory, pathfinder);
+        this.protege = factory.getTargetEntity();
     }
 
     @Override
@@ -79,4 +80,8 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
         //}
     }
 
+    @Override
+    public VirtualEntityGoalFactory getFactory() {
+        return super.getFactory().withTargetEntity(protege);
+    }
 }
