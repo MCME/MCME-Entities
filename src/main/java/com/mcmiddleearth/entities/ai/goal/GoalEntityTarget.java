@@ -6,20 +6,23 @@ import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.Placeholder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalEntityTargetChangedEvent;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 
 public abstract class GoalEntityTarget extends GoalPath {
 
     protected McmeEntity target;
+    protected boolean targetIncomplete = false;
 
     //private float headYaw, headPitch;
 
     public GoalEntityTarget(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
         super(entity, factory, pathfinder);
         this.target = factory.getTargetEntity();
+        if(this.target instanceof Placeholder) {
+            targetIncomplete = true;
+        }
         setDefaultHeadGoal();
     }
 
@@ -35,7 +38,14 @@ public abstract class GoalEntityTarget extends GoalPath {
 
     @Override
     public void update() {
-        if(target!=null) {
+        if(targetIncomplete) {
+            McmeEntity search = EntitiesPlugin.getEntityServer().getEntity(target.getUniqueId());
+            if(search != null) {
+                target = search;
+                targetIncomplete = false;
+            }
+        }
+        if(target!=null && !targetIncomplete) {
             setPathTarget(getTarget().getLocation().toVector());
         } else {
             setPathTarget(null);
@@ -69,6 +79,9 @@ public abstract class GoalEntityTarget extends GoalPath {
             EntitiesPlugin.getEntityServer().handleEvent(event);
             if(!event.isCancelled()) {
                 this.target = event.getNextTarget();
+                if(this.target instanceof Placeholder) {
+                    targetIncomplete = true;
+                }
             }
         }
     }

@@ -21,7 +21,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public UUID getUniqueId() {
-        return null;
+        return getBukkitPlayer().getUniqueId();
     }
 
     @Override

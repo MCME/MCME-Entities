@@ -1,23 +1,21 @@
 package com.mcmiddleearth.entities.json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.GoalType;
-import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
-import com.mcmiddleearth.entities.ai.goal.head.HeadGoalLook;
-import com.mcmiddleearth.entities.ai.goal.head.HeadGoalType;
-import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWatch;
+import com.mcmiddleearth.entities.ai.goal.head.*;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.Location;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGoalFactory> {
 
@@ -87,6 +85,115 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
 
     @Override
     public VirtualEntityGoalFactory read(JsonReader in) throws IOException {
+        VirtualEntityGoalFactory factory = VirtualEntityGoalFactory.getDefaults();
+        Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
+        in.beginObject();
+        while(in.hasNext()) {
+            String key = in.nextName();
+            try {
+                switch(key) {
+                    case "goalType":
+                        factory.withGoalType(GoalType.valueOf(in.nextString()));
+                        break;
+                    case "movementSpeed":
+                        factory.withMovementSpeed(MovementSpeed.valueOf(in.nextString()));
+                        break;
+                    case "targetLocation":
+                        factory.withTargetLocation(gson.fromJson(in,Location.class));
+                        break;
+                    case "checkpoints":
+                        List<Location> checkpoints = new ArrayList<>();
+                        in.beginArray();
+                        try {
+                            while(in.hasNext()) {
+                                checkpoints.add(gson.fromJson(in,Location.class));
+                            }
+                        } finally { in.endArray(); }
+                        factory.withCheckpoints(checkpoints.toArray(new Location[0]));
+                        break;
+                    case "startCheckPoint":
+                        factory.withStartCheckpoint(in.nextInt());
+                        break;
+                    case "targetEntity":
+                        factory.withTargetEntity(JsonUtil.readEntityLink(in));
+                        break;
+                    case "updateInterval":
+                        factory.withUpdateInterval(in.nextInt());
+                        break;
+                    case "loop":
+                        factory.withLoop(in.nextBoolean());
+                        break;
+                    case "headGoals":
+                        Set<HeadGoal>headGoals = new HashSet<>();
+                        in.beginArray();
+                        try {
+                            while(in.hasNext()) {
+                                in.beginObject();
+                                try {
+                                    HeadGoalType type = null;
+                                    int duration = 15;
+                                    McmeEntity targetEntity = null;
+                                    Location targetLocation = null;
+                                    float yaw = 0, pitch = 0;
+                                    while(in.hasNext()) {
+                                        switch(in.nextName()) {
+                                            case "type":
+                                                type = HeadGoalType.valueOf(in.nextString());
+                                                break;
+                                            case "targetLocation":
+                                                targetLocation = gson.fromJson(in,Location.class);
+                                                break;
+                                            case "targetEntity":
+                                                targetEntity = JsonUtil.readEntityLink(in);
+                                                break;
+                                            case "yaw":
+                                                yaw = (float) in.nextDouble();
+                                                break;
+                                            case "pitch":
+                                                pitch = (float) in.nextDouble();
+                                                break;
+                                            case "duration":
+                                                duration = in.nextInt();
+                                                break;
+                                            default:
+                                                in.skipValue();
+                                        }
+                                    }
+                                    if(type != null) {
+                                        switch (type) {
+                                            case ENTITY_TARGET:
+                                                headGoals.add(new HeadGoalEntityTarget(null,duration));
+                                                break;
+                                            case LOCATION_TARGET:
+                                                headGoals.add(new HeadGoalLocationTarget(null,duration));
+                                                break;
+                                            case LOOK:
+                                                headGoals.add(new HeadGoalLook(targetLocation, null,duration));
+                                                break;
+                                            case STARE:
+                                                headGoals.add(new HeadGoalStare(yaw,pitch,duration));
+                                                break;
+                                            case WATCH:
+                                                headGoals.add(new HeadGoalWatch(targetEntity, null,duration));
+                                                break;
+                                            case WAYPOINT_TARGET:
+                                                headGoals.add(new HeadGoalWaypointTarget(null,duration));
+                                                break;
+                                        }
+                                    }
+                                } finally { in.endObject(); }
+                            }
+                        } finally { in.endArray(); }
+                        factory.withHeadGoals(headGoals);
+                        break;
+                    default:
+                        in.skipValue();
+                }
+            } catch (IllegalArgumentException | IllegalStateException | JsonSyntaxException ex) {
+                Logger.getLogger(VirtualEntityGoalFactoryAdapter.class.getSimpleName()).warning("Error reading key: "+key+" -> "+ex.getMessage());
+            }
+        }
+        in.endObject();
         return null;
     }
 }

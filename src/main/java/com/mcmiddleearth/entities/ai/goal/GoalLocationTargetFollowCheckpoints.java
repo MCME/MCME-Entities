@@ -7,9 +7,6 @@ import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
 import org.bukkit.Location;
-import sun.rmi.runtime.Log;
-
-import java.util.logging.Logger;
 
 public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
 

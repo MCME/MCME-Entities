@@ -1,6 +1,8 @@
 package com.mcmiddleearth.entities.ai.goal.head;
 
-import com.mcmiddleearth.entities.ai.goal.GoalEntityTarget;
+import com.mcmiddleearth.entities.ai.goal.Goal;
+import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.VirtualEntity;
 
 public class HeadGoalStare extends HeadGoal {
 
@@ -16,4 +18,10 @@ public class HeadGoalStare extends HeadGoal {
 
     @Override
     public void doTick() {}
+
+    @Override
+    public boolean provideGoalAndEntity(Goal goal, McmeEntity entity) {
+        return true;
+    }
+
 }

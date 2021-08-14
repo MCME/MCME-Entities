@@ -8,8 +8,6 @@ import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import java.util.logging.Logger;
-
 public class GoalLocationTargetFollowCheckpointsWingedFlight extends GoalLocationTargetFollowCheckpoints {
 
     public GoalLocationTargetFollowCheckpointsWingedFlight(VirtualEntity entity, VirtualEntityGoalFactory factory,

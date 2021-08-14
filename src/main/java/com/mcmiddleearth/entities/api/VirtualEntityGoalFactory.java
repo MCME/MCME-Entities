@@ -1,10 +1,5 @@
 package com.mcmiddleearth.entities.api;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializer;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.entities.ai.goal.*;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
@@ -17,13 +12,9 @@ import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.Constrain;
 import org.bukkit.Location;
 
-import java.io.IOException;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class VirtualEntityGoalFactory {
-
-    private static final VirtualEntityGoalFactory defaults = new VirtualEntityGoalFactory(GoalType.NONE);
 
     private MovementSpeed movementSpeed = MovementSpeed.WALK;
 
@@ -129,7 +120,7 @@ public class VirtualEntityGoalFactory {
     }
 
     public static VirtualEntityGoalFactory getDefaults() {
-        return defaults;
+        return new VirtualEntityGoalFactory(GoalType.NONE);
     }
 
     public GoalVirtualEntity build(VirtualEntity entity) throws InvalidLocationException, InvalidDataException {
@@ -207,7 +198,11 @@ public class VirtualEntityGoalFactory {
         }
         if(goal!=null && headGoals != null) {
             goal.clearHeadGoals();
-            headGoals.forEach(goal::addHeadGoal);
+            headGoals.forEach(headGoal -> {
+                if(headGoal.provideGoalAndEntity(goal,entity)) {
+                    goal.addHeadGoal(headGoal);
+                }
+            });
         }
         return goal;
     }

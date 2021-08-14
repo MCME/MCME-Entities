@@ -26,12 +26,12 @@ public class SpeechBalloonLayout {
 
     private Integer[] modelDataWide, modelDataNarrow;
 
-    private final Width width;
+    private Width width;
     private boolean isWide;
-    private final int lineLengthNarrow, lineLengthWide;
-    private final double widthInBlocksNarrow, widthInBlocksWide;
+    private int lineLengthNarrow, lineLengthWide;
+    private double widthInBlocksNarrow, widthInBlocksWide;
 
-    private final Position position;
+    private Position position;
 
     private int duration;
 
@@ -277,28 +277,63 @@ Logger.getGlobal().info("Lines: "+lines.length);
         return position;
     }
 
+    public SpeechBalloonLayout withPosition(Position position) {
+        this.position = position;
+        return this;
+    }
+
     public Width getWidth() {
         return width;
+    }
+
+    public SpeechBalloonLayout withWidth(Width width) {
+        this.width = width;
+        return this;
     }
 
     public int getLineLengthNarrow() {
         return lineLengthNarrow;
     }
 
+    public SpeechBalloonLayout withLineLengthNarrow(int lineLengthNarrow) {
+        this.lineLengthNarrow = lineLengthNarrow;
+        return this;
+    }
+
     public int getLineLengthWide() {
         return lineLengthWide;
+    }
+
+    public SpeechBalloonLayout withLineLengthWide(int lineLengthWide) {
+        this.lineLengthWide = lineLengthWide;
+        return this;
     }
 
     public double getWidthInBlocksNarrow() {
         return widthInBlocksNarrow;
     }
 
+    public SpeechBalloonLayout withWidthInBlocksNarrow(double widthInBlocksNarrow) {
+        this.widthInBlocksNarrow = widthInBlocksNarrow;
+        return this;
+    }
+
     public double getWidthInBlocksWide() {
         return widthInBlocksWide;
     }
 
+    public SpeechBalloonLayout withWidthInBlocksWide(double widthInBlocksWide) {
+        this.widthInBlocksWide = widthInBlocksWide;
+        return this;
+    }
+
     public Vector getBaseOffset() {
         return baseOffset;
+    }
+
+    public SpeechBalloonLayout withBaseOffset(Vector baseOffset) {
+        this.baseOffset = baseOffset;
+        return this;
     }
 
     public Integer[] getModelDataWide() {
@@ -357,7 +392,6 @@ Logger.getGlobal().info("Lines: "+lines.length);
                 Double.compare(that.widthInBlocksWide, widthInBlocksWide) == 0 &&
                 balloonMaterial == that.balloonMaterial &&
                 Objects.equals(baseOffset, that.baseOffset) &&
-                Objects.equals(layoutOffset, that.layoutOffset) &&
                 Objects.equals(linePrefix, that.linePrefix) &&
                 Arrays.equals(modelDataWide, that.modelDataWide) &&
                 Arrays.equals(modelDataNarrow, that.modelDataNarrow) &&
@@ -367,7 +401,7 @@ Logger.getGlobal().info("Lines: "+lines.length);
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(hasBalloon, balloonMaterial, baseOffset, layoutOffset, linePrefix, linePitch, width, isWide, lineLengthNarrow, lineLengthWide, widthInBlocksNarrow, widthInBlocksWide, position);
+        int result = Objects.hash(hasBalloon, balloonMaterial, baseOffset, linePrefix, linePitch, width, isWide, lineLengthNarrow, lineLengthWide, widthInBlocksNarrow, widthInBlocksWide, position);
         result = 31 * result + Arrays.hashCode(modelDataWide);
         result = 31 * result + Arrays.hashCode(modelDataNarrow);
         return result;

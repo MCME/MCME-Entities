@@ -35,22 +35,25 @@ public class EntityBoundingBoxAdapter extends TypeAdapter<EntityBoundingBox> {
 
     @Override
     public EntityBoundingBox read(JsonReader in) throws IOException {
+        EntityBoundingBox box;
         in.beginObject();
-        Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
-        Map<String,Integer> data = new HashMap<>();
-        Vector location = null;
-        while(in.hasNext()) {
-            String name = in.nextName();
-            if(name.equals("location")) {
-                location = gson.fromJson(in, Vector.class);
-            } else {
-                data.put(name, in.nextInt());
+        try {
+            Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
+            Map<String, Integer> data = new HashMap<>();
+            Vector location = null;
+            while (in.hasNext()) {
+                String name = in.nextName();
+                if (name.equals("location")) {
+                    location = gson.fromJson(in, Vector.class);
+                } else {
+                    data.put(name, in.nextInt());
+                }
             }
-        }
-        EntityBoundingBox box = new EntityBoundingBox(data.get("dx"),data.get("dz"),data.get("ymin"),data.get("ymax"));
-        if(location!=null) {
-            box.setLocation(location.toLocation(null));
-        }
+            box = new EntityBoundingBox(data.get("dx"),data.get("dz"),data.get("ymin"),data.get("ymax"));
+            if(location!=null) {
+                box.setLocation(location.toLocation(null));
+            }
+        } finally { in.endObject(); }
         return box;
     }
 }

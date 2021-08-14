@@ -28,20 +28,18 @@ import java.util.stream.Stream;
  */
 public class VirtualEntityFactory {
 
-    private static final VirtualEntityFactory defaults = new VirtualEntityFactory(null,null,false,null,"",null);
-
-    private McmeEntityType type = null;
+    private McmeEntityType type;
 
     private Set<UUID> whitelist = null;
     private boolean useWhitelistAsBlacklist = false;
 
-    private UUID uniqueId = null;
+    private UUID uniqueId;
 
     private String name = "", dataFile = "", displayName = "";
 
     private Vector displayNamePosition = new Vector(0,2,0);
 
-    private Location location = null;
+    private Location location;
 
     private float roll = 0;
 
@@ -61,8 +59,7 @@ public class VirtualEntityFactory {
 
     private Vector headPitchCenter = new Vector(0,0.1,-0.03);
 
-    private SpeechBalloonLayout speechBalloonLayout = new SpeechBalloonLayout(SpeechBalloonLayout.Position.RIGHT,
-                                                                              SpeechBalloonLayout.Width.OPTIMAL);
+    private SpeechBalloonLayout speechBalloonLayout = new SpeechBalloonLayout();
 
     private Vector mouth = new Vector(0,1.7,0);
 
@@ -187,7 +184,7 @@ public class VirtualEntityFactory {
         return updateInterval;
     }
 
-    public VirtualEntityFactory setUpdateInterval(int updateInterval) {
+    public VirtualEntityFactory withUpdateInterval(int updateInterval) {
         this.updateInterval = updateInterval;
         return this;
     }
@@ -398,7 +395,8 @@ public class VirtualEntityFactory {
     }
 
     public static VirtualEntityFactory getDefaults() {
-        return defaults;
+        return new VirtualEntityFactory(null,null,false,
+                                         UuidGenerator.fast_nullUUID(),"",null);
     }
 
     /**

@@ -1,13 +1,14 @@
 package com.mcmiddleearth.entities.ai.goal.head;
 
-import com.mcmiddleearth.entities.ai.goal.GoalEntityTarget;
+import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.goal.GoalLocationTarget;
+import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 
 public class HeadGoalLocationTarget extends HeadGoal {
 
-    private final GoalLocationTarget goal;
+    private GoalLocationTarget goal;
 
     public HeadGoalLocationTarget(GoalLocationTarget goal) {
         this.goal = goal;
@@ -16,6 +17,10 @@ public class HeadGoalLocationTarget extends HeadGoal {
     public HeadGoalLocationTarget(GoalLocationTarget goal, int duration) {
         this(goal);
         setDuration(duration);
+    }
+
+    public void setGoal(GoalLocationTarget goal) {
+        this.goal = goal;
     }
 
     @Override
@@ -30,4 +35,14 @@ public class HeadGoalLocationTarget extends HeadGoal {
             pitch = targetDir.getPitch();
         }
     }
+
+    @Override
+    public boolean provideGoalAndEntity(Goal goal, McmeEntity entity) {
+        if(goal instanceof GoalLocationTarget) {
+            this.goal = (GoalLocationTarget) goal;
+            return true;
+        }
+        return false;
+    }
+
 }

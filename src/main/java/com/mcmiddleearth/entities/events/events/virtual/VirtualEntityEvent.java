@@ -1,7 +1,6 @@
 package com.mcmiddleearth.entities.events.events.virtual;
 
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 
@@ -15,7 +14,7 @@ public abstract class VirtualEntityEvent implements McmeEntityEvent {
 
     @Override
     public McmeEntity getEntity() {
-        return entity;
+        return null;
     }
 
     public VirtualEntity getVirtualEntity() { return entity;}

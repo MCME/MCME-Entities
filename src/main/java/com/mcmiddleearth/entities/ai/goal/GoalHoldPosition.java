@@ -1,9 +1,6 @@
 package com.mcmiddleearth.entities.ai.goal;
 
-import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalStare;
-import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
-import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;

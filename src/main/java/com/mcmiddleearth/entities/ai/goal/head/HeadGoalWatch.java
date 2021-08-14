@@ -1,24 +1,28 @@
 package com.mcmiddleearth.entities.ai.goal.head;
 
+import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 
 public class HeadGoalWatch extends HeadGoal {
 
     private final McmeEntity target;
 
-    private final VirtualEntity entity;
+    private McmeEntity entity;
 
-    public HeadGoalWatch(McmeEntity target, VirtualEntity entity) {
+    public HeadGoalWatch(McmeEntity target, McmeEntity entity) {
         this.target = target;
         this.entity = entity;
     }
 
-    public HeadGoalWatch(McmeEntity target, VirtualEntity entity, int duration) {
+    public HeadGoalWatch(McmeEntity target, McmeEntity entity, int duration) {
         this(target, entity);
         setDuration(duration);
+    }
+
+    public void setEntity(VirtualEntity entity) {
+        this.entity = entity;
     }
 
     @Override
@@ -33,4 +37,15 @@ public class HeadGoalWatch extends HeadGoal {
     public McmeEntity getTarget() {
         return target;
     }
+
+    @Override
+    public boolean provideGoalAndEntity(Goal goal, McmeEntity entity) {
+        if(entity != null) {
+            this.entity = entity;
+            return true;
+        }
+        return false;
+    }
+
+
 }

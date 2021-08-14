@@ -1,7 +1,6 @@
 package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalLocationTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;

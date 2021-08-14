@@ -1,15 +1,18 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWatch;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.Placeholder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class GoalWatchEntity extends GoalVirtualEntity {
 
-    private final McmeEntity target;
+    private McmeEntity target;
+    private boolean targetIncomplete = false;
 
     private boolean hasRotation;
     private float rotation;
@@ -19,19 +22,31 @@ public class GoalWatchEntity extends GoalVirtualEntity {
     public GoalWatchEntity(VirtualEntity entity, VirtualEntityGoalFactory factory) {
         super(entity, factory);
         this.target = factory.getTargetEntity();
+        if(this.target instanceof Placeholder) {
+            targetIncomplete = true;
+        }
         setDefaultHeadGoal();
     }
 
     @Override
     public void update() {
         super.update();
-        if(secondUpdate) {
-            Location orientation = getEntity().getLocation().clone()
-                    .setDirection(target.getLocation().toVector().subtract(getEntity().getLocation().toVector()));
-            rotation = orientation.getYaw();
-            hasRotation = true;
+        if(targetIncomplete) {
+            McmeEntity search = EntitiesPlugin.getEntityServer().getEntity(target.getUniqueId());
+            if(search != null) {
+                target = search;
+                targetIncomplete = false;
+            }
         }
-        secondUpdate = !secondUpdate;
+        if(!targetIncomplete) {
+            if (secondUpdate) {
+                Location orientation = getEntity().getLocation().clone()
+                        .setDirection(target.getLocation().toVector().subtract(getEntity().getLocation().toVector()));
+                rotation = orientation.getYaw();
+                hasRotation = true;
+            }
+            secondUpdate = !secondUpdate;
+        }
     }
 
     @Override

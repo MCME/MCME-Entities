@@ -20,7 +20,7 @@ public class VectorAdapter extends TypeAdapter<Vector> {
                 .name("x").value(value.getX())
                 .name("y").value(value.getY())
                 .name("z").value(value.getZ())
-            .endObject();
+           .endObject();
     }
 
     @Override

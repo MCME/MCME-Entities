@@ -14,12 +14,12 @@ import java.util.logging.Logger;
 
 public class VirtualEntityAttributeInstance implements AttributeInstance {
 
-    private final Attribute attribute;
+    private Attribute attribute;
 
-    private final double defaultValue;
+    private double defaultValue;
     private double baseValue, value;
 
-    private final List<AttributeModifier> modifiers = new ArrayList<>();
+    private List<AttributeModifier> modifiers = new ArrayList<>();
 
     public VirtualEntityAttributeInstance(Attribute attribute, double defaultValue) {
         this(attribute, defaultValue, defaultValue);
@@ -37,6 +37,10 @@ public class VirtualEntityAttributeInstance implements AttributeInstance {
         return attribute;
     }
 
+    public void setAttribute(Attribute attribute) {
+        this.attribute = attribute;
+    }
+
     @Override
     public double getBaseValue() {
         return baseValue;
@@ -50,6 +54,10 @@ public class VirtualEntityAttributeInstance implements AttributeInstance {
     @Override
     public @NotNull Collection<AttributeModifier> getModifiers() {
         return modifiers;
+    }
+
+    public void setModifiers(List<AttributeModifier> modifiers) {
+        this.modifiers = modifiers;
     }
 
     @Override
@@ -72,6 +80,10 @@ public class VirtualEntityAttributeInstance implements AttributeInstance {
     @Override
     public double getDefaultValue() {
         return defaultValue;
+    }
+
+    public void setDefaultValue(double defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     private void calculateValue() {

@@ -1,16 +1,15 @@
 package com.mcmiddleearth.entities.ai.goal.head;
 
-import com.mcmiddleearth.entities.ai.goal.GoalEntityTarget;
+import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.goal.GoalPath;
+import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import java.util.logging.Logger;
-
 public class HeadGoalWaypointTarget extends HeadGoal {
 
-    private final GoalPath goal;
+    private GoalPath goal;
 
     public HeadGoalWaypointTarget(GoalPath goal) {
         this.goal = goal;
@@ -19,6 +18,10 @@ public class HeadGoalWaypointTarget extends HeadGoal {
     public HeadGoalWaypointTarget(GoalPath goal, int duration) {
         this(goal);
         setDuration(duration);
+    }
+
+    public void setGoal(GoalPath goal) {
+        this.goal = goal;
     }
 
     @Override
@@ -39,4 +42,14 @@ public class HeadGoalWaypointTarget extends HeadGoal {
 //Logger.getGlobal().info("Has waypoint: "+goal.getWaypoint());
         return goal.getWaypoint() != null;
     }
+
+    @Override
+    public boolean provideGoalAndEntity(Goal goal, McmeEntity entity) {
+        if(goal instanceof GoalPath) {
+            this.goal = (GoalPath) goal;
+            return true;
+        }
+        return false;
+    }
+
 }

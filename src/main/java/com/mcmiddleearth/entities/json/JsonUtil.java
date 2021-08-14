@@ -1,9 +1,13 @@
 package com.mcmiddleearth.entities.json;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.api.McmeEntityType;
+import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.Placeholder;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import org.bukkit.Location;
@@ -11,14 +15,46 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.util.Vector;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class JsonUtil {
 
     public static void writeEntityLink(Entity entity, boolean required, JsonWriter out) throws IOException {
         out.beginObject()
                 .name("required").value(required)
-                .name("uniqueid").value(entity.getUniqueId().toString());
+                .name("uniqueId").value(entity.getUniqueId().toString());
         out.endObject();
+    }
+
+    public static McmeEntity readEntityLink(JsonReader in) throws IOException {
+        boolean required = false;
+        UUID uuid = null;
+        in.beginObject();
+        try {
+            while (in.hasNext()) {
+                switch (in.nextName()) {
+                    case "required":
+                        required = in.nextBoolean();
+                        break;
+                    case "uniqueId":
+                        uuid = UUID.fromString(in.nextString());
+                }
+            }
+        } finally {
+            in.endObject();
+        }
+        if(uuid != null) {
+            McmeEntity entity = EntitiesPlugin.getEntityServer().getEntity(uuid);
+            if(entity != null) {
+                return entity;
+            } else if(required){
+                throw new IllegalArgumentException("Required entity not found!");
+            } else {
+                return new Placeholder(uuid);
+            }
+        } else {
+            throw new IllegalArgumentException("Missing UUID for entity.");
+        }
     }
 
     public static void writeNonDefaultAttribute(JsonWriter out, AttributeInstance attributeInstance, McmeEntityType entityType, Gson gson) {

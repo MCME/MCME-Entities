@@ -8,8 +8,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-import java.util.logging.Logger;
-
 public class WalkingPathfinder implements Pathfinder{
 
     private final VirtualEntity entity;

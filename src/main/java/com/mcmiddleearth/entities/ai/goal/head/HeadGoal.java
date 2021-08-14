@@ -1,5 +1,8 @@
 package com.mcmiddleearth.entities.ai.goal.head;
 
+import com.mcmiddleearth.entities.ai.goal.Goal;
+import com.mcmiddleearth.entities.entities.McmeEntity;
+
 public abstract class HeadGoal {
 
     private int duration = 10;
@@ -22,6 +25,8 @@ public abstract class HeadGoal {
     public void setDuration(int duration) {
         this.duration = duration;
     }
+
+    public abstract boolean provideGoalAndEntity(Goal goal, McmeEntity entity);
 
     public abstract void doTick();
 

@@ -1,10 +1,11 @@
 package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.Placeholder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
 
@@ -15,39 +16,52 @@ import java.util.stream.Collectors;
 
 public class GoalEntityTargetDefend extends GoalEntityTarget {
 
-    McmeEntity protege;
+    private McmeEntity protege;
+    private boolean protegeIncomplete = false;
 
     public GoalEntityTargetDefend(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
         super(entity, factory, pathfinder);
         this.protege = factory.getTargetEntity();
+        if(this.protege instanceof Placeholder) {
+            protegeIncomplete = true;
+        }
     }
 
     @Override
     public void doTick() {
         super.doTick();
-        if(target == protege && isCloseToTarget(GoalDistance.CAUTION)) {
-//Logger.getGlobal().info("delete path as entity is close.");
-            EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(),this));
-            setIsMoving(false);//deletePath();
-            movementSpeed = MovementSpeed.STAND;
-            setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
-                    .subtract(getEntity().getLocation().toVector())).getYaw());
-        } else if(target != protege && isCloseToTarget(GoalDistance.ATTACK)) {
-            EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(),this));
-            if(getEntity().getAttackCoolDown()==0) {
-                getEntity().attack(target);
+        if(!targetIncomplete) {
+            if (target == protege && isCloseToTarget(GoalDistance.CAUTION)) {
+                //Logger.getGlobal().info("delete path as entity is close.");
+                EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(), this));
+                setIsMoving(false);//deletePath();
+                movementSpeed = MovementSpeed.STAND;
+                setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
+                        .subtract(getEntity().getLocation().toVector())).getYaw());
+            } else if (target != protege && isCloseToTarget(GoalDistance.ATTACK)) {
+                EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(), this));
+                if (getEntity().getAttackCoolDown() == 0) {
+                    getEntity().attack(target);
+                }
+            } else {
+                setIsMoving(true);
+                movementSpeed = MovementSpeed.WALK;
             }
-        } else {
-            setIsMoving(true);
-            movementSpeed = MovementSpeed.WALK;
-        }
-        if(protege.isDead()) {
-            setFinished();
+            if (!protegeIncomplete && protege.isDead()) {
+                setFinished();
+            }
         }
     }
 
     @Override
     public void update() {
+        if(protegeIncomplete) {
+            McmeEntity search = EntitiesPlugin.getEntityServer().getEntity(protege.getUniqueId());
+            if(search != null) {
+                protege = search;
+                protegeIncomplete = false;
+            }
+        }
         int range = 20;
         Set<McmeEntity> attackerSet = EntitiesPlugin.getEntityServer().getEntitiesAt(protege.getLocation(),range,range,range).stream()
                 .filter(entity -> entity.getGoal() instanceof  GoalEntityTargetAttack && ((GoalEntityTargetAttack) entity.getGoal()).target == protege

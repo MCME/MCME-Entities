@@ -2,7 +2,6 @@ package com.mcmiddleearth.entities.command;
 
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.command.AbstractCommandHandler;
@@ -129,7 +128,7 @@ public class VirtualCommand extends AbstractCommandHandler implements TabExecuto
                 .then(HelpfulLiteralBuilder.literal("save")
                         .then(HelpfulRequiredArgumentBuilder.argument("file", word())
                                 .executes(context -> saveEntities(context.getSource(), context.getArgument("file", String.class)))))
-                .then(HelpfulLiteralBuilder.literal("save")
+                .then(HelpfulLiteralBuilder.literal("load")
                         .then(HelpfulRequiredArgumentBuilder.argument("file", word())
                                 .executes(context -> loadEntities(context.getSource(), context.getArgument("file", String.class)))))
                 .then(HelpfulLiteralBuilder.literal("say")
@@ -249,13 +248,6 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
         {
             factory.withName(name);
         }
-        if(goal !=null)
-        {
-            try {
-                factory.withGoalType(GoalType.valueOf(goal.toUpperCase()));
-            } catch (IllegalArgumentException ignore) {
-            }
-        }
         if(dataFile!=null && !dataFile.equals("")) {
             factory.withDataFile(dataFile);
         }
@@ -263,21 +255,28 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
         {
             factory.useEntityForSpawnLocation(player);
         }
-        if(factory.getTargetLocation()==null) {
-            factory.withTargetLocation(player.getSelectedPoints().stream()
-                                       .findFirst().orElse(new Location(player.getLocation().getWorld(),
-                                                                        0,0,0)));
-        }
-        if(player.getSelectedTargetEntity()!=null)
+        if(goal !=null)
         {
-            factory.withTargetEntity(player.getSelectedTargetEntity());
-        }
-        if(factory.getTargetEntity() == null) {
-            factory.withTargetEntity(player);
-        }
-//Logger.getGlobal().info("Factory tar type: "+factory.getTargetEntity());
-        if(player.getSelectedPoints() != null && player.getSelectedPoints().size()>0) {
-            factory.withCheckpoints(player.getSelectedPoints().toArray(new Location[0]));
+            createGoalFactory(factory);
+            try {
+                factory.getGoalFactory().withGoalType(GoalType.valueOf(goal.toUpperCase()));
+            } catch (IllegalArgumentException ignore) { }
+            if(factory.getGoalFactory().getTargetLocation()==null) {
+                factory.getGoalFactory().withTargetLocation(player.getSelectedPoints().stream()
+                                           .findFirst().orElse(new Location(player.getLocation().getWorld(),
+                                                                            0,0,0)));
+            }
+            if(player.getSelectedTargetEntity()!=null)
+            {
+                factory.getGoalFactory().withTargetEntity(player.getSelectedTargetEntity());
+            }
+            if(factory.getGoalFactory().getTargetEntity() == null) {
+                factory.getGoalFactory().withTargetEntity(player);
+            }
+    //Logger.getGlobal().info("Factory tar type: "+factory.getTargetEntity());
+            if(player.getSelectedPoints() != null && player.getSelectedPoints().size()>0) {
+                factory.getGoalFactory().withCheckpoints(player.getSelectedPoints().toArray(new Location[0]));
+            }
         }
         return factory;
     }
@@ -330,9 +329,9 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
         int counter = 0;
         try (JsonWriter writer = gson.newJsonWriter(new FileWriter(file))) {
             writer.beginArray();
-            for(Entity entity: ((BukkitCommandSender)sender).getSelectedEntities()) {
+            for(McmeEntity entity: ((BukkitCommandSender)sender).getSelectedEntities()) {
                 if(entity instanceof VirtualEntity) {
-                    gson.toJson(writer, entity.getFactory());
+                    gson.toJson(((VirtualEntity)entity).getFactory(), VirtualEntityFactory.class,writer);
                     counter++;
                 }
             }
@@ -341,6 +340,7 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
         } catch (IOException e) {
             sender.sendMessage(new ComponentBuilder("File output error.").color(ChatColor.RED).create());
         }
+        return 0;
     }
 
     private int applyAnimationFrame(McmeCommandSender sender, String animation, int frameId) {
@@ -363,22 +363,25 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
     private int findPath(McmeCommandSender sender) {
         RealPlayer player = ((RealPlayer)sender);
         VirtualEntity entity = (VirtualEntity) player.getSelectedEntities().iterator().next();
-        GoalVirtualEntity goal = new GoalEntityTargetFollow(GoalType.FOLLOW_ENTITY, entity,
-                                     new WalkingPathfinder(entity), player);
-        goal.update();
-        Path path = ((GoalPath)goal).getPath();
-        if(path!=null) {
-            Logger.getGlobal().info("Target: " +path.getTarget());
-            Logger.getGlobal().info("Start: " +path.getStart());
-            Logger.getGlobal().info("End: " +path.getEnd());
-            path.getPoints().forEach(point -> {
-                Logger.getGlobal().info(point.getBlockX()+" "+point.getBlockY()+" "+point.getBlockZ());
-                player.getLocation().getWorld()
-                        .dropItem(point.toLocation(player.getLocation().getWorld()), new ItemStack(Material.STONE));
-            });
-        } else {
-            Logger.getGlobal().info("no path found");
-        }
+        try {
+            GoalVirtualEntity goal = new VirtualEntityGoalFactory(GoalType.FOLLOW_ENTITY)
+                    .withTargetEntity(player)
+                    .build(entity);
+            goal.update();
+            Path path = ((GoalPath)goal).getPath();
+            if(path!=null) {
+                Logger.getGlobal().info("Target: " +path.getTarget());
+                Logger.getGlobal().info("Start: " +path.getStart());
+                Logger.getGlobal().info("End: " +path.getEnd());
+                path.getPoints().forEach(point -> {
+                    Logger.getGlobal().info(point.getBlockX()+" "+point.getBlockY()+" "+point.getBlockZ());
+                    player.getLocation().getWorld()
+                            .dropItem(point.toLocation(player.getLocation().getWorld()), new ItemStack(Material.STONE));
+                });
+            } else {
+                Logger.getGlobal().info("no path found");
+            }
+        } catch (Exception ignore) {}
         return 0;
     }
 
@@ -542,7 +545,7 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
                 }
                 break;
             case "invertwhitelist":
-                factory.withInvertWhiteList(value.equalsIgnoreCase("true"));
+                factory.withBlackList(value.equalsIgnoreCase("true"));
                 break;
             case "uniqueid":
                 try {
@@ -588,14 +591,16 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
                 break;
             case "goaltype":
                 try {
-                    factory.withGoalType(GoalType.valueOf(value.toUpperCase()));
+                    createGoalFactory(factory);
+                    factory.getGoalFactory().withGoalType(GoalType.valueOf(value.toUpperCase()));
                 } catch (IllegalArgumentException ex) {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse goal type").color(ChatColor.RED).create());
                 }
                 break;
             case "targetlocation":
                 try {
-                    factory.withTargetLocation(parseLocation(((RealPlayer)player).getBukkitPlayer(), value));
+                    createGoalFactory(factory);
+                    factory.getGoalFactory().withTargetLocation(parseLocation(((RealPlayer)player).getBukkitPlayer(), value));
                 } catch (IllegalArgumentException ex) {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse target location!").color(ChatColor.RED).create());
                 }
@@ -603,7 +608,8 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
             case "targetentity":
                 McmeEntity target = EntitiesPlugin.getEntityServer().getEntity(value);
                 if(target != null) {
-                    factory.withTargetEntity(target);
+                    createGoalFactory(factory);
+                    factory.getGoalFactory().withTargetEntity(target);
                 } else {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Target entity not found!").color(ChatColor.RED).create());
                 }
@@ -647,6 +653,10 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
         }
         sender.sendMessage(new ComponentBuilder(property + " set to " + value + ".").create());
         return 0;
+    }
+
+    private void createGoalFactory(VirtualEntityFactory factory) {
+        factory.withGoalFactory(new VirtualEntityGoalFactory(GoalType.HOLD_POSITION));
     }
 
     private Vector parseVector(Player player, String value) throws IllegalArgumentException {

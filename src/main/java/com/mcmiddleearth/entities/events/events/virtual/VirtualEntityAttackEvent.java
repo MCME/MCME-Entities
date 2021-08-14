@@ -28,4 +28,6 @@ public class VirtualEntityAttackEvent extends VirtualEntityEvent implements Canc
     public void setCancelled(boolean cancelled) {
         isCancelled = cancelled;
     }
+
+
 }

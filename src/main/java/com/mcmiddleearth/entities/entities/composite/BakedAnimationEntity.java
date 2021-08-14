@@ -3,10 +3,8 @@ package com.mcmiddleearth.entities.entities.composite;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.api.MovementSpeed;
-import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
@@ -17,14 +15,12 @@ import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimation
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import org.bukkit.Material;
-import org.graalvm.compiler.lir.aarch64.AArch64Move;
 
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class BakedAnimationEntity extends CompositeEntity {

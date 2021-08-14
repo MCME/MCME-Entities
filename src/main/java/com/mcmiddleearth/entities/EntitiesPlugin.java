@@ -12,6 +12,8 @@ import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import com.mcmiddleearth.entities.command.EntitiesCommand;
 import com.mcmiddleearth.entities.command.VirtualCommand;
+import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
+import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.listener.PlayerListener;
 import com.mcmiddleearth.entities.json.*;
 import com.mcmiddleearth.entities.protocol.listener.VirtualEntityUseListener;
@@ -19,6 +21,7 @@ import com.mcmiddleearth.entities.server.EntityServer;
 import com.mcmiddleearth.entities.server.SyncEntityServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -112,19 +115,31 @@ public final class EntitiesPlugin extends JavaPlugin {
 
     public static GsonBuilder getEntitiesGsonBuilder() {
         return new GsonBuilder()
+                .setPrettyPrinting()
+                .setLenient()
+                .registerTypeAdapter(VirtualEntityAttributeInstance.class, new AttributeInstanceAdapter().nullSafe())
+                .registerTypeAdapter(EntityBoundingBox.class, new EntityBoundingBoxAdapter().nullSafe())
                 .registerTypeAdapter(Location.class, new LocationAdapter().nullSafe())
+                .registerTypeAdapter(SpeechBalloonLayout.class, new SpeechBalloonLayoutAdapter().nullSafe())
                 .registerTypeAdapter(Vector.class, new VectorAdapter().nullSafe())
                 .registerTypeAdapter(VirtualEntityFactory.class, new VirtualEntityFactoryAdapter().nullSafe())
-                .registerTypeAdapter(VirtualEntityGoalFactory.class, new VirtualEntityGoalFactoryAdapter().nullSafe())
-                .registerTypeAdapter(EntityBoundingBox.class, new EntityBoundingBoxAdapter().nullSafe());
+                .registerTypeAdapter(VirtualEntityGoalFactory.class, new VirtualEntityGoalFactoryAdapter().nullSafe());
     }
 
     public static File getEntitiesFolder() {
-        return new File(instance.getDataFolder(),"entity");
+        File file = new File(instance.getDataFolder(),"entity");
+        if(!file.exists()) {
+            file.mkdir();
+        }
+        return file;
     }
 
     public static File getAnimationFolder() {
-        return new File(instance.getDataFolder(), "animation");
+        File file = new File(instance.getDataFolder(), "animation");
+        if(!file.exists()) {
+            file.mkdir();
+        }
+        return file;
     }
 
 }
