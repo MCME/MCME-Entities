@@ -11,6 +11,7 @@ import com.mcmiddleearth.entities.ai.goal.head.*;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.exception.InvalidJsonDataException;
 import org.bukkit.Location;
 
 import java.io.IOException;
@@ -93,10 +94,10 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
             try {
                 switch(key) {
                     case "goalType":
-                        factory.withGoalType(GoalType.valueOf(in.nextString()));
+                        factory.withGoalType(GoalType.valueOf(in.nextString().toUpperCase()));
                         break;
                     case "movementSpeed":
-                        factory.withMovementSpeed(MovementSpeed.valueOf(in.nextString()));
+                        factory.withMovementSpeed(MovementSpeed.valueOf(in.nextString().toUpperCase()));
                         break;
                     case "targetLocation":
                         factory.withTargetLocation(gson.fromJson(in,Location.class));
@@ -126,10 +127,10 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                     case "headGoals":
                         Set<HeadGoal>headGoals = new HashSet<>();
                         in.beginArray();
-                        try {
+                        //try {
                             while(in.hasNext()) {
                                 in.beginObject();
-                                try {
+                                //try {
                                     HeadGoalType type = null;
                                     int duration = 15;
                                     McmeEntity targetEntity = null;
@@ -138,7 +139,7 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                                     while(in.hasNext()) {
                                         switch(in.nextName()) {
                                             case "type":
-                                                type = HeadGoalType.valueOf(in.nextString());
+                                                type = HeadGoalType.valueOf(in.nextString().toUpperCase());
                                                 break;
                                             case "targetLocation":
                                                 targetLocation = gson.fromJson(in,Location.class);
@@ -181,16 +182,19 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                                                 break;
                                         }
                                     }
-                                } finally { in.endObject(); }
+                                //} finally {
+                            in.endObject(); //}
                             }
-                        } finally { in.endArray(); }
+                        //} finally {
+                        in.endArray(); //}
                         factory.withHeadGoals(headGoals);
                         break;
                     default:
                         in.skipValue();
                 }
             } catch (IllegalArgumentException | IllegalStateException | JsonSyntaxException ex) {
-                Logger.getLogger(VirtualEntityGoalFactoryAdapter.class.getSimpleName()).warning("Error reading key: "+key+" -> "+ex.getMessage());
+                //Logger.getLogger(VirtualEntityGoalFactoryAdapter.class.getSimpleName()).warning("Error reading key: "+key+" -> "+ex.getMessage());
+                throw new IllegalArgumentException("Error reading key: "+key+" at "+in.getPath() + " -> "+ex.getMessage());
             }
         }
         in.endObject();

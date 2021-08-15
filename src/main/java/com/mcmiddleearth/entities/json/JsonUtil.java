@@ -30,7 +30,7 @@ public class JsonUtil {
         boolean required = false;
         UUID uuid = null;
         in.beginObject();
-        try {
+        //try {
             while (in.hasNext()) {
                 switch (in.nextName()) {
                     case "required":
@@ -40,9 +40,9 @@ public class JsonUtil {
                         uuid = UUID.fromString(in.nextString());
                 }
             }
-        } finally {
+        //} finally {
             in.endObject();
-        }
+        //}
         if(uuid != null) {
             McmeEntity entity = EntitiesPlugin.getEntityServer().getEntity(uuid);
             if(entity != null) {

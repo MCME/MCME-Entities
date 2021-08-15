@@ -159,18 +159,41 @@ Logger.getGlobal().info("Start new server task");
     }
 
     @Override
-    public Collection<McmeEntity> getEntities(Class<? extends Entity> clazz) {
-        return entityProvider.getEntities().stream().filter(clazz::isInstance).collect(Collectors.toList());
+    public Collection<? extends McmeEntity> getEntities(Class<? extends Entity> clazz) {
+        if(clazz.isAssignableFrom(RealPlayer.class)) {
+            return playerProvider.getMcmePlayers();
+        } else {
+            return entityProvider.getEntities().stream().filter(clazz::isInstance).collect(Collectors.toList());
+        }
     }
 
     @Override
     public McmeEntity getEntity(UUID uniqueId) {
-        return entityProvider.getEntity(uniqueId);
+        if(uniqueId.version()==4) {
+            McmeEntity entity = playerProvider.getMcmePlayer(uniqueId);
+            if(entity != null) {
+                return entity;
+            } else {
+                return entityProvider.getEntity(uniqueId);
+            }
+        } else {
+            McmeEntity entity = entityProvider.getEntity(uniqueId.version());
+            if(entity != null) {
+                return entity;
+            } else {
+                return playerProvider.getMcmePlayer(uniqueId);
+            }
+        }
     }
 
     @Override
     public McmeEntity getEntity(String name) {
-        return entityProvider.getEntityByName(name);
+        McmeEntity entity = entityProvider.getEntityByName(name);
+        if(entity != null) {
+            return entity;
+        } else {
+            return playerProvider.getMcmePlayer(name);
+        }
     }
 
     @Override
@@ -180,7 +203,10 @@ Logger.getGlobal().info("Start new server task");
 
     @Override
     public Collection<McmeEntity> getEntitiesAt(Location location, int rangeX, int rangeY, int rangeZ) {
-        return entityProvider.getEntitiesAt(location, rangeX,rangeY,rangeZ);
+        Collection<McmeEntity> entities = new HashSet<>();
+        entities.addAll(entityProvider.getEntitiesAt(location, rangeX,rangeY,rangeZ));
+        entities.addAll(playerProvider.getMcmePlayersAt(location,rangeX, rangeY, rangeZ));
+        return entities;
     }
 
     @Override

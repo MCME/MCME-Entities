@@ -106,7 +106,7 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
             try {
                 switch (key) {
                     case "type":
-                        factory.withEntityType(McmeEntityType.valueOf(in.nextString()));
+                        factory.withEntityType(McmeEntityType.valueOf(in.nextString().toUpperCase()));
                         break;
                     case "blacklist":
                         factory.withBlackList(in.nextBoolean());
@@ -114,11 +114,12 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                     case "whitelist":
                         Set<UUID> whitelist = new HashSet<>();
                         in.beginArray();
-                        try {
+                        //try {
                             while (in.hasNext()) {
                                 whitelist.add(UUID.fromString(in.nextString()));
                             }
-                        } finally { in.endArray();}
+                        //} finally {
+                        in.endArray();//}
                         factory.withWhitelist(whitelist);
                         break;
                     case "uniqueId":
@@ -159,12 +160,13 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                     case "attributes":
                         Map<Attribute,AttributeInstance> attributes = new HashMap<>();
                         in.beginArray();
-                        try {
+                        //try {
                             while(in.hasNext()) {
                                 VirtualEntityAttributeInstance instance = gson.fromJson(in,VirtualEntityAttributeInstance.class);
                                 attributes.put(instance.getAttribute(),instance);
                             }
-                        } finally { in.endArray(); }
+                        //} finally {
+                        in.endArray(); //}
                         factory.withAttributes(attributes);
                         break;
                     case "boundingBox":
@@ -212,18 +214,20 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                     case "enemies":
                         Set<McmeEntity> enemies = new HashSet<>();
                         in.beginArray();
-                        try {
+                        //try {
                             while(in.hasNext()) {
                                 enemies.add(JsonUtil.readEntityLink(in));
                             }
-                        } finally { in.endArray(); }
+                        //} finally {
+                        in.endArray(); //}
                         factory.withEnemies(enemies);
                         break;
                     default:
                         in.skipValue();
                 }
             } catch (IllegalArgumentException | IllegalStateException | JsonSyntaxException ex) {
-                Logger.getLogger(VirtualEntityFactoryAdapter.class.getSimpleName()).warning("Error reading key: "+key+" -> "+ex.getMessage());
+                //Logger.getLogger(VirtualEntityFactoryAdapter.class.getSimpleName()).warning("Error reading key: "+key+" -> "+ex.getMessage());
+                throw new IllegalArgumentException("Error reading key: "+key+" at "+in.getPath() + " -> "+ex.getMessage());
             }
         }
         in.endObject();

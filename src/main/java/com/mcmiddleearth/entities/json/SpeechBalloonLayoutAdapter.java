@@ -60,7 +60,7 @@ public class SpeechBalloonLayoutAdapter extends TypeAdapter<SpeechBalloonLayout>
                         layout.withBalloon(in.nextBoolean());
                         break;
                     case "balloonMaterial":
-                        layout.withBalloonMaterial(Material.valueOf(in.nextString()));
+                        layout.withBalloonMaterial(Material.valueOf(in.nextString().toUpperCase()));
                         break;
                     case "linePrefix":
                         layout.withLinePrefix(in.nextString());
@@ -69,7 +69,7 @@ public class SpeechBalloonLayoutAdapter extends TypeAdapter<SpeechBalloonLayout>
                         layout.withLinePitch(in.nextInt());
                         break;
                     case "width":
-                        layout.withWidth(SpeechBalloonLayout.Width.valueOf(in.nextString()));
+                        layout.withWidth(SpeechBalloonLayout.Width.valueOf(in.nextString().toUpperCase()));
                         break;
                     case "lineLengthNarrow":
                         layout.withLineLengthNarrow(in.nextInt());
@@ -84,7 +84,7 @@ public class SpeechBalloonLayoutAdapter extends TypeAdapter<SpeechBalloonLayout>
                         layout.withWidthInBlocksWide(in.nextDouble());
                         break;
                     case "position":
-                        layout.withPosition(SpeechBalloonLayout.Position.valueOf(in.nextString()));
+                        layout.withPosition(SpeechBalloonLayout.Position.valueOf(in.nextString().toUpperCase()));
                         break;
                     case "baseOffset":
                         layout.withBaseOffset(gson.fromJson(in,Vector.class));
@@ -92,28 +92,31 @@ public class SpeechBalloonLayoutAdapter extends TypeAdapter<SpeechBalloonLayout>
                     case "modelDataNarrow":
                         List<Integer> data = new ArrayList<>();
                         in.beginArray();
-                        try {
+                        //try {
                             while(in.hasNext()) {
                                 data.add(in.nextInt());
                             }
-                        } finally { in.endArray(); }
+                        //} finally {
+                        in.endArray(); //}
                         layout.withBalloonModelData(data.toArray(new Integer[0]),false);
                         break;
                     case "modelDataWide":
                         data = new ArrayList<>();
                         in.beginArray();
-                        try {
+                        //try {
                             while(in.hasNext()) {
                                 data.add(in.nextInt());
                             }
-                        } finally { in.endArray(); }
+                        //} finally {
+                        in.endArray(); //}
                         layout.withBalloonModelData(data.toArray(new Integer[0]),true);
                         break;
                     default:
                         in.skipValue();
                 }
             } catch (IllegalArgumentException | IllegalStateException | JsonSyntaxException ex) {
-                Logger.getLogger(SpeechBalloonLayoutAdapter.class.getSimpleName()).warning("Error reading key: "+key+" -> "+ex.getMessage());
+                //Logger.getLogger(SpeechBalloonLayoutAdapter.class.getSimpleName()).warning("Error reading key: "+key+" -> "+ex.getMessage());
+                throw new IllegalArgumentException("Error reading key: "+key+" at "+in.getPath() + " -> "+ex.getMessage());
             }
         }
         in.endObject();

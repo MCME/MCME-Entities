@@ -96,7 +96,7 @@ public class EntityAPI {
      * @param clazz requested entity class
      * @return collection of found entities
      */
-    public Collection<McmeEntity> getEntities(Class<? extends Entity> clazz) {
+    public Collection<? extends McmeEntity> getEntities(Class<? extends Entity> clazz) {
         return entityServer.getEntities(clazz);
     }
 

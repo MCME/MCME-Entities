@@ -315,6 +315,8 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
             sender.sendMessage(new ComponentBuilder("File not found.").color(ChatColor.RED).create());
         } catch (IOException e) {
             sender.sendMessage(new ComponentBuilder("File input error.").color(ChatColor.RED).create());
+        } catch (IllegalArgumentException ex) {
+            sender.sendMessage(new ComponentBuilder(ex.getMessage()).color(ChatColor.RED).create());
         } catch (InvalidDataException e) {
             sender.sendMessage(new ComponentBuilder("Invalid entity data in file.").color(ChatColor.RED).create());
         } catch (InvalidLocationException e) {

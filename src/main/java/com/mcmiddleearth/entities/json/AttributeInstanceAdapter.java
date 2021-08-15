@@ -46,11 +46,11 @@ public class AttributeInstanceAdapter extends TypeAdapter<VirtualEntityAttribute
     public VirtualEntityAttributeInstance read(JsonReader in) throws IOException {
         VirtualEntityAttributeInstance instance = new VirtualEntityAttributeInstance(Attribute.GENERIC_MAX_HEALTH,20);
         in.beginObject();
-        try {
+        //try {
             while (in.hasNext()) {
                 switch(in.nextName()) {
                     case "attribute":
-                        instance.setAttribute(Attribute.valueOf(in.nextString()));
+                        instance.setAttribute(Attribute.valueOf(in.nextString().toUpperCase()));
                         break;
                     case "default":
                         instance.setDefaultValue(in.nextDouble());
@@ -61,10 +61,10 @@ public class AttributeInstanceAdapter extends TypeAdapter<VirtualEntityAttribute
                     case "modifier":
                         List<AttributeModifier> modifiers = new ArrayList<>();
                         in.beginArray();
-                        try {
+                        //try {
                             while(in.hasNext()) {
                                 in.beginObject();
-                                try {
+                                //try {
                                     String name = "";
                                     AttributeModifier.Operation operation = AttributeModifier.Operation.ADD_NUMBER;
                                     double amount = 0;
@@ -80,29 +80,33 @@ public class AttributeInstanceAdapter extends TypeAdapter<VirtualEntityAttribute
                                                 amount = in.nextDouble();
                                                 break;
                                             case "operation":
-                                                operation = AttributeModifier.Operation.valueOf(in.nextString());
+                                                operation = AttributeModifier.Operation.valueOf(in.nextString().toUpperCase());
                                                 break;
                                             case "uniqueId":
                                                 uniqueId = UUID.fromString(in.nextString());
                                                 break;
                                             case "slot":
-                                                slot = EquipmentSlot.valueOf(in.nextString());
+                                                slot = EquipmentSlot.valueOf(in.nextString().toUpperCase());
                                                 break;
                                             default:
                                                 in.skipValue();
                                         }
                                     }
                                     modifiers.add(new AttributeModifier(uniqueId, name, amount, operation, slot));
-                                } finally { in.endObject(); }
+                                //} finally {
+                                in.endObject(); //}
                             }
-                        } finally { in.endArray(); }
+                        //} finally {
+                        in.endArray(); //}
                         instance.setModifiers(modifiers);
                         break;
                     default:
                         in.skipValue();
                 }
             }
+        //} finally {
+                in.endObject();
+            //}
             return instance;
-        } finally { in.endObject(); }
     }
 }
