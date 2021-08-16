@@ -4,6 +4,7 @@ import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.bones.Bone;
+import com.mcmiddleearth.entities.entities.composite.bones.BoneThreeAxis;
 import com.mcmiddleearth.entities.entities.composite.bones.BoneTwoAxis;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
@@ -38,15 +39,25 @@ public abstract class CompositeEntity extends VirtualEntity {
     protected RotationMode rotationMode;
 
     public CompositeEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
+        this(entityId,factory, RotationMode.YAW);
+    }
+
+    protected CompositeEntity(int entityId, VirtualEntityFactory factory,
+                              RotationMode rotationMode) throws InvalidLocationException, InvalidDataException {
         super(factory);
         firstEntityId = entityId;
         headPitchCenter = factory.getHeadPitchCenter();
         headPoseDelay = factory.getHeadPoseDelay();
-        rotationMode = RotationMode.YAW;
+        this.rotationMode = rotationMode;
         maxRotationStep = factory.getMaxRotationStep();
         if(getDisplayName()!=null) {
-            displayNameBone = new Bone("displayName",this,new EulerAngle(0,0,0),
-                                       factory.getDisplayNamePosition(),null,false, 0);
+            if (rotationMode.equals(RotationMode.YAW_PITCH_ROLL)) {
+                displayNameBone = new BoneThreeAxis("displayName", this, new EulerAngle(0, 0, 0),
+                        factory.getDisplayNamePosition(), null, false, 0);
+            } else {
+                displayNameBone = new Bone("displayName", this, new EulerAngle(0, 0, 0),
+                        factory.getDisplayNamePosition(), null, false, 0);
+            }
             displayNameBone.setDisplayName(factory.getDisplayName());
             bones.add(displayNameBone);
         }

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class BakedAnimationEntity extends CompositeEntity {
@@ -43,9 +44,15 @@ public class BakedAnimationEntity extends CompositeEntity {
     private String animationFileName;
 
     public BakedAnimationEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
-        super(entityId, factory);
+        this(entityId,factory,RotationMode.YAW);
+    }
+
+    public BakedAnimationEntity(int entityId, VirtualEntityFactory factory,
+                                RotationMode rotationMode) throws InvalidLocationException, InvalidDataException {
+        super(entityId, factory, rotationMode);
 //Logger.getGlobal().info("Baked Animation Get location "+getLocation());
         manualAnimationControl = factory.getManualAnimationControl();
+Logger.getGlobal().info("Manual animation: "+manualAnimationControl);
         movementSpeedAnimation = getMovementSpeed();
         animationFileName = factory.getDataFile();
         File animationFile = new File(EntitiesPlugin.getAnimationFolder(), animationFileName+".json");

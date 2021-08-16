@@ -16,10 +16,11 @@ public class WingedFlightEntity extends BakedAnimationEntity {
     private float maxRotationStepFlight = 2f;
 
     public WingedFlightEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
-        super(entityId, factory);
+        super(entityId, factory, RotationMode.YAW_PITCH_ROLL);
         maxRotationStepFlight = factory.getMaxRotationStepFlight();
         //pitch = factory.getgetPitch();
         currentRoll = factory.getRoll();
+Logger.getGlobal().info("RotationStepFlight: "+maxRotationStepFlight + " roll: "+currentRoll);
     }
 
     @Override
@@ -73,10 +74,10 @@ public class WingedFlightEntity extends BakedAnimationEntity {
         return currentPitch!=getPitch() || currentYaw != getLocation().getYaw();
     }
 
-    @Override
+    /*@Override
     public RotationMode getRotationMode() {
         return RotationMode.YAW_PITCH_ROLL;
-    }
+    }*/
 
     public float getCurrentPitch() {
         return currentPitch;

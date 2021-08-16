@@ -6,6 +6,7 @@ import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.SimplePathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.Placeholder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
@@ -145,27 +146,32 @@ public class VirtualEntityGoalFactory {
         switch(goalType) {
             case WATCH_ENTITY:
                 Constrain.checkEntity(targetEntity);
-                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalWatchEntity(entity,this);
                 break;
             case FOLLOW_ENTITY:
                 Constrain.checkEntity(targetEntity);
-                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetFollow(entity,this, pathfinder);
                 break;
             case ATTACK_ENTITY:
                 Constrain.checkEntity(targetEntity);
-                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetAttack(entity,this, pathfinder);
                 break;
             case ATTACK_CLOSE:
                 Constrain.checkEntity(targetEntity);
-                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetAttackClose(entity, this, pathfinder);
                 break;
             case DEFEND_ENTITY:
                 Constrain.checkEntity(targetEntity);
-                Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetDefend(entity,this, pathfinder);
                 break;
             case GOTO_LOCATION:
@@ -178,11 +184,11 @@ public class VirtualEntityGoalFactory {
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
                 goal = new GoalLocationTargetFollowCheckpoints(entity,this, pathfinder);
                 break;
-            case FOLLOW_CHECKPOINTS_WINGED:
+            /*case FOLLOW_CHECKPOINTS_WINGED:
                 Constrain.checkCheckpoints(checkpoints);
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());
                 goal = new GoalLocationTargetFollowCheckpointsWingedFlight(entity,this, pathfinder);
-                break;
+                break;*/
             case RANDOM_CHECKPOINTS:
                 Constrain.checkCheckpoints(checkpoints);
                 Constrain.checkSameWorld(checkpoints,entity.getLocation().getWorld());

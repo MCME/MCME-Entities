@@ -3,8 +3,11 @@ package com.mcmiddleearth.entities.ai.goal;
 import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.api.MovementSpeed;
+import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
+import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public abstract class GoalPath extends GoalVirtualEntity {
@@ -55,13 +58,23 @@ public abstract class GoalPath extends GoalVirtualEntity {
 
     public void setIsMoving(boolean move) {
         this.isMoving = move;
-        if (move && waypoint != null) {
+        /*if (move && waypoint != null) {
 //Logger.getGlobal().info("Walk!");
             movementSpeed = MovementSpeed.WALK;
         } else {
             movementSpeed = MovementSpeed.STAND;
-        }
+        }*/
         //return getEntity().getLocation().toVector().distanceSquared(waypoint) < isCloseDistanceSquared;
+    }
+
+    @Override
+    public MovementSpeed getMovementSpeed() {
+        if (isMoving && waypoint != null) {
+//Logger.getGlobal().info("Walk!");
+            return movementSpeed;
+        } else {
+            return MovementSpeed.STAND;
+        }
     }
 
     public void setPathTarget(Vector target) {
@@ -76,10 +89,24 @@ public abstract class GoalPath extends GoalVirtualEntity {
     }
 
     public Vector getDirection() {
-        if(path == null || waypoint == null || !isMoving) {
-            return null;
+        if((getEntity() instanceof WingedFlightEntity)
+                && (getEntity().getMovementType().equals(MovementType.FLYING)|| getEntity().getMovementType().equals(MovementType.GLIDING))) {
+            WingedFlightEntity winged = (WingedFlightEntity) getEntity();
+            Location loc = winged.getLocation().clone();
+            loc.setPitch(winged.getCurrentPitch());
+            loc.setYaw(winged.getCurrentYaw());
+            return loc.getDirection();
+        /*double sinY = Math.sin(winged.getCurrentYaw());
+        double cosY = Math.cos(winged.getCurrentYaw());
+        double sinP = Math.sin(winged.getCurrentPitch());
+        double cosP = Math.cos(winged.getCurrentPitch());
+        return new Vector(cosY * sinP, sinY * sinP, cosP);*/
         } else {
-            return waypoint.clone().subtract(getEntity().getLocation().toVector());
+            if (path == null || waypoint == null || !isMoving) {
+                return null;
+            } else {
+                return waypoint.clone().subtract(getEntity().getLocation().toVector());
+            }
         }
     }
 

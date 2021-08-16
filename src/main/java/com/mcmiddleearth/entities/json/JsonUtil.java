@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class JsonUtil {
 
@@ -45,11 +46,13 @@ public class JsonUtil {
         //}
         if(uuid != null) {
             McmeEntity entity = EntitiesPlugin.getEntityServer().getEntity(uuid);
+Logger.getGlobal().info("Found entity: "+entity);
             if(entity != null) {
                 return entity;
             } else if(required){
                 throw new IllegalArgumentException("Required entity not found!");
             } else {
+Logger.getGlobal().info("Creating placeholder!");
                 return new Placeholder(uuid);
             }
         } else {

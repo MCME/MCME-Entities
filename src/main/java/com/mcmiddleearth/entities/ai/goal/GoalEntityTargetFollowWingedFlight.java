@@ -8,10 +8,9 @@ import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class GoalLocationTargetFollowCheckpointsWingedFlight extends GoalLocationTargetFollowCheckpoints {
+public class GoalEntityTargetFollowWingedFlight extends GoalEntityTargetFollow {
 
-    public GoalLocationTargetFollowCheckpointsWingedFlight(VirtualEntity entity, VirtualEntityGoalFactory factory,
-                                                           Pathfinder pathfinder) {
+    public GoalEntityTargetFollowWingedFlight(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
         super(entity, factory, pathfinder);
     }
 
@@ -36,7 +35,7 @@ public class GoalLocationTargetFollowCheckpointsWingedFlight extends GoalLocatio
 
     @Override
     public boolean isCloseToTarget(double distanceSquared) {
-        double distance = getEntity().getLocation().distanceSquared(getTarget());
+        double distance = getEntity().getLocation().distanceSquared(getTarget().getLocation());
 //Logger.getGlobal().info("Distance: "+distance);
         return distance < distanceSquared*400;
     }

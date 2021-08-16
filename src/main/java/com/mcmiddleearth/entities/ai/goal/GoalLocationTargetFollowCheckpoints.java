@@ -56,7 +56,7 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
     @Override
     public VirtualEntityGoalFactory getFactory() {
         return super.getFactory()
-                .withStartCheckpoint(currentCheckpoint)
+                .withStartCheckpoint(Math.min(currentCheckpoint,checkpoints.length-1))
                 .withCheckpoints(checkpoints)
                 .withLoop(loop);
     }

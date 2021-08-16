@@ -35,7 +35,7 @@ public class VirtualEntityFactory {
 
     private UUID uniqueId;
 
-    private String name = "", dataFile = "", displayName = "";
+    private String name = "", dataFile = "", displayName = null;
 
     private Vector displayNamePosition = new Vector(0,2,0);
 

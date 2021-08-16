@@ -198,6 +198,6 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
             }
         }
         in.endObject();
-        return null;
+        return factory;
     }
 }

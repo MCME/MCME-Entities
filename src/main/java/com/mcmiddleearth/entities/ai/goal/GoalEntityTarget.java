@@ -4,11 +4,17 @@ import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalEntityTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Placeholder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalEntityTargetChangedEvent;
+import org.bukkit.Location;
+import org.bukkit.util.Vector;
+
+import java.util.logging.Logger;
 
 public abstract class GoalEntityTarget extends GoalPath {
 
@@ -39,7 +45,9 @@ public abstract class GoalEntityTarget extends GoalPath {
     @Override
     public void update() {
         if(targetIncomplete) {
+Logger.getGlobal().info("Incomplete");
             McmeEntity search = EntitiesPlugin.getEntityServer().getEntity(target.getUniqueId());
+Logger.getGlobal().info("Completition: "+search);
             if(search != null) {
                 target = search;
                 targetIncomplete = false;
@@ -86,9 +94,23 @@ public abstract class GoalEntityTarget extends GoalPath {
         }
     }
 
+    /*@Override
+    public boolean isCloseToTarget(double distanceSquared) {
+        double distance = getEntity().getLocation().distanceSquared(getTarget().getLocation());
+//Logger.getGlobal().info("Distance: "+distance);
+        return distance < distanceSquared*400;
+    }*/
+
     public boolean isCloseToTarget(double distanceSquared) {
         if(target!=null) {
-            return getEntity().getLocation().toVector().distanceSquared(getTarget().getLocation().toVector()) < distanceSquared;
+            double distance = getEntity().getLocation().toVector().distanceSquared(getTarget().getLocation().toVector());
+            if((getEntity() instanceof  WingedFlightEntity)
+                    && (getEntity().getMovementType().equals(MovementType.FLYING)
+                        || getEntity().getMovementType().equals(MovementType.GLIDING))) {
+                return distance < (distanceSquared*400);
+            } else {
+                return distance < distanceSquared;
+            }
         } else {
             return false;
         }

@@ -4,8 +4,10 @@ import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalLocationTarget;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalLocationTargetChangedEvent;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -67,7 +69,14 @@ public abstract class GoalLocationTarget extends GoalPath {
     }
 
     public boolean isCloseToTarget(double distanceSquared) {
-        return getEntity().getLocation().toVector().distanceSquared(getTarget().toVector()) < distanceSquared;
+        double distance = getEntity().getLocation().toVector().distanceSquared(getTarget().toVector());
+        if((getEntity() instanceof WingedFlightEntity)
+                && (getEntity().getMovementType().equals(MovementType.FLYING)
+                || getEntity().getMovementType().equals(MovementType.GLIDING))) {
+            return distance < distanceSquared * 400;
+        } else {
+            return distance < distanceSquared;
+        }
     }
 
     @Override

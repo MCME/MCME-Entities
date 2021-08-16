@@ -1,5 +1,6 @@
 package com.mcmiddleearth.entities.server;
 
+import com.google.common.base.Joiner;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.entities.McmeEntity;
@@ -141,7 +142,7 @@ Logger.getGlobal().info("Start new server task");
         }
         ((McmeEntity)entity).finalise();
         entityProvider.removeEntity((McmeEntity)entity);
-        playerProvider.getMcmePlayers().forEach(player -> player.getSelectedEntities().remove(entity));
+        playerProvider.getMcmePlayers().forEach(player -> player.removeFromSelectedEntities((McmeEntity)entity));
     }
 
     @Override
@@ -355,7 +356,9 @@ Logger.getGlobal().info("Start new server task");
                             server.doTick();
                         }
                     } catch (Exception ex) {
-                        Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING, "Ticking error!", ex);
+                        Logger.getLogger(this.getClass().getSimpleName())
+                                .log(Level.WARNING, "Ticking error!\n"+ ex.getLocalizedMessage()
+                                        + "\n" + Joiner.on("\n").join(ex.getStackTrace()));
                     }
                 }
             }.runTaskTimer(EntitiesPlugin.getInstance(),1,1);

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BukkitCommandSender implements McmeCommandSender {
 
@@ -41,6 +42,8 @@ public class BukkitCommandSender implements McmeCommandSender {
     }
 
     public Set<McmeEntity> getSelectedEntities() {
+        selectedEntities = selectedEntities.stream().filter(selectedTargetEntity -> !selectedTargetEntity.isTerminated())
+                                                    .collect(Collectors.toSet());
         return new HashSet<McmeEntity>(selectedEntities);
     }
 

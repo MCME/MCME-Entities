@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.api.McmeEntityType;
+import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
@@ -54,7 +55,8 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
             JsonUtil.writeNonDefaultFloat(out, "headYaw", factory.getHeadYaw(), defaults.getHeadYaw());
             JsonUtil.writeNonDefaultFloat(out, "headPitch", factory.getHeadPitch(), defaults.getHeadPitch());
             JsonUtil.writeNonDefaultInt(out, "health", factory.getHealth(), defaults.getHealth());
-            JsonUtil.writeNonDefaultString(out, "movementType", factory.getMovementType().name(), defaults.getMovementType().name());
+            JsonUtil.writeNonDefaultString(out, "movementType", factory.getMovementType().name().toLowerCase(),
+                                                                      defaults.getMovementType().name().toLowerCase());
             if (!factory.getAttributes().isEmpty()) {
                 out.name("attributes").beginArray();
                 for (AttributeInstance attributeInstance : factory.getAttributes().values()) {
@@ -156,6 +158,7 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                         factory.withHealth(in.nextInt());
                         break;
                     case "movementType":
+                        factory.withMovementType(MovementType.valueOf(in.nextString().toUpperCase()));
                         break;
                     case "attributes":
                         Map<Attribute,AttributeInstance> attributes = new HashMap<>();
