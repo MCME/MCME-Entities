@@ -4,6 +4,7 @@ import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.VirtualEntity;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -92,6 +93,10 @@ public class BukkitCommandSender implements McmeCommandSender {
 
     public VirtualEntityFactory getEntityFactory() {
         return factory;
+    }
+
+    public void setEntityFactory(VirtualEntityFactory factory) {
+        this.factory = factory;
     }
 
     public McmeEntity getSelectedTargetEntity() {

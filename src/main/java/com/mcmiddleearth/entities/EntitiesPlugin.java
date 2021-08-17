@@ -9,9 +9,7 @@ import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.api.EntityAPI;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
-import com.mcmiddleearth.entities.command.BukkitCommandSender;
-import com.mcmiddleearth.entities.command.EntitiesCommand;
-import com.mcmiddleearth.entities.command.VirtualCommand;
+import com.mcmiddleearth.entities.command.*;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.listener.PlayerListener;
@@ -54,8 +52,19 @@ public final class EntitiesPlugin extends JavaPlugin {
         //Bukkit.getServer().getPluginCommand("entity").setExecutor(new EntityCommand());
         //Bukkit.getServer().getPluginCommand("animation").setExecutor(new AnimationCommand());
 
-        setExecutor("virtual", new VirtualCommand("virtual"));
-        setExecutor("entities", new EntitiesCommand("entities"));
+        //setExecutor("virtual", new VirtualCommand("virtual"));
+        setExecutor("vserver", new EntitiesCommand("vserver"));
+        setExecutor("vspawn", new SpawnCommand("vspawn"));
+        setExecutor("varmy", new ArmyCommand("varmy"));
+        setExecutor("vremove", new RemoveCommand("vremove"));
+        setExecutor("vsay", new SayCommand("vsay"));
+        setExecutor("vselect", new SelectCommand("vselect"));
+        setExecutor("vfactory", new FactoryCommand("vfactory"));
+        setExecutor("vset", new SetCommand("vset"));
+        setExecutor("vanimate", new AnimateCommand("vanimate"));
+        setExecutor("vload", new LoadCommand("vload"));
+        setExecutor("vsave", new SaveCommand("vsave"));
+        setExecutor("vtest", new TestCommand("vtest"));
 
         Bukkit.getPluginManager().registerEvents(playerListener,this);
 

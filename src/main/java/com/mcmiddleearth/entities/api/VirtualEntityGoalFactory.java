@@ -13,7 +13,10 @@ import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.Constrain;
 import org.bukkit.Location;
 
+import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class VirtualEntityGoalFactory {
 
@@ -43,6 +46,12 @@ public class VirtualEntityGoalFactory {
         this.targetLocation = target;
         return this;
     }
+
+    public static Collection<String> availableProperties() {
+        return Stream.of("goaltype","targetlocation","targetentity","loop","checkpoints","headgoal").map(String::toLowerCase)
+                .sorted().collect(Collectors.toList());
+    }
+
 
     public Location getTargetLocation() {
         return targetLocation;

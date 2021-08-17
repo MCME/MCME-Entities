@@ -98,9 +98,11 @@ public class VirtualEntityFactory {
     }
 
     public static Collection<String> availableProperties() {
-        return Stream.of("type","invertWhitelist","uniqueId", "name", "dataFile", "displayName","displayNamePosition",
+        return Stream.of("type","blacklist","uniqueId", "name", "dataFile", "displayName","displayNamePosition",
                 "location","movementType","goalType","targetLocation","targetEntity","headPitchCenter",
-                "speechBalloonLayout","mouth","manualAnimation","headPoseDelay").map(String::toLowerCase)
+                "speechballoonlayout","mouth","manualanimation","headposedelay","viewdistance",
+                "maxrotationstep", "maxRotationStepFlight", "updateInterval", "jumpheight", "knockbackbase",
+                "knockbackperdamage").map(String::toLowerCase)
                 .sorted().collect(Collectors.toList());
     }
 

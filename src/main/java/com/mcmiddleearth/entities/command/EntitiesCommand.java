@@ -23,7 +23,7 @@ import java.util.List;
 
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 
-public class EntitiesCommand extends AbstractCommandHandler implements TabExecutor {
+public class EntitiesCommand extends McmeEntitiesCommandHandler {
 
     public EntitiesCommand(String command) {
         super(command);
@@ -48,23 +48,5 @@ public class EntitiesCommand extends AbstractCommandHandler implements TabExecut
                         }));
         return commandNodeBuilder;
     }
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        McmeCommandSender wrappedSender = EntitiesPlugin.wrapCommandSender(sender);
-        execute(wrappedSender, args);
-        return true;
-    }
-
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-//Logger.getGlobal().info("tabComplete 1");
-        TabCompleteRequest request = new SimpleTabCompleteRequest(EntitiesPlugin.wrapCommandSender(sender),
-                                                                  String.format("/%s %s", alias, Joiner.on(' ').join(args)).trim());
-        onTabComplete(request);
-//Logger.getGlobal().info("tabComplete 1");
-        return request.getSuggestions();
-    }
-
 
 }
