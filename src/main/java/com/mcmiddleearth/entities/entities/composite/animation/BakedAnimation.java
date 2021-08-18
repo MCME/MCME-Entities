@@ -70,6 +70,10 @@ public class BakedAnimation {
         return finished;
     }
 
+    public boolean isAtLastFrame() {
+        return currentFrame == frames.size()-1;
+    }
+
     public void addFrame(Frame frame) {
         frames.add(frame);
     }

@@ -35,9 +35,11 @@ public abstract class GoalPath extends GoalVirtualEntity {
 //        +getEntity().getLocation().toVector().getBlockY()+" "
 //        +getEntity().getLocation().toVector().getBlockZ());
 //Logger.getGlobal().info("find path to target: "+pathfinder.getTarget());
-        findPath(getEntity().getLocation().toVector());
-//Logger.getGlobal().info("Found path: \n"+path+" complete: "+path.isComplete());
-        updateWaypoint();
+        if(pathfinder.getTarget()!=null) {
+            findPath(getEntity().getLocation().toVector());
+            //Logger.getGlobal().info("Found path: \n"+path+" complete: "+path.isComplete());
+            updateWaypoint();
+        }
 //Logger.getGlobal().info("location: "+getEntity().getLocation().getX()+" "+getEntity().getLocation().getZ()+ " waypoint "+waypoint+" rotation: "+rotation);
     }
 

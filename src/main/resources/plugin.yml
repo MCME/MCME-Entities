@@ -19,10 +19,40 @@ commands:
   animation:
     description: manges entity animations
     usage: /animation
-  virtual:
+  vspawn:
     description: manages virtual entities
     usage: /virtual spawn | kill | animate
-  entities:
+  varmy:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vset:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vremove:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vtest:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vsay:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vload:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vsave:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vselect:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vfactory:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vanimate:
+    description: manages virtual entities
+    usage: /virtual spawn | kill | animate
+  vserver:
     description: manages entities plugin
     usage: /entities reload | restart
 

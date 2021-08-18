@@ -20,6 +20,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -78,6 +79,8 @@ public class VirtualEntityFactory {
     private float knockBackBase = 0.2f, knockBackPerDamage = 0.01f;
 
     private Set<McmeEntity> enemies = null;
+
+    private boolean writeDefaultValuesToFile = false;
 
     public VirtualEntityFactory(McmeEntityType type, Location location) {
         uniqueId = UuidGenerator.fast_random();//getRandomV2();
@@ -401,6 +404,15 @@ public class VirtualEntityFactory {
                                          UuidGenerator.fast_nullUUID(),"",null);
     }
 
+    public boolean isWriteDefaultValuesToFile() {
+        return writeDefaultValuesToFile;
+    }
+
+    public VirtualEntityFactory withWriteDefaultValuesToFile(boolean writeDefaultValuesToFile) {
+        this.writeDefaultValuesToFile = writeDefaultValuesToFile;
+        return this;
+    }
+
     /**
      * For internal use by the entity server only.
      * @param entityId
@@ -408,6 +420,7 @@ public class VirtualEntityFactory {
      * @throws InvalidLocationException
      */
     public McmeEntity build(int entityId) throws InvalidLocationException, InvalidDataException {
+//Logger.getGlobal().info("UUID: "+uniqueId.toString());
         if(type.isCustomType()) {
             switch(type.getCustomType()) {
                 case BAKED_ANIMATION:

@@ -45,7 +45,7 @@ public abstract class GoalEntityTarget extends GoalPath {
     @Override
     public void update() {
         if(targetIncomplete) {
-Logger.getGlobal().info("Incomplete");
+Logger.getGlobal().info("Incomplete, searching for: "+target.getUniqueId());
             McmeEntity search = EntitiesPlugin.getEntityServer().getEntity(target.getUniqueId());
 Logger.getGlobal().info("Completition: "+search);
             if(search != null) {

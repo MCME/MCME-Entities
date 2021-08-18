@@ -2,6 +2,7 @@ package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWatch;
+import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Placeholder;
@@ -25,6 +26,7 @@ public class GoalWatchEntity extends GoalVirtualEntity {
         if(this.target instanceof Placeholder) {
             targetIncomplete = true;
         }
+        movementSpeed = MovementSpeed.STAND;
         setDefaultHeadGoal();
     }
 

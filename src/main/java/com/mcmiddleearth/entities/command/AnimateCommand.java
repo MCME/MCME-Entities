@@ -50,7 +50,7 @@ public class AnimateCommand extends McmeEntitiesCommandHandler {
         commandNodeBuilder
                 .requires(sender -> (sender instanceof RealPlayer)
                         && ((RealPlayer) sender).getBukkitPlayer().hasPermission(Permission.USER.getNode()))
-                .then(HelpfulLiteralBuilder.literal("animate")
+                .then(HelpfulLiteralBuilder.literal("play")
                         .then(HelpfulRequiredArgumentBuilder.argument("animationId", new AnimationIdArgument())
                                 .executes(context -> animateEntity(context.getSource(), context.getArgument("animationId", String.class)))))
                 .then(HelpfulLiteralBuilder.literal("frame")

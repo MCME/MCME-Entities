@@ -38,6 +38,8 @@ public class VirtualEntityGoalFactory {
 
     private int updateInterval = 10;
 
+    private boolean writeDefaultsToFile = false;
+
     public VirtualEntityGoalFactory(GoalType goalType) {
         this.goalType = goalType;
     }
@@ -126,6 +128,15 @@ public class VirtualEntityGoalFactory {
 
     public VirtualEntityGoalFactory withHeadGoals(Set<HeadGoal> headGoals) {
         this.headGoals = headGoals;
+        return this;
+    }
+
+    public boolean isWriteDefaultsToFile() {
+        return writeDefaultsToFile;
+    }
+
+    public VirtualEntityGoalFactory withWriteDefaultsToFile(boolean writeDefaultsToFile) {
+        this.writeDefaultsToFile = writeDefaultsToFile;
         return this;
     }
 
@@ -221,5 +232,6 @@ public class VirtualEntityGoalFactory {
         }
         return goal;
     }
+
 
 }

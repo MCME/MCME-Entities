@@ -32,7 +32,7 @@ public class BakedAnimationEntity extends CompositeEntity {
 
     private final Map<String, Integer> states = new HashMap<>();
 
-    private BakedAnimation currentAnimation;
+    private BakedAnimation currentAnimation, nextAnimation;
 
     private int currentState;
 
@@ -42,6 +42,8 @@ public class BakedAnimationEntity extends CompositeEntity {
     private int startMovementCounter, stopMovementCounter;
 
     private String animationFileName;
+
+    protected boolean instantAnimationSwitching = true;
 
     public BakedAnimationEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         this(entityId,factory,RotationMode.YAW);
@@ -102,6 +104,7 @@ Logger.getGlobal().info("Manual animation: "+manualAnimationControl);
 
     @Override
     public void doTick() {
+//Logger.getGlobal().info("Movementspeed: "+getMovementSpeed());
         if(movementSpeedAnimation.equals(MovementSpeed.STAND)
                 && (getMovementSpeed().equals(MovementSpeed.WALK) || getMovementSpeed().equals(MovementSpeed.SPRINT)
                                                                   || getMovementSpeed().equals(MovementSpeed.SLOW))) {
@@ -124,11 +127,16 @@ Logger.getGlobal().info("Manual animation: "+manualAnimationControl);
         }
         if(!manualAnimationControl) {
             BakedAnimation expected = animationTree.getAnimation(this);
+//Logger.getGlobal().info("Expected: "+(expected == null?"none":expected.getName()));
             if(currentAnimation!=expected) {
-//Logger.getGlobal().info("Switch: "+(expected == null?"none":expected.getName()));
-                currentAnimation = expected;
-                if(currentAnimation!=null)
-                    currentAnimation.reset();
+//Logger.getGlobal().info("Switch from: "+(currentAnimation == null?"none":currentAnimation.getName()));
+                if(instantAnimationSwitching) {
+                    currentAnimation = expected;
+                    if (currentAnimation != null)
+                        currentAnimation.reset();
+                } else {
+                    nextAnimation = expected;
+                }
             }
         }
         if(currentAnimation!=null) {
@@ -138,7 +146,20 @@ Logger.getGlobal().info("Manual animation: "+manualAnimationControl);
                     currentAnimation.reset();
                 }
             }
+            if((currentAnimation.isAtLastFrame() || currentAnimation.isFinished())
+                    && nextAnimation != null) {
+                currentAnimation = nextAnimation;
+                currentAnimation.reset();
+                nextAnimation = null;
+            }
             currentAnimation.doTick();
+        } else {
+            if(nextAnimation != null) {
+                currentAnimation = nextAnimation;
+                currentAnimation.reset();
+                nextAnimation = null;
+                currentAnimation.doTick();
+            }
         }
         super.doTick();
     }

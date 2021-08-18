@@ -51,11 +51,17 @@ public class SaveCommand extends McmeEntitiesCommandHandler {
                 .requires(sender -> (sender instanceof RealPlayer)
                         && ((RealPlayer) sender).getBukkitPlayer().hasPermission(Permission.USER.getNode()))
                 .then(HelpfulRequiredArgumentBuilder.argument("file", word())
-                        .executes(context -> saveEntities(context.getSource(), context.getArgument("file", String.class))));
+                        .executes(context -> saveEntities(context.getSource(),
+                                                 context.getArgument("file", String.class),false))
+                        .then(HelpfulRequiredArgumentBuilder.argument("writeDefaults", word())
+                            .executes(context -> saveEntities(context.getSource(),
+                                            context.getArgument("file", String.class),
+                                            context.getArgument("writeDefaults", String.class)
+                                                   .equalsIgnoreCase("true")))));
         return commandNodeBuilder;
     }
 
-    private int saveEntities(McmeCommandSender sender, String fileName) {
+    private int saveEntities(McmeCommandSender sender, String fileName, boolean writeDefaults) {
         File file = new File(EntitiesPlugin.getEntitiesFolder(),fileName+".json");
         Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
         int counter = 0;
@@ -63,7 +69,9 @@ public class SaveCommand extends McmeEntitiesCommandHandler {
             writer.beginArray();
             for(McmeEntity entity: ((BukkitCommandSender)sender).getSelectedEntities()) {
                 if(entity instanceof VirtualEntity) {
-                    gson.toJson(((VirtualEntity)entity).getFactory(), VirtualEntityFactory.class,writer);
+                    VirtualEntityFactory factory = ((VirtualEntity)entity).getFactory();
+                    if(writeDefaults) factory.withWriteDefaultValuesToFile(true);
+                    gson.toJson(factory, VirtualEntityFactory.class,writer);
                     counter++;
                 }
             }

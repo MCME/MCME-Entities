@@ -22,62 +22,70 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
 
     @Override
     public void write(JsonWriter out, VirtualEntityGoalFactory factory) throws IOException {
+        boolean writeDefaults = factory.isWriteDefaultsToFile();
         Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
         VirtualEntityGoalFactory defaults = VirtualEntityGoalFactory.getDefaults();
         out.beginObject();
             JsonUtil.writeNonDefaultString(out,"goalType",factory.getGoalType().name().toLowerCase(),
-                                                                defaults.getGoalType().name().toLowerCase());
+                                                                defaults.getGoalType().name().toLowerCase(), writeDefaults);
             JsonUtil.writeNonDefaultString(out,"movementSpeed",factory.getMovementSpeed().name().toLowerCase(),
-                                                                     defaults.getMovementSpeed().name().toLowerCase());
-            JsonUtil.writeNonDefaultLocation(out,"targetLocation",factory.getTargetLocation(),defaults.getTargetLocation(), gson);
-            if(factory.getCheckpoints()!=null && factory.getCheckpoints().length>0) {
+                                                                 defaults.getMovementSpeed().name().toLowerCase(),writeDefaults);
+            JsonUtil.writeNonDefaultLocation(out,"targetLocation",factory.getTargetLocation(),
+                                                                defaults.getTargetLocation(), gson, writeDefaults);
+            if(writeDefaults || (factory.getCheckpoints()!=null && factory.getCheckpoints().length>0)) {
                 out.name("checkpoints").beginArray();
-                for(Location checkpoint: factory.getCheckpoints()) {
-                    gson.toJson(checkpoint,Location.class,out);
+                if(factory.getCheckpoints()!=null) {
+                    for (Location checkpoint : factory.getCheckpoints()) {
+                        gson.toJson(checkpoint, Location.class, out);
+                    }
                 }
                 out.endArray();
             }
-            JsonUtil.writeNonDefaultInt(out,"startCheckPoint",factory.getStartCheckpoint(),defaults.getStartCheckpoint());
-            if(factory.getTargetEntity() != null) {
+            JsonUtil.writeNonDefaultInt(out,"startCheckPoint",factory.getStartCheckpoint(),
+                                            defaults.getStartCheckpoint(), writeDefaults);
+            if(writeDefaults || factory.getTargetEntity() != null) {
                 out.name("targetEntity");
                 JsonUtil.writeEntityLink(factory.getTargetEntity(), false, out);
             }
-            JsonUtil.writeNonDefaultInt(out,"updateInterval",factory.getUpdateInterval(),defaults.getUpdateInterval());
-            JsonUtil.writeNonDefaultBoolean(out, "loop", factory.isLoop(), defaults.isLoop());
-            if(factory.getHeadGoals()!=null && !factory.getHeadGoals().isEmpty()) {
+            JsonUtil.writeNonDefaultInt(out,"updateInterval",factory.getUpdateInterval(),
+                                            defaults.getUpdateInterval(),writeDefaults);
+            JsonUtil.writeNonDefaultBoolean(out, "loop", factory.isLoop(), defaults.isLoop(),writeDefaults);
+            if(writeDefaults || (factory.getHeadGoals()!=null && !factory.getHeadGoals().isEmpty())) {
                out.name("headGoals").beginArray();
-               for(HeadGoal headGoal: factory.getHeadGoals()) {
-                   out.beginObject();
-                   out.name("duration").value(headGoal.getDuration());
-                   switch(headGoal.getClass().getSimpleName()) {
-                       case "HeadGoalEntityTarget":
-                           out.name("type").value(HeadGoalType.ENTITY_TARGET.name().toLowerCase());
-                           break;
-                       case "HeadGoalLocationTarget":
-                           out.name("type").value(HeadGoalType.LOCATION_TARGET.name().toLowerCase());
-                           break;
-                       case "HeadGoalLook":
-                           out.name("type").value(HeadGoalType.LOOK.name().toLowerCase());
-                           out.name("targetLocation");
-                           gson.toJson(((HeadGoalLook)headGoal).getTarget(),Location.class,out);
-                           break;
-                       case "HeadGoalStare":
-                           out.name("type").value(HeadGoalType.STARE.name().toLowerCase());
-                           out.name("yaw").value(headGoal.getHeadYaw())
-                              .name("pitch").value(headGoal.getHeadPitch());
-                           break;
-                       case "HeadGoalWatch":
-                           out.name("type").value(HeadGoalType.WATCH.name().toLowerCase());
-                           out.name("targetEntity");
-                           JsonUtil.writeEntityLink(((HeadGoalWatch)headGoal).getTarget(),false,out);
-                           break;
-                       case "HeadGoalWaypointTarget":
-                           out.name("type").value(HeadGoalType.WAYPOINT_TARGET.name().toLowerCase());
-                           break;
-                       default:
-                           out.name("type").value(headGoal.getClass().getSimpleName());
+               if(factory.getHeadGoals()!=null) {
+                   for (HeadGoal headGoal : factory.getHeadGoals()) {
+                       out.beginObject();
+                       out.name("duration").value(headGoal.getDuration());
+                       switch (headGoal.getClass().getSimpleName()) {
+                           case "HeadGoalEntityTarget":
+                               out.name("type").value(HeadGoalType.ENTITY_TARGET.name().toLowerCase());
+                               break;
+                           case "HeadGoalLocationTarget":
+                               out.name("type").value(HeadGoalType.LOCATION_TARGET.name().toLowerCase());
+                               break;
+                           case "HeadGoalLook":
+                               out.name("type").value(HeadGoalType.LOOK.name().toLowerCase());
+                               out.name("targetLocation");
+                               gson.toJson(((HeadGoalLook) headGoal).getTarget(), Location.class, out);
+                               break;
+                           case "HeadGoalStare":
+                               out.name("type").value(HeadGoalType.STARE.name().toLowerCase());
+                               out.name("yaw").value(headGoal.getHeadYaw())
+                                       .name("pitch").value(headGoal.getHeadPitch());
+                               break;
+                           case "HeadGoalWatch":
+                               out.name("type").value(HeadGoalType.WATCH.name().toLowerCase());
+                               out.name("targetEntity");
+                               JsonUtil.writeEntityLink(((HeadGoalWatch) headGoal).getTarget(), false, out);
+                               break;
+                           case "HeadGoalWaypointTarget":
+                               out.name("type").value(HeadGoalType.WAYPOINT_TARGET.name().toLowerCase());
+                               break;
+                           default:
+                               out.name("type").value(headGoal.getClass().getSimpleName());
+                       }
+                       out.endObject();
                    }
-                   out.endObject();
                }
                out.endArray();
             }

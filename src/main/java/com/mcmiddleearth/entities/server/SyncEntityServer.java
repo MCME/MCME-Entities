@@ -178,7 +178,7 @@ Logger.getGlobal().info("Start new server task");
                 return entityProvider.getEntity(uniqueId);
             }
         } else {
-            McmeEntity entity = entityProvider.getEntity(uniqueId.version());
+            McmeEntity entity = entityProvider.getEntity(uniqueId);
             if(entity != null) {
                 return entity;
             } else {

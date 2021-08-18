@@ -8,10 +8,10 @@ import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class GoalLocationTargetFollowCheckpointsWingedFlight extends GoalLocationTargetFollowCheckpoints {
+public class _invalid_GoalLocationTargetFollowCheckpointsWingedFlight extends GoalLocationTargetFollowCheckpoints {
 
-    public GoalLocationTargetFollowCheckpointsWingedFlight(VirtualEntity entity, VirtualEntityGoalFactory factory,
-                                                           Pathfinder pathfinder) {
+    public _invalid_GoalLocationTargetFollowCheckpointsWingedFlight(VirtualEntity entity, VirtualEntityGoalFactory factory,
+                                                                    Pathfinder pathfinder) {
         super(entity, factory, pathfinder);
     }
 

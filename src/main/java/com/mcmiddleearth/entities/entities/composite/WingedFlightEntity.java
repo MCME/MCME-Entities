@@ -1,10 +1,12 @@
 package com.mcmiddleearth.entities.entities.composite;
 
+import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.bones.BoneThreeAxis;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
+import org.bukkit.util.Vector;
 
 import java.util.logging.Logger;
 
@@ -20,7 +22,8 @@ public class WingedFlightEntity extends BakedAnimationEntity {
         maxRotationStepFlight = factory.getMaxRotationStepFlight();
         //pitch = factory.getgetPitch();
         currentRoll = factory.getRoll();
-Logger.getGlobal().info("RotationStepFlight: "+maxRotationStepFlight + " roll: "+currentRoll);
+        instantAnimationSwitching = false;
+//Logger.getGlobal().info("RotationStepFlight: "+maxRotationStepFlight + " roll: "+currentRoll);
     }
 
     @Override
@@ -102,5 +105,16 @@ Logger.getGlobal().info("RotationStepFlight: "+maxRotationStepFlight + " roll: "
         return factory;
     }
 
-
+    @Override
+    public MovementSpeed getMovementSpeedAnimation() {
+        float angle = getVelocity().angle(new Vector(getVelocity().getX(),0,getVelocity().getZ()));
+//Logger.getGlobal().info("angle: " + angle);
+        if(angle < 0.174) { //10 * PI / 180
+            return MovementSpeed.WALK;
+        } else if(getVelocity().getY() < 0) {
+            return MovementSpeed.SPRINT;
+        } else {
+            return MovementSpeed.SLOW;
+        }
+    }
 }

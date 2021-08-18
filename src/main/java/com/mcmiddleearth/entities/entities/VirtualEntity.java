@@ -352,9 +352,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         return movementSpeed;
     }
 
-    public void setMovementSpeed(MovementSpeed movementSpeed) {
+    /*public void setMovementSpeed(MovementSpeed movementSpeed) {
         this.movementSpeed = movementSpeed;
-    }
+    }*/
 
     public MovementType getMovementType() {
         return movementType;
