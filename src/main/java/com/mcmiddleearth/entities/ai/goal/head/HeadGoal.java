@@ -30,4 +30,6 @@ public abstract class HeadGoal {
 
     public abstract void doTick();
 
+    public void resetRotationFlags() {}
+
 }

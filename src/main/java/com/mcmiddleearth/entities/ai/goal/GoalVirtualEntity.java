@@ -12,12 +12,16 @@ import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public abstract class GoalVirtualEntity implements Goal {
 
     private final GoalType type;
 
     private final VirtualEntity entity;
+
+    private float yaw, pitch, roll;
+    private boolean hasRotation;
 
     private final Set<HeadGoal> headGoals = new HashSet<>();
     private HeadGoal currentHeadGoal;
@@ -46,9 +50,48 @@ public abstract class GoalVirtualEntity implements Goal {
     public abstract Vector getDirection();
 
     @Override
-    public abstract boolean hasRotation();
+    public boolean hasRotation() {
+        return hasRotation;
+    }
 
-    public abstract float getRotation();
+    @Override
+    public void resetRotationFlags() {
+        hasRotation = false;
+        if(currentHeadGoal!=null) {
+            currentHeadGoal.resetRotationFlags();
+        }
+    }
+
+    @Override
+    public float getYaw() {
+        return yaw;
+    }
+
+    public void setYaw(float yaw) {
+        this.yaw = yaw;
+        hasRotation = true;
+    }
+
+    @Override
+    public float getPitch() {
+        return pitch;
+    }
+
+    public void setPitch(float pitch) {
+        hasRotation = true;
+        this.pitch = pitch;
+    }
+
+    @Override
+    public float getRoll() {
+        hasRotation = true;
+        return roll;
+    }
+
+    public void setRoll(float roll) {
+        hasRotation = true;
+        this.roll = roll;
+    }
 
     public boolean hasHeadRotation(){
         return currentHeadGoal!=null && currentHeadGoal.hasHeadRotation();
@@ -65,6 +108,7 @@ public abstract class GoalVirtualEntity implements Goal {
     @Override
     public float getHeadPitch() {
         if(currentHeadGoal!=null) {
+//Logger.getGlobal().info("Virtual goal head rotation: "+ currentHeadGoal.getHeadYaw()+" "+currentHeadGoal.getHeadPitch());
             return currentHeadGoal.getHeadPitch();
         } else {
             return 0;

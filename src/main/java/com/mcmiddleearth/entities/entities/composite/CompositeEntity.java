@@ -139,7 +139,7 @@ Logger.getGlobal().info("Sending animation: "+viewer.getName());
 
     private void updateHeadBones() {
         currentHeadYaw = turn(currentHeadYaw, getHeadYaw(),maxRotationStep);
-        currentHeadPitch = turn(currentHeadPitch,getLocation().getPitch(),maxRotationStep);
+        currentHeadPitch = turn(currentHeadPitch,getHeadPitch(),maxRotationStep);
         bones.stream().filter(bone -> (bone instanceof  BoneTwoAxis) && bone.isHeadBone()).forEach(bone-> {
             bone.setRotation(currentHeadYaw);
             ((BoneTwoAxis)bone).setPitch(currentHeadPitch);

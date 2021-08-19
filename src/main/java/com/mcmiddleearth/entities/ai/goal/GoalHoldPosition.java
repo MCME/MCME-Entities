@@ -9,35 +9,35 @@ import org.bukkit.util.Vector;
 
 public class GoalHoldPosition extends GoalVirtualEntity {
 
-    private final float yaw, pitch;
+    //private final float yaw, pitch;
 
     private final Location targetLocation;
 
-    private boolean hasRotation = true, tick = false;
+    //private boolean hasRotation = true, tick = false;
 
     public GoalHoldPosition(VirtualEntity entity, VirtualEntityGoalFactory factory) {
         super(entity, factory);
         Location orientation = getEntity().getLocation().clone()
                 .setDirection(factory.getTargetLocation().toVector().subtract(getEntity().getLocation().toVector()));
-        yaw = orientation.getYaw();
-        pitch = orientation.getPitch();
+        setYaw(orientation.getYaw());
+        setPitch(orientation.getPitch());
         this.targetLocation = factory.getTargetLocation();
         setDefaultHeadGoal();
     }
 
-    @Override
+    /*@Override
     public void doTick() {
         super.doTick();
         if(tick) hasRotation = false;
         if(!tick) tick = true;
-    }
+    }*/
 
     @Override
     public Vector getDirection() {
         return null;
     }
 
-    @Override
+    /*@Override
     public boolean hasRotation() {
         return hasRotation;
     }
@@ -45,14 +45,14 @@ public class GoalHoldPosition extends GoalVirtualEntity {
     @Override
     public float getRotation() {
         return yaw;
-    }
+    }*/
 
     public void setDefaultHeadGoal() {
         clearHeadGoals();
-        addHeadGoal(new HeadGoalStare(yaw,pitch));
+        addHeadGoal(new HeadGoalStare(getYaw(),getPitch()));
     }
 
-    @Override
+    /*@Override
     public float getYaw() {
         return yaw;
     }
@@ -65,7 +65,7 @@ public class GoalHoldPosition extends GoalVirtualEntity {
     @Override
     public float getRoll() {
         return 0;
-    }
+    }*/
 
     @Override
     public VirtualEntityGoalFactory getFactory() {

@@ -18,8 +18,7 @@ public abstract class GoalPath extends GoalVirtualEntity {
 
     private final Pathfinder pathfinder;
 
-    private boolean hasRotation;
-    private float rotation;
+    //private boolean hasRotation;
 
     private boolean isMoving = true;
 
@@ -46,7 +45,7 @@ public abstract class GoalPath extends GoalVirtualEntity {
     @Override
     public void doTick() {
         super.doTick();
-        hasRotation = false;
+        //hasRotation = false;
         if(waypoint != null && isMoving){//getEntity().getLocation().toVector().distanceSquared(waypoint) < isCloseDistanceSquared) {
             path.setStart(waypoint);
             updateWaypoint();
@@ -112,21 +111,16 @@ public abstract class GoalPath extends GoalVirtualEntity {
         }
     }
 
-    @Override
+    /*@Override
     public boolean hasRotation() {
         return hasRotation;
-    }
-
-    @Override
-    public float getRotation() {
-        return rotation;
     }
 
     public void setRotation(float rotation) {
 //Logger.getGlobal().info("*                           rotation: "+rotation);
         this.rotation = rotation;
         hasRotation = true;
-    }
+    }*/
 
     public void updateWaypoint() {
 //Logger.getGlobal().info("update Waypoint: start "+path+" "+path.getEnd());
@@ -158,8 +152,10 @@ Logger.getGlobal().info("Path target reached!");
             }
 //Logger.getGlobal().info("Waypoint: "+waypoint.getX()+" "+waypoint.getZ());
             if(waypoint != null && isMoving) {
-                setRotation(getEntity().getLocation().clone()
-                        .setDirection(waypoint.clone().subtract(getEntity().getLocation().toVector())).getYaw());
+                Location orientation = getEntity().getLocation().clone()
+                        .setDirection(waypoint.clone().subtract(getEntity().getLocation().toVector()));
+                setYaw(orientation.getYaw());
+                setPitch(orientation.getPitch());
             }
         }
     }

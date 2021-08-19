@@ -8,6 +8,7 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Placeholder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +37,10 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
                 EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(), this));
                 setIsMoving(false);//deletePath();
                 movementSpeed = MovementSpeed.STAND;
-                setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
-                        .subtract(getEntity().getLocation().toVector())).getYaw());
+                Location orientation = getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
+                        .subtract(getEntity().getLocation().toVector()));
+                setYaw(orientation.getYaw());
+                setPitch(orientation.getPitch());
             } else if (target != protege && isCloseToTarget(GoalDistance.ATTACK)) {
                 EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(), this));
                 if (getEntity().getAttackCoolDown() == 0) {

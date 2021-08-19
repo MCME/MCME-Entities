@@ -47,12 +47,13 @@ public abstract class GoalLocationTarget extends GoalPath {
         return true;
     }*/
 
+    /*
     @Override
     public float getRotation() {
         return getEntity().getLocation().clone()
                 .setDirection(target.toVector().subtract(getEntity().getLocation().toVector()))
                 .getYaw();
-    }
+    }*/
 
     public Location getTarget() {
         return target;
@@ -100,6 +101,7 @@ public abstract class GoalLocationTarget extends GoalPath {
         addHeadGoal(new HeadGoalWaypointTarget(this, 40));
     }
 
+    /*remove
     @Override
     public float getYaw() {
         return getEntity().getLocation().clone()
@@ -107,12 +109,13 @@ public abstract class GoalLocationTarget extends GoalPath {
                 .getYaw();
     }
 
+    remove
     @Override
     public float getPitch() {
         return getEntity().getLocation().clone()
                 .setDirection(target.toVector().subtract(getEntity().getLocation().toVector()))
                 .getPitch();
-    }
+    }*/
 
     @Override
     public float getRoll() {

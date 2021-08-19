@@ -15,10 +15,10 @@ public class GoalWatchEntity extends GoalVirtualEntity {
     private McmeEntity target;
     private boolean targetIncomplete = false;
 
-    private boolean hasRotation;
-    private float rotation;
+    //private boolean hasRotation;
+    //private float rotation;
 
-    private boolean secondUpdate = false;
+    private int tickCounter = 0;
 
     public GoalWatchEntity(VirtualEntity entity, VirtualEntityGoalFactory factory) {
         super(entity, factory);
@@ -41,28 +41,32 @@ public class GoalWatchEntity extends GoalVirtualEntity {
             }
         }
         if(!targetIncomplete) {
-            if (secondUpdate) {
+            if (tickCounter%3==0) {
                 Location orientation = getEntity().getLocation().clone()
                         .setDirection(target.getLocation().toVector().subtract(getEntity().getLocation().toVector()));
-                rotation = orientation.getYaw();
-                hasRotation = true;
+                setYaw(orientation.getYaw());
+                setPitch(orientation.getPitch());
+                tickCounter = 0;
+                //hasRotation = true;
             }
-            secondUpdate = !secondUpdate;
+            //secondUpdate = !secondUpdate;
+            tickCounter++;
         }
     }
 
-    @Override
+    /*@Override
     public void doTick() {
         super.doTick();
-        hasRotation = false;
-    }
+
+        //hasRotation = false;
+    }*/
 
     @Override
     public Vector getDirection() {
         return null;
     }
 
-    @Override
+    /*@Override
     public boolean hasRotation() {
         return hasRotation;
     }
@@ -70,7 +74,7 @@ public class GoalWatchEntity extends GoalVirtualEntity {
     @Override
     public float getRotation() {
         return rotation;
-    }
+    }*/
 
     @Override
     public boolean isFinished() {
@@ -82,6 +86,7 @@ public class GoalWatchEntity extends GoalVirtualEntity {
         addHeadGoal(new HeadGoalWatch(target,getEntity()));
     }
 
+    /*remove
     @Override
     public float getYaw() {
         return getEntity().getLocation().clone()
@@ -89,12 +94,13 @@ public class GoalWatchEntity extends GoalVirtualEntity {
                 .getYaw();
     }
 
+    remove
     @Override
     public float getPitch() {
         return getEntity().getLocation().clone()
                 .setDirection(target.getLocation().toVector().subtract(getEntity().getLocation().toVector()))
                 .getPitch();
-    }
+    }*/
 
     @Override
     public float getRoll() {

@@ -20,6 +20,7 @@ public interface Goal {
     Vector getDirection();
 
     boolean hasRotation();
+    void resetRotationFlags();
 
     boolean hasHeadRotation();
 

@@ -27,6 +27,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
@@ -177,9 +178,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                     setRotation(goal.getYaw(),goal.getPitch(),goal.getRoll());
                 }
                 if(goal.hasHeadRotation()) {
-//Logger.getGlobal().info("head rotation: "+ goal.getHeadYaw()+" "+goal.getHeadPitch());
+//Logger.getGlobal().info("Virtual Entity head rotation: "+ goal.getHeadYaw()+" "+goal.getHeadPitch());
                     setHeadRotation(goal.getHeadYaw(), goal.getHeadPitch());
                 }
+                goal.resetRotationFlags();
             } else {
                 movementEngine.calculateMovement(new Vector(0,0,0));
             }

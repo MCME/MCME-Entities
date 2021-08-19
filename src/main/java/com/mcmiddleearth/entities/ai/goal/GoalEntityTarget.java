@@ -122,6 +122,7 @@ Logger.getGlobal().info("Completition: "+search);
         addHeadGoal(new HeadGoalWaypointTarget(this, 10));
     }
 
+    /*remove
     @Override
     public float getYaw() {
         return getEntity().getLocation().clone()
@@ -129,12 +130,13 @@ Logger.getGlobal().info("Completition: "+search);
                 .getYaw();
     }
 
+    remove
     @Override
     public float getPitch() {
         return getEntity().getLocation().clone()
                 .setDirection(target.getLocation().toVector().subtract(getEntity().getLocation().toVector()))
                 .getPitch();
-    }
+    }*/
 
     @Override
     public float getRoll() {

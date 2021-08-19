@@ -24,4 +24,6 @@ public class HeadGoalStare extends HeadGoal {
         return true;
     }
 
+    @Override
+    public boolean hasHeadRotation() {return false;}
 }

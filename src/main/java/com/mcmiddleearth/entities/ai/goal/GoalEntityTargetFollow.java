@@ -5,6 +5,7 @@ import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
+import org.bukkit.Location;
 
 public class GoalEntityTargetFollow extends GoalEntityTarget {
 
@@ -22,8 +23,10 @@ public class GoalEntityTargetFollow extends GoalEntityTarget {
                 //Logger.getGlobal().info("delete path as entity is close.");
                 EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(), this));
                 setIsMoving(false);//deletePath();
-                setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
-                        .subtract(getEntity().getLocation().toVector())).getYaw());
+                Location orientation = getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
+                        .subtract(getEntity().getLocation().toVector()));
+                setYaw(orientation.getYaw());
+                setPitch(orientation.getPitch());
             } else {
                 setIsMoving(true);
             }

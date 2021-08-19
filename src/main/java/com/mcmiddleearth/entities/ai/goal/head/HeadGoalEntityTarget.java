@@ -7,6 +7,8 @@ import com.mcmiddleearth.entities.entities.Placeholder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import org.bukkit.Location;
 
+import java.util.logging.Logger;
+
 public class HeadGoalEntityTarget extends HeadGoal {
 
     private GoalEntityTarget goal;
@@ -34,6 +36,7 @@ public class HeadGoalEntityTarget extends HeadGoal {
                             .subtract(entity.getLocation().toVector()));
             yaw = targetDir.getYaw();
             pitch = targetDir.getPitch();
+//Logger.getGlobal().info("Yaw: "+yaw +" pitch: "+pitch);
         }
     }
 

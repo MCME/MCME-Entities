@@ -6,6 +6,7 @@ import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
+import org.bukkit.Location;
 
 public class GoalEntityTargetAttack extends GoalEntityTarget {
 
@@ -23,11 +24,10 @@ public class GoalEntityTargetAttack extends GoalEntityTarget {
                 EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(), this));
                 setIsMoving(false);//deletePath();
                 movementSpeed = MovementSpeed.STAND;
-                setRotation(getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
-                        .subtract(getEntity().getLocation().toVector())).getYaw());
-                //Logger.getGlobal().info("Cooldown: "+getEntity().getAttackCoolDown());
-                //if(getEntity().getAttackCoolDown()==0) {
-                //Logger.getGlobal().info("ATTACK");
+                Location orientation =getEntity().getLocation().clone().setDirection(getTarget().getLocation().toVector()
+                        .subtract(getEntity().getLocation().toVector()));
+                setYaw(orientation.getYaw());
+                setPitch(orientation.getPitch());
                 if (!isFinished()) {
                     getEntity().attack(target);
                 }
