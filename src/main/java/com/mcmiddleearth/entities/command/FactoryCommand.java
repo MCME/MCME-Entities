@@ -70,9 +70,13 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
         BukkitCommandSender player = (BukkitCommandSender) sender;
         VirtualEntityFactory factory = player.getEntityFactory();
         switch (property.toLowerCase()) {
+            case "show":
+                showFactory(player);
+                break;
             case "clear":
                 player.setEntityFactory(new VirtualEntityFactory(
                                         new McmeEntityType(McmeEntityType.CustomEntityType.BAKED_ANIMATION),null));
+                break;
             case "type":
                 McmeEntityType entityType = McmeEntityType.valueOf(value);
                 if (entityType != null) {
@@ -275,6 +279,31 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
         }
         sender.sendMessage(new ComponentBuilder(property + " set to " + value + ".").create());
         return 0;
+    }
+
+    private void showFactory(BukkitCommandSender player) {
+        VirtualEntityFactory factory = player.getEntityFactory();
+        VirtualEntityGoalFactory goalFactory = factory.getGoalFactory();
+        player.sendMessage(new ComponentBuilder("Entity Factory Settings:").create());
+        player.sendMessage(new ComponentBuilder("Entity type: ").append(factory.getType().name()).create());
+        player.sendMessage(new ComponentBuilder("Movement type: ").append(factory.getMovementType().name()).create());
+        player.sendMessage(new ComponentBuilder("Name: ").append(factory.getName()).create());
+        player.sendMessage(new ComponentBuilder("Display name: ").append(factory.getDisplayName()).create());
+        player.sendMessage(new ComponentBuilder("Display name position: ").append(""+factory.getDisplayNamePosition()).create());
+        player.sendMessage(new ComponentBuilder("Entity type: ").append(factory.getDataFile()).create());
+        player.sendMessage(new ComponentBuilder("Use Blacklist: ").append(""+factory.hasBlackList()).create());
+        player.sendMessage(new ComponentBuilder("UUID: ").append(""+factory.getUniqueId()).create());
+        player.sendMessage(new ComponentBuilder("Entity Location: ").append(""+factory.getLocation()).create());
+        player.sendMessage(new ComponentBuilder("Max rotation step: ").append(""+factory.getMaxRotationStep()).create());
+        player.sendMessage(new ComponentBuilder("Max rotation step in flight: ").append(""+factory.getMaxRotationStepFlight()).create());
+        player.sendMessage(new ComponentBuilder("Update interval in ticks: ").append(""+factory.getUpdateInterval()).create());
+        player.sendMessage(new ComponentBuilder("View distance in blocks: ").append(""+factory.getViewDistance()).create());
+        player.sendMessage(new ComponentBuilder("Jump height in blocks: ").append(""+factory.getJumpHeight()).create());
+        player.sendMessage(new ComponentBuilder("Mouth position: ").append(""+factory.getMouth()).create());
+        player.sendMessage(new ComponentBuilder("Entity Location: ").append(""+factory.getLocation()).create());
+        player.sendMessage(new ComponentBuilder("Base Knockback: ").append(""+factory.getKnockBackBase()).create());
+        player.sendMessage(new ComponentBuilder("Knockback per Damage: ").append(""+factory.getKnockBackPerDamage()).create());
+
     }
 
 }

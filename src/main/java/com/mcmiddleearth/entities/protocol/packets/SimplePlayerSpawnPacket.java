@@ -25,7 +25,7 @@ public class SimplePlayerSpawnPacket extends AbstractPacket {
         info = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         info.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
         WrappedGameProfile profile = new WrappedGameProfile(player.getUniqueId(), (player.getName()!=null?player.getName():" "));
-        WrappedChatComponent displayName = WrappedChatComponent.fromText("*"+player.getName()+"*");
+        WrappedChatComponent displayName = WrappedChatComponent.fromText("*"+player.getDisplayName()+"*");
         PlayerInfoData data = new PlayerInfoData(profile, 0, EnumWrappers.NativeGameMode.SURVIVAL, displayName);
         info.getPlayerInfoDataLists().write(0, Collections.singletonList(data));
         send(info, player.getViewers());

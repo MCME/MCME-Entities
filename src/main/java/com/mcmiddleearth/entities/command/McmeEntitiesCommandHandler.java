@@ -56,8 +56,8 @@ public abstract class McmeEntitiesCommandHandler extends AbstractCommandHandler 
     protected VirtualEntityFactory getFactory(McmeCommandSender sender, String type, String name, String goal, String dataFile) {
         RealPlayer player = (RealPlayer) sender;
         VirtualEntityFactory factory = player.getEntityFactory();
-Logger.getGlobal().info("Factory: "+factory);
-Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name());
+//Logger.getGlobal().info("Factory: "+factory);
+//Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name());
         McmeEntityType entityType = McmeEntityType.valueOf(type);
         if(entityType !=null)
         {
@@ -82,8 +82,7 @@ Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name
             } catch (IllegalArgumentException ignore) { }
             if(factory.getGoalFactory().getTargetLocation()==null) {
                 factory.getGoalFactory().withTargetLocation(player.getSelectedPoints().stream()
-                                           .findFirst().orElse(new Location(player.getLocation().getWorld(),
-                                                                            0,0,0)));
+                                           .findFirst().orElse(player.getLocation()));
             }
             if(player.getSelectedTargetEntity()!=null)
             {

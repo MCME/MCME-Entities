@@ -147,7 +147,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.uniqueId = UuidGenerator.fast_random();//UuidGenerator.getRandomV2();
         this.boundingBox = new EntityBoundingBox(0,0,0,0);
         this.movementEngine = null;
-
+        this.whiteList = new HashSet<>();
     }
 
     @Override
