@@ -51,8 +51,6 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     protected AbstractPacket teleportPacket;
     protected AbstractPacket movePacket;
     protected AbstractPacket statusPacket;
-    protected AbstractPacket namePacket;
-
     private Location location;
 
     //private float rotation; //remove and replace with location.yaw
@@ -115,6 +113,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.headYaw = factory.getHeadYaw();
         this.headPitch = factory.getHeadPitch();
         this.uniqueId = factory.getUniqueId();
+        if(uniqueId == null) {
+            this.uniqueId = UuidGenerator.fast_random();
+        }
         this.name = factory.getName();
         this.displayName = factory.getDisplayName();
         this.useWhitelistAsBlacklist = factory.hasBlackList();
@@ -129,7 +130,6 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         }
 //Logger.getGlobal().info("this goal: "+getGoal());
         this.health = factory.getHealth();
-        this.namePacket = new DisplayNamePacket(this.getEntityId());
         this.defaultSpeechBalloonLayout = factory.getSpeechBalloonLayout();
         this.mouth = factory.getMouth();
         this.viewDistance = factory.getViewDistance();
@@ -422,9 +422,6 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             return;
         }
         spawnPacket.send(player);
-        if(displayName!=null) {
-            namePacket.send(player);
-        }
         viewers.add(player);
         if(isTalking) {
             createSpeechBalloon(player);
@@ -557,8 +554,6 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-        ((DisplayNamePacket)namePacket).setName(displayName);
-        namePacket.send(viewers);
     }
 
     public String getDisplayName() {

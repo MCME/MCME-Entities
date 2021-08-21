@@ -43,7 +43,7 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                 }
                 out.endArray();
             }
-            JsonUtil.writeNonDefaultString(out, "uniqueId", factory.getUniqueId().toString(), defaults.getUniqueId().toString(),writeDefaults);
+            JsonUtil.writeNonDefaultUuid(out, "uniqueId", factory.getUniqueId(), defaults.getUniqueId(),writeDefaults);
             JsonUtil.writeNonDefaultString(out, "name", factory.getName(), defaults.getName(),writeDefaults);
             JsonUtil.writeNonDefaultString(out, "datafile", factory.getDataFile(), defaults.getDataFile(),writeDefaults);
             JsonUtil.writeNonDefaultString(out, "displayName", factory.getDisplayName(), defaults.getDisplayName(),writeDefaults);

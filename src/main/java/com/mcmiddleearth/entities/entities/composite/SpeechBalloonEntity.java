@@ -53,7 +53,7 @@ public class SpeechBalloonEntity extends CompositeEntity {
                                        - layout.getLinePitch()/*0.26*/ * i,
                                speaker.getMouth().getZ()+layout.getLayoutOffset().getZ()/*0*/), null, false, 0);
             this.getBones().add(bone);
-Logger.getGlobal().info("Bone display name: "+line);
+//Logger.getGlobal().info("Bone display name: "+line);
             bone.setDisplayName(line);//"{\"text\": \"foo\",\"bold\": \"true\"}");
         }
         createPackets();
@@ -61,7 +61,7 @@ Logger.getGlobal().info("Bone display name: "+line);
 
     @Override
     public void doTick() {
-Logger.getGlobal().info("Set balloon loc: "+speaker.getLocation());
+//Logger.getGlobal().info("Set balloon loc: "+speaker.getLocation());
         setLocation(speaker.getLocation());
         setRotation(speaker.getLocation().clone().setDirection(viewer.getLocation().toVector()
                                          .subtract(speaker.getLocation().toVector())).getYaw());

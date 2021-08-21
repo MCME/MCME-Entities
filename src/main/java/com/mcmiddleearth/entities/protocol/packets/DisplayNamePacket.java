@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class DisplayNamePacket extends AbstractPacket {
 
@@ -30,11 +31,13 @@ public class DisplayNamePacket extends AbstractPacket {
                 .WrappedDataWatcherObject(3,
                 WrappedDataWatcher.Registry.get(Boolean.class));
         watcher.setObject(nameVisible, name!=null);
+//Logger.getGlobal().info("Set Display name packet name to: "+name);
         meta.getWatchableCollectionModifier().write(0,watcher.getWatchableObjects());
     }
 
     @Override
     public void send(Player recipient) {
+//Logger.getGlobal().info("Sending Display Name Packet.");
         send(meta, recipient);
     }
 }

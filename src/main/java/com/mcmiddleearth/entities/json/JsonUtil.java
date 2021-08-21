@@ -78,6 +78,13 @@ Logger.getGlobal().info("Creating placeholder!");
         if(writeDefaults || (value != null && !value.equals(defaultValue))) out.name(name).value(value);
     }
 
+    public static void writeNonDefaultUuid(JsonWriter out, String name, UUID value, UUID defaultValue,
+                                             boolean writeDefaults) throws IOException {
+        if(writeDefaults || (value != null && !value.equals(defaultValue))) {
+            out.name(name).value(value.toString());
+        }
+    }
+
     public static void writeNonDefaultBoolean(JsonWriter out, String name, boolean value, boolean defaultValue,
                                               boolean writeDefaults) throws IOException {
         if(writeDefaults || value != defaultValue) out.name(name).value(value);

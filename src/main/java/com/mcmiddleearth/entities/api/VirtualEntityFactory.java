@@ -34,11 +34,11 @@ public class VirtualEntityFactory {
     private Set<UUID> whitelist = null;
     private boolean useWhitelistAsBlacklist = false;
 
-    private UUID uniqueId;
+    private UUID uniqueId = null;
 
     private String name = "", dataFile = "", displayName = null;
 
-    private Vector displayNamePosition = new Vector(0,2,0);
+    private Vector displayNamePosition = new Vector(0,0,0);
 
     private Location location;
 
@@ -83,7 +83,7 @@ public class VirtualEntityFactory {
     private boolean writeDefaultValuesToFile = false;
 
     public VirtualEntityFactory(McmeEntityType type, Location location) {
-        uniqueId = UuidGenerator.fast_random();//getRandomV2();
+        //uniqueId = UuidGenerator.fast_random();//getRandomV2();
         this.type = type;
         this.location = location;
         attributes = VirtualAttributeFactory.getAttributesFor(type);
@@ -401,7 +401,7 @@ public class VirtualEntityFactory {
 
     public static VirtualEntityFactory getDefaults() {
         return new VirtualEntityFactory(null,null,false,
-                                         UuidGenerator.fast_nullUUID(),"",null);
+                                         null ,"",null);
     }
 
     public boolean isWriteDefaultValuesToFile() {

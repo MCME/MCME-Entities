@@ -27,6 +27,7 @@ import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -54,10 +55,23 @@ public class SetCommand extends McmeEntitiesCommandHandler {
                     .then(HelpfulRequiredArgumentBuilder.argument("type", new GoalTypeArgument())
                         .executes(context -> setGoal(context.getSource(), context.getArgument("type", String.class), false))
                         .then(HelpfulLiteralBuilder.literal("loop")
-                            .executes(context -> setGoal(context.getSource(), context.getArgument("type", String.class), true)))));
+                            .executes(context -> setGoal(context.getSource(), context.getArgument("type", String.class), true)))))
+                .then(HelpfulLiteralBuilder.literal("displayname")
+                    .then(HelpfulRequiredArgumentBuilder.argument("displayname", word())
+                        .executes(context -> setDisplayName(context.getSource(), context.getArgument("displayname", String.class)))));
         return commandNodeBuilder;
     }
 
+    private int setDisplayName(McmeCommandSender source, String displayname) {
+        Entity entity = ((BukkitCommandSender)source).getSelectedEntities().stream().findFirst().orElse(null);
+        if(entity instanceof VirtualEntity) {
+            ((VirtualEntity)entity).setDisplayName(displayname);
+            source.sendMessage(new ComponentBuilder("Set display name to: "+displayname).create());
+        } else {
+            source.sendMessage(new ComponentBuilder("You need to select an entity!").color(ChatColor.RED).create());
+        }
+        return 0;
+    }
 
 
     private int setGoal(McmeCommandSender sender, String type, boolean loop) {

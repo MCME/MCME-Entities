@@ -24,6 +24,7 @@ public abstract class CompositeEntity extends VirtualEntity {
     private final int firstEntityId;
 
     private Bone displayNameBone;
+    private Vector displayNamePosition;
 
     private Vector headPitchCenter;
 
@@ -46,20 +47,13 @@ public abstract class CompositeEntity extends VirtualEntity {
                               RotationMode rotationMode) throws InvalidLocationException, InvalidDataException {
         super(factory);
         firstEntityId = entityId;
-        headPitchCenter = factory.getHeadPitchCenter();
+        headPitchCenter = factory.getHeadPitchCenter().clone();
         headPoseDelay = factory.getHeadPoseDelay();
         this.rotationMode = rotationMode;
         maxRotationStep = factory.getMaxRotationStep();
+        displayNamePosition = factory.getDisplayNamePosition().clone();
         if(getDisplayName()!=null) {
-            if (rotationMode.equals(RotationMode.YAW_PITCH_ROLL)) {
-                displayNameBone = new BoneThreeAxis("displayName", this, new EulerAngle(0, 0, 0),
-                        factory.getDisplayNamePosition(), null, false, 0);
-            } else {
-                displayNameBone = new Bone("displayName", this, new EulerAngle(0, 0, 0),
-                        factory.getDisplayNamePosition(), null, false, 0);
-            }
-            displayNameBone.setDisplayName(factory.getDisplayName());
-            bones.add(displayNameBone);
+            createDisplayBone();
         }
     }
 
@@ -78,7 +72,19 @@ public abstract class CompositeEntity extends VirtualEntity {
         removePacket = new VirtualEntityDestroyPacket(ids);
         teleportPacket = new CompositeEntityTeleportPacket(this);
         movePacket = new CompositeEntityMovePacket(this);
-        namePacket = new DisplayNamePacket(firstEntityId);
+        //namePacket = new DisplayNamePacket(firstEntityId);
+    }
+
+    private void createDisplayBone() {
+        if (rotationMode.equals(RotationMode.YAW_PITCH_ROLL)) {
+            displayNameBone = new BoneThreeAxis("displayName", this, new EulerAngle(0, 0, 0),
+                    displayNamePosition, null, false, 0);
+        } else {
+            displayNameBone = new Bone("displayName", this, new EulerAngle(0, 0, 0),
+                    displayNamePosition, null, false, 0);
+        }
+        displayNameBone.setDisplayName(getDisplayName());
+        bones.add(displayNameBone);
     }
 
     @Override
@@ -231,8 +237,9 @@ Logger.getGlobal().info("Sending animation: "+viewer.getName());
 
     @Override
     public void setDisplayName(String displayName) {
-        if(displayNameBone!=null) {
+        if (displayNameBone != null) {
             super.setDisplayName(displayName);
+            displayNameBone.setDisplayName(displayName);
         }
     }
 

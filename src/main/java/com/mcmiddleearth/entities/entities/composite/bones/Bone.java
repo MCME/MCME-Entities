@@ -15,11 +15,9 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-import sun.rmi.runtime.Log;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public class Bone implements McmeEntity {
 
