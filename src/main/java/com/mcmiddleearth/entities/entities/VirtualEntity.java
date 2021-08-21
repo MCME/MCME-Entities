@@ -72,7 +72,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private final McmeEntityType type;
 
-    private final Map<Attribute, AttributeInstance> attributes = new HashMap<>();
+    private Map<Attribute, AttributeInstance> attributes = new HashMap<>();
 
     private final EntityBoundingBox boundingBox;
 
@@ -117,6 +117,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             this.uniqueId = UuidGenerator.fast_random();
         }
         this.name = factory.getName();
+        this.attributes = factory.getAttributes();
         this.displayName = factory.getDisplayName();
         this.useWhitelistAsBlacklist = factory.hasBlackList();
         this.whiteList = (factory.getWhitelist()!=null?factory.getWhitelist():new HashSet<>());

@@ -49,7 +49,8 @@ public class VirtualAttributeFactory {
                 default:
                     attributes.put(Attribute.GENERIC_ATTACK_KNOCKBACK,getAttributeInstance(Attribute.GENERIC_ATTACK_KNOCKBACK, 0.0));
             }
-            attributes.put(Attribute.GENERIC_FOLLOW_RANGE,getAttributeInstance(Attribute.GENERIC_FOLLOW_RANGE, 40.0));
+            attributes.put(Attribute.GENERIC_ATTACK_DAMAGE, getAttributeInstance(Attribute.GENERIC_ATTACK_DAMAGE, getAttackDamage(type)));
+            //attributes.put(Attribute.GENERIC_FOLLOW_RANGE,getAttributeInstance(Attribute.GENERIC_FOLLOW_RANGE, 40.0));
         }
         return attributes;
     }
@@ -59,8 +60,10 @@ public class VirtualAttributeFactory {
         switch(attribute) {
             case GENERIC_MAX_HEALTH:
                 defaultValue = 20;
+                break;
             case GENERIC_FOLLOW_RANGE:
                 defaultValue = 32;
+                break;
             case GENERIC_KNOCKBACK_RESISTANCE:
             case GENERIC_ATTACK_KNOCKBACK:
             case GENERIC_ARMOR:
@@ -68,15 +71,22 @@ public class VirtualAttributeFactory {
             case GENERIC_LUCK:
             case ZOMBIE_SPAWN_REINFORCEMENTS:
                 defaultValue = 0;
+                break;
             case GENERIC_MOVEMENT_SPEED:
+                defaultValue = 0.1;
+                break;
             case HORSE_JUMP_STRENGTH:
                 defaultValue = 0.7;
+                break;
             case GENERIC_FLYING_SPEED:
                 defaultValue = 0.4;
+                break;
             case GENERIC_ATTACK_DAMAGE:
                 defaultValue = 2;
+                break;
             case GENERIC_ATTACK_SPEED:
                 defaultValue = 4;
+                break;
         }
         if(baseValue == null) {
             baseValue = defaultValue;
@@ -214,6 +224,55 @@ public class VirtualAttributeFactory {
             case ENDER_DRAGON: return 200;
             case WITHER: return 300;
             default: return 20;
+        }
+    }
+
+    private static Double getAttackDamage(McmeEntityType type) {
+        switch(type.getBukkitEntityType()) {
+            case SILVERFISH:
+            case LLAMA_SPIT: return 1d;
+            case BEE:
+            case ENDERMITE:
+            case FOX:
+            case PHANTOM:
+            case PUFFERFISH:
+            case SKELETON:
+            case SLIME:
+            case STRAY:
+            case SPIDER:
+            case CAVE_SPIDER: return 2d;
+            case DOLPHIN:
+            case HUSK:
+            case ILLUSIONER:
+            case HOGLIN:
+            case MAGMA_CUBE:
+            case ZOGLIN:
+            case ZOMBIE:
+            case ZOMBIE_VILLAGER:
+            case DROWNED: return 3d;
+            case WOLF:
+            case SHULKER_BULLET:return 4d;
+            case PIGLIN: return 5d;
+            case EVOKER_FANGS:
+            case FIREBALL:
+            case GUARDIAN:
+            case PANDA:
+            case POLAR_BEAR:
+            case BLAZE: return 6d;
+            case ENDERMAN: return 7d;
+            case IRON_GOLEM: return 7.5;
+            case RABBIT:
+            case WITHER_SKELETON:
+            case WITHER_SKULL:
+            case ZOMBIFIED_PIGLIN:
+            case ELDER_GUARDIAN: return 8d;
+            case VEX: return 9d;
+            case ENDER_DRAGON: return 10d;
+            case RAVAGER: return 12d;
+            case VINDICATOR:
+            case PIGLIN_BRUTE: return 13d;
+            case WITHER: return 15d;
+            default: return 0d;
         }
     }
 }

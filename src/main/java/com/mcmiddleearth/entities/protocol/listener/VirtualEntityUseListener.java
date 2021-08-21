@@ -56,12 +56,13 @@ public class VirtualEntityUseListener extends EntityListener {
 //Logger.getGlobal().info("off hand!");
                             if (isSneaking) {
 //Logger.getGlobal().info("sneak!");
-                                player.removeFromSelectedEntities(entity);
-                                player.sendMessage(new ComponentBuilder("Removed from selection").create());
+                                player.addToSelectedEntities(entity);
+                                player.sendMessage(new ComponentBuilder("Entity added to your selection.").create());
                             } else {
 //Logger.getGlobal().info("no sneak!");
+                                player.clearSelectedEntities();
                                 player.addToSelectedEntities(entity);
-                                player.sendMessage(new ComponentBuilder("Added to selection").create());
+                                player.sendMessage(new ComponentBuilder("Entity selected.").create());
                             }
                         }
                     }
