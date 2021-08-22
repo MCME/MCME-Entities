@@ -17,10 +17,13 @@ import com.mcmiddleearth.entities.api.EntityAPI;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.command.argument.AnimationIdArgument;
+import com.mcmiddleearth.entities.command.argument.AttributeTypeArgument;
 import com.mcmiddleearth.entities.command.argument.GoalTypeArgument;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
+import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
@@ -30,6 +33,8 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.*;
@@ -58,8 +63,42 @@ public class SetCommand extends McmeEntitiesCommandHandler {
                             .executes(context -> setGoal(context.getSource(), context.getArgument("type", String.class), true)))))
                 .then(HelpfulLiteralBuilder.literal("displayname")
                     .then(HelpfulRequiredArgumentBuilder.argument("displayname", word())
-                        .executes(context -> setDisplayName(context.getSource(), context.getArgument("displayname", String.class)))));
+                        .executes(context -> setDisplayName(context.getSource(), context.getArgument("displayname", String.class)))))
+                .then(HelpfulLiteralBuilder.literal("attribute")
+                    .then(HelpfulRequiredArgumentBuilder.argument("type", new AttributeTypeArgument())
+                        .then(HelpfulRequiredArgumentBuilder.argument("value", word())
+                            .executes(context -> setAttribute(context.getSource(),context.getArgument("type",String.class),
+                                                                                  context.getArgument("value", String.class))))));
         return commandNodeBuilder;
+    }
+
+    private int setAttribute(McmeCommandSender sender, String type, String valueString) {
+        try {
+            double value = Double.parseDouble(valueString);
+            Entity entity = ((BukkitCommandSender)sender).getSelectedEntities().stream().findFirst().orElse(null);
+            if(entity instanceof VirtualEntity) {
+                Attribute attributeType = Attribute.valueOf(type.toUpperCase());
+                AttributeInstance attribute = ((VirtualEntity)entity).getAttribute(attributeType);
+//Logger.getGlobal().info("attribute instance set command: "+attribute);
+                if(attribute == null) {
+                    ((VirtualEntity)entity).registerAttribute(attributeType);
+                    attribute = ((VirtualEntity)entity).getAttribute(attributeType);
+                }
+                if(attribute!=null) {
+                    attribute.setBaseValue(value);
+                    sender.sendMessage(new ComponentBuilder("Attribute '"+type+"' set to "+value).create());
+                } else {
+                    sender.sendMessage(new ComponentBuilder("Attribute not found!").color(ChatColor.RED).create());
+                }
+            } else {
+                sender.sendMessage(new ComponentBuilder("You need to select an entity first!").color(ChatColor.RED).create());
+            }
+        } catch(NumberFormatException ex) {
+            sender.sendMessage(new ComponentBuilder("Attribute value must be  a decimal number!").color(ChatColor.RED).create());
+        } catch(IllegalArgumentException ex) {
+            sender.sendMessage(new ComponentBuilder("Invalid attribute type!").color(ChatColor.RED).create());
+        }
+        return 0;
     }
 
     private int setDisplayName(McmeCommandSender source, String displayname) {
@@ -68,7 +107,7 @@ public class SetCommand extends McmeEntitiesCommandHandler {
             ((VirtualEntity)entity).setDisplayName(displayname);
             source.sendMessage(new ComponentBuilder("Set display name to: "+displayname).create());
         } else {
-            source.sendMessage(new ComponentBuilder("You need to select an entity!").color(ChatColor.RED).create());
+            source.sendMessage(new ComponentBuilder("You need to select an entity first!").color(ChatColor.RED).create());
         }
         return 0;
     }

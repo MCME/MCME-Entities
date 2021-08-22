@@ -4,7 +4,6 @@ import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.entities.VirtualEntity;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -45,7 +44,7 @@ public class BukkitCommandSender implements McmeCommandSender {
     public Set<McmeEntity> getSelectedEntities() {
         selectedEntities = selectedEntities.stream().filter(selectedTargetEntity -> !selectedTargetEntity.isTerminated())
                                                     .collect(Collectors.toSet());
-        return new HashSet<McmeEntity>(selectedEntities);
+        return new HashSet<>(selectedEntities);
     }
 
     public void clearSelectedEntities() {

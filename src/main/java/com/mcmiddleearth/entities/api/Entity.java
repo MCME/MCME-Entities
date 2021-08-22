@@ -81,11 +81,11 @@ public interface Entity {
 
     public EntityBoundingBox getBoundingBox();
 
-    public int getHealth();
+    public double getHealth();
 
-    public void damage(int damage);
+    public void damage(double damage);
 
-    public void heal(int damage);
+    public void heal(double damage);
 
     public boolean isDead();
 
@@ -93,7 +93,7 @@ public interface Entity {
 
     public void playAnimation(ActionType type);
 
-    public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor);
+    public void receiveAttack(McmeEntity damager, double damage, double knockDownFactor);
 
     public void attack(McmeEntity target);
 

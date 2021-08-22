@@ -95,6 +95,11 @@ Logger.getGlobal().info("Creating placeholder!");
         if(writeDefaults || value != defaultValue) out.name(name).value(value);
     }
 
+    public static void writeNonDefaultDouble(JsonWriter out, String name, double value, double defaultValue,
+                                            boolean writeDefaults) throws IOException {
+        if(writeDefaults || value != defaultValue) out.name(name).value(value);
+    }
+
     public static void writeNonDefaultInt(JsonWriter out, String name, int value, int defaultValue,
                                           boolean writeDefaults) throws IOException {
         if(writeDefaults || value != defaultValue) out.name(name).value(value);

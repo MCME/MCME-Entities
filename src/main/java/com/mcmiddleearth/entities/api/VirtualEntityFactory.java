@@ -48,7 +48,7 @@ public class VirtualEntityFactory {
 
     private Entity spawnLocationEntity = null;
 
-    private int health = 20;
+    private double health = -1;
 
     private MovementType movementType = MovementType.UPRIGHT;
 
@@ -372,11 +372,11 @@ public class VirtualEntityFactory {
         return this;
     }
 
-    public int getHealth() {
+    public double getHealth() {
         return health;
     }
 
-    public VirtualEntityFactory withHealth(int health) {
+    public VirtualEntityFactory withHealth(double health) {
         this.health = health;
         return this;
     }

@@ -58,7 +58,7 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
             JsonUtil.writeNonDefaultFloat(out, "roll", factory.getRoll(), defaults.getRoll(),writeDefaults);
             JsonUtil.writeNonDefaultFloat(out, "headYaw", factory.getHeadYaw(), defaults.getHeadYaw(),writeDefaults);
             JsonUtil.writeNonDefaultFloat(out, "headPitch", factory.getHeadPitch(), defaults.getHeadPitch(),writeDefaults);
-            JsonUtil.writeNonDefaultInt(out, "health", factory.getHealth(), defaults.getHealth(),writeDefaults);
+            JsonUtil.writeNonDefaultDouble(out, "health", factory.getHealth(), defaults.getHealth(),writeDefaults);
             JsonUtil.writeNonDefaultString(out, "movementType", factory.getMovementType().name().toLowerCase(),
                                                                       defaults.getMovementType().name().toLowerCase(),writeDefaults);
             if (writeDefaults || !factory.getAttributes().isEmpty()) {

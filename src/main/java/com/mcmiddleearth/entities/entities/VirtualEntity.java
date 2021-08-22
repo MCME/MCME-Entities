@@ -85,7 +85,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private int jumpHeight = 1, fallDepth = 1; //if both values differ from each other pathfinding can easily get stuck.
     private float knockBackBase = 0.2f, knockBackPerDamage = 0.01f;
 
-    private int health;
+    private double health;
     private boolean dead = false;
     private int deathCounter = 0;
 
@@ -131,6 +131,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         }
 //Logger.getGlobal().info("this goal: "+getGoal());
         this.health = factory.getHealth();
+        if(health<0) {
+            AttributeInstance maxHealth = getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            if(maxHealth!=null) health = maxHealth.getValue();
+        }
         this.defaultSpeechBalloonLayout = factory.getSpeechBalloonLayout();
         this.mouth = factory.getMouth();
         this.viewDistance = factory.getViewDistance();
@@ -470,9 +474,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         return fallDepth;
     }
 
-    public int getHealth() { return health;}
+    public double getHealth() { return health;}
 
-    public void damage(int damage) {
+    public void damage(double damage) {
         McmeEntityDamagedEvent event = new McmeEntityDamagedEvent(this, damage);
         EntitiesPlugin.getEntityServer().handleEvent(event);
         if(!event.isCancelled()) {
@@ -488,8 +492,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         }
     }
 
-    public void heal(int damage) {
-        health = Math.min(health + damage, 20);
+    public void heal(double damage) {
+        double maxHealth = 20;
+        AttributeInstance attrib = getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        if(attrib!=null) maxHealth = attrib.getValue();
+        health = Math.min(health + damage, maxHealth);
     }
 
     public boolean isDead() {
@@ -497,9 +504,18 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     @Override
-    public void receiveAttack(McmeEntity damager, int damage, float knockBackFactor) {
-        damage(damage);
-        double length = knockBackBase+damage*knockBackFactor*knockBackPerDamage;
+    public void receiveAttack(McmeEntity damager, double damage, double knockBackFactor) {
+        double defense = 0;
+        AttributeInstance attribute = getAttribute(Attribute.GENERIC_ARMOR);
+        if(attribute!=null) defense = attribute.getValue();
+        double toughness = 0;
+        attribute = getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
+        if(attribute!=null) toughness = attribute.getValue();
+        damage(damage*(1-Math.min(20,Math.max(defense/5,defense - 4*damage/(toughness+8)))/25));
+        attribute = getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
+        double resistance = 0;
+        if(attribute!=null) resistance = attribute.getValue();
+        double length = knockBackFactor * (knockBackBase+Math.max(0,damage-resistance)*knockBackPerDamage);
         Vector normal = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize();
         Vector knockBack = normal.multiply(-length).add(new Vector(0,length*2,0));
         if(isOnGround()) {
@@ -521,7 +537,13 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 actionType = ActionType.ATTACK;
 //Logger.getGlobal().info("Attack");
                 playAnimation(ActionType.ATTACK);
-                target.receiveAttack(this, 2, 1);
+                AttributeInstance attribute = getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+                double damage = 2;
+                if(attribute!= null) damage = attribute.getValue();
+                attribute = getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
+                double knockback = 1;
+                if(attribute!=null) knockback = attribute.getValue();
+                target.receiveAttack(this, damage, knockback);
                 attackCoolDown = 40;
             }
         }

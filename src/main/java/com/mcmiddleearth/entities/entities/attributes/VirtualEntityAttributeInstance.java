@@ -49,6 +49,7 @@ public class VirtualEntityAttributeInstance implements AttributeInstance {
     @Override
     public void setBaseValue(double value) {
         this.baseValue = value;
+        calculateValue();
     }
 
     @Override
@@ -58,6 +59,7 @@ public class VirtualEntityAttributeInstance implements AttributeInstance {
 
     public void setModifiers(List<AttributeModifier> modifiers) {
         this.modifiers = modifiers;
+        calculateValue();
     }
 
     @Override
@@ -84,6 +86,7 @@ public class VirtualEntityAttributeInstance implements AttributeInstance {
 
     public void setDefaultValue(double defaultValue) {
         this.defaultValue = defaultValue;
+        calculateValue();
     }
 
     private void calculateValue() {

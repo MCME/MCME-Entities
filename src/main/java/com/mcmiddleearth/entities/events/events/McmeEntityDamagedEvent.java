@@ -7,11 +7,11 @@ public class McmeEntityDamagedEvent implements McmeEntityEvent, Cancelable {
 
     private McmeEntity entity;
 
-    private int damage;
+    private double damage;
 
     private boolean isCancelled;
 
-    public McmeEntityDamagedEvent(McmeEntity entity, int damage) {
+    public McmeEntityDamagedEvent(McmeEntity entity, double damage) {
         this.entity = entity;
         this.damage = damage;
     }
@@ -21,11 +21,11 @@ public class McmeEntityDamagedEvent implements McmeEntityEvent, Cancelable {
         return entity;
     }
 
-    public int getDamage() {
+    public double getDamage() {
         return damage;
     }
 
-    public void setDamage(int damage) {
+    public void setDamage(double damage) {
         this.damage = damage;
     }
 

@@ -204,11 +204,13 @@ if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
         if(instance == null) {
             return getGenericSpeed();
         }
+//Logger.getGlobal().info("Flyspeed: "+instance);
         return instance.getValue();
     }
 
     private double getGenericSpeed() {
         AttributeInstance instance = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+//Logger.getGlobal().info("Using generic: "+instance);
         return (instance!=null?instance.getValue():0.1);
     }
 

@@ -333,17 +333,17 @@ public class Bone implements McmeEntity {
     }
 
     @Override
-    public int getHealth() {
+    public double getHealth() {
         return 0;
     }
 
     @Override
-    public void damage(int damage) {
+    public void damage(double damage) {
 
     }
 
     @Override
-    public void heal(int damage) {
+    public void heal(double damage) {
 
     }
 
@@ -353,7 +353,7 @@ public class Bone implements McmeEntity {
     }
 
     @Override
-    public void receiveAttack(McmeEntity damager, int damage, float knockDownFactor) {
+    public void receiveAttack(McmeEntity damager, double damage, double knockDownFactor) {
 
     }
 
