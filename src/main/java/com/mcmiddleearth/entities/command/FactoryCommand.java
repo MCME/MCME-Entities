@@ -34,6 +34,7 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
         commandNodeBuilder
                 .requires(sender -> (sender instanceof RealPlayer)
                         && ((RealPlayer) sender).getBukkitPlayer().hasPermission(Permission.USER.getNode()))
+                .executes(context -> setFactoryValue(context.getSource(),"show",""))
                 .then(HelpfulRequiredArgumentBuilder.argument("property", new FactoryPropertyArgument())
                         .then(HelpfulRequiredArgumentBuilder.argument("value", greedyString())
                                 .executes(context -> setFactoryValue(context.getSource(),
@@ -250,7 +251,7 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
                 }
                 break;
             default:
-                sender.sendMessage(new ComponentBuilder("Property " + property +" could not be found.").color(ChatColor.RED).create());
+                sender.sendMessage(new ComponentBuilder("Property " + property +" could not be changed.").color(ChatColor.RED).create());
                 return 0;
         }
         sender.sendMessage(new ComponentBuilder(property + " set to " + value + ".").create());

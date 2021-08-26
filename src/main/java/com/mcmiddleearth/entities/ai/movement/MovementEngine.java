@@ -50,7 +50,7 @@ public class MovementEngine {
             case FLYING:
 //Logger.getGlobal().info("location: "+ entity.getLocation());
 //Logger.getGlobal().info("speed: "+ getFlyingSpeed());
-                Vector velocity = direction.normalize().multiply(getFlyingSpeed());
+                Vector velocity = direction.normalize().multiply(entity.getFlyingSpeed());
 //Logger.getGlobal().info("velocity: "+ velocity);
                 if(cannotMove(velocity)) {
                     velocity = new Vector(0,0,0);
@@ -97,7 +97,7 @@ if (velocity.getY()<-10) {
             case UPRIGHT:
             case SNEAKING:
             default:
-                velocity = direction.normalize().multiply(getGenericSpeed());
+                velocity = direction.normalize().multiply(entity.getGenericSpeed());
                 velocity.setY(0);
                 Vector collisionVelocity = handleCollisions(velocity.clone());
                 if(!cannotMove(collisionVelocity)) {
@@ -105,11 +105,11 @@ if (velocity.getY()<-10) {
                 }
                 if(cannotMove(velocity)) {
                     double jumpHeight = jumpHeight();
-                    if(jumpHeight>0 && jumpHeight<= getMaxJumpHeight()+0.01) {
+                    if(jumpHeight>0 && jumpHeight<= entity.getJumpHeight()+0.01) {
                         entity.setMovementType(MovementType.FALLING);
                         velocity.setY(Math.sqrt(-2 * jumpHeight * gravity.getY()));
 if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
-    Logger.getGlobal().info("Warning! Wrong velocity: "+velocity.getY()+" jump: "+jumpHeight+" maxtJump: "+getMaxJumpHeight()+" gravity: "+gravity.getY());
+    Logger.getGlobal().info("Warning! Wrong velocity: "+velocity.getY()+" jump: "+jumpHeight+" maxtJump: "+entity.getJumpHeight()+" gravity: "+gravity.getY());
 }
 //Logger.getGlobal().info("entity vel: "+entity.getVelocity());
                     } else {
@@ -171,7 +171,7 @@ if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
 
     public double distanceToGround() {
         BoundingBox entityBB = entity.getBoundingBox().getBoundingBox().clone();
-        return distanceToGround(entityBB, entity.getJumpHeight()+1);
+        return distanceToGround(entityBB, (int)entity.getJumpHeight()+1);
     }
 
     private double distanceToGround(BoundingBox boundingBox, int range) {
@@ -196,27 +196,7 @@ if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
     public double jumpHeight() {
         BoundingBox entityBB = entity.getBoundingBox().getBoundingBox().clone();
         entityBB.shift(new Vector(entity.getVelocity().getX(),0,entity.getVelocity().getZ()));
-        return - distanceToGround(entityBB, entity.getJumpHeight()+1);
-    }
-
-    private double getFlyingSpeed() {
-        AttributeInstance instance = entity.getAttribute(Attribute.GENERIC_FLYING_SPEED);
-        if(instance == null) {
-            return getGenericSpeed();
-        }
-//Logger.getGlobal().info("Flyspeed: "+instance);
-        return instance.getValue();
-    }
-
-    private double getGenericSpeed() {
-        AttributeInstance instance = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-//Logger.getGlobal().info("Using generic: "+instance);
-        return (instance!=null?instance.getValue():0.1);
-    }
-
-    private double getMaxJumpHeight() {
-        AttributeInstance instance = entity.getAttribute(Attribute.HORSE_JUMP_STRENGTH);
-        return (instance!=null?instance.getValue():1);
+        return - distanceToGround(entityBB, (int)entity.getJumpHeight()+1);
     }
 
     public void setFallStart(double fallStart) {

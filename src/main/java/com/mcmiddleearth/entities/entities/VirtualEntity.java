@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.entities;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
@@ -422,6 +423,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public synchronized void addViewer(Player player) {
+        if(!player.hasPermission(Permission.VIEWER.getNode())) return;
         if(!useWhitelistAsBlacklist && !(whiteList.isEmpty() || whiteList.contains(player.getUniqueId()))
                 || useWhitelistAsBlacklist && whiteList.contains(player.getUniqueId())) {
             return;
@@ -466,8 +468,25 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         attributes.put(attribute, VirtualAttributeFactory.getAttributeInstance(attribute, null));
     }
 
-    public int getJumpHeight() {
-        return jumpHeight;
+    public double getJumpHeight() {
+        AttributeInstance instance = getAttribute(Attribute.HORSE_JUMP_STRENGTH);
+        return jumpHeight+(instance!=null?instance.getValue():0);
+        //return jumpHeight;
+    }
+
+    public double getFlyingSpeed() {
+        AttributeInstance instance = getAttribute(Attribute.GENERIC_FLYING_SPEED);
+        if(instance == null) {
+            return getGenericSpeed();
+        }
+//Logger.getGlobal().info("Flyspeed: "+instance);
+        return instance.getValue();
+    }
+
+    public double getGenericSpeed() {
+        AttributeInstance instance = getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+//Logger.getGlobal().info("Using generic: "+instance);
+        return (instance!=null?instance.getValue():0.1);
     }
 
     public int getFallDepth() {

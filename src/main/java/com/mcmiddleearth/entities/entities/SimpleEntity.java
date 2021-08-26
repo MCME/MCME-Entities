@@ -1,5 +1,6 @@
 package com.mcmiddleearth.entities.entities;
 
+import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
@@ -40,7 +41,7 @@ public abstract class SimpleEntity extends VirtualEntity {
     public synchronized void addViewer(Player player) {
         super.addViewer(player);
 //Logger.getGlobal().info("Send Display Name: "+ getDisplayName());
-        if(getDisplayName()!=null) {
+        if(player.hasPermission(Permission.VIEWER.getNode()) && getDisplayName()!=null) {
             namePacket.send(player);
         }
     }

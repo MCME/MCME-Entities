@@ -144,7 +144,7 @@ left.getPoints().forEach(vector -> {
 //path.getPoints().forEach(vector -> {
 //    System.out.println("x: " + vector.getX() + " y: " + vector.getY() + " z: " + vector.getZ());}
 //);
-            path.optimise(entity.getJumpHeight(), entity.getFallDepth());
+            path.optimise((int)entity.getJumpHeight(), entity.getFallDepth());
 
             return path;
         //} else {
@@ -226,7 +226,7 @@ Logger.getGlobal().info("step: "+(step < maxPathLength) + "not complete: "+ !pat
     private void moveMarker(PathMarker next) {
         next.move(next.getPoint().getY());
         double blockY = blockProvider.blockTopY(next.getPoint().getBlockX(),next.getPoint().getBlockY(),next.getPoint().getBlockZ(),
-                                                entity.getJumpHeight()+1);
+                (int)(entity.getJumpHeight()+1));
         next.getPoint().setY(blockY);
     }
 
@@ -335,10 +335,10 @@ Logger.getGlobal().info("step: "+(step < maxPathLength) + "not complete: "+ !pat
 //Logger.getGlobal().info("Trace Vector: "+targetDirection);
         RayTracer<Double> tracer = new RayTracer<>(entity.getLocation().toVector(),targetDirection,
                 (x,y,z) -> EntitiesPlugin.getEntityServer().getBlockProvider(entity.getLocation().getWorld().getUID())
-                        .blockTopY(x,y,z,entity.getJumpHeight()+1));
+                        .blockTopY(x,y,z,(int)entity.getJumpHeight()+1));
         BoundingBox boundingBox = entity.getBoundingBox().getBoundingBox();
 //Logger.getGlobal().info("BB: min: "+boundingBox.getMin()+" max: "+boundingBox.getMax());
-        int jumpHeight = entity.getJumpHeight();
+        int jumpHeight = (int)entity.getJumpHeight();
         tracer.addRay(new Vector(boundingBox.getMinX(),boundingBox.getMinY(),boundingBox.getMinZ()));
         tracer.addRay(new Vector(boundingBox.getMinX(),boundingBox.getMinY(),boundingBox.getMaxZ()));
         tracer.addRay(new Vector(boundingBox.getMaxX(),boundingBox.getMinY(),boundingBox.getMinZ()));

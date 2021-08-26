@@ -63,3 +63,6 @@ permissions:
   mcmeentities.user:
     description: allow to use plugin commands
     default: op
+  mcmeentities.viewer:
+    description: allow to see virtual entities
+    default: op

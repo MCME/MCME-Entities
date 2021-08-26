@@ -73,20 +73,23 @@ public class ArmyCommand extends McmeEntitiesCommandHandler {
                 .withTargetEntity((RealPlayer) sender);*/
         //((BukkitCommandSender)sender).clearSelection();
         VirtualEntityFactory factory = getFactory(sender, type, name, goal, dataFile);
+        int counter = 1;
         for (int i = 0; i < size; i++) {
-            //factory.withLocation(((RealPlayer) sender).getLocation().add(new Vector(i * 2, 0, 0)));
+            factory.withLocation(((RealPlayer) sender).getLocation().add(new Vector(i * 2, 0, 0)));
             for (int j = 0; j < size; j++) {
+                factory.withName(name+counter);
                 try {
                     ((BukkitCommandSender) sender).addToSelectedEntities(EntityAPI.spawnEntity(factory));
-                    sender.sendMessage(new ComponentBuilder((size * size) + " entities spawned.").create());
                 } catch (InvalidLocationException e) {
                     sender.sendMessage(new ComponentBuilder("Can't spawn because of invalid or missing location!").create());
                 } catch (InvalidDataException e) {
                     sender.sendMessage(new ComponentBuilder(e.getMessage()).create());
                 }
                 factory.withLocation(factory.getLocation().add(new Vector(0, 0, 2)));
+                counter++;
             }
         }
+        sender.sendMessage(new ComponentBuilder((counter) + " entities spawned.").create());
         return 0;
     }
 }

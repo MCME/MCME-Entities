@@ -104,7 +104,7 @@ Logger.getGlobal().info("baseOffset: "+baseOffset.toString());
 
             int lineLength = (isWide ? lineLengthWide : lineLengthNarrow);
             List<String> wrappedLines = new ArrayList<>();
-Logger.getGlobal().info("Lines: "+lines.length);
+//Logger.getGlobal().info("Lines: "+lines.length);
             for (String line : lines) {
                 String[] words = line.split(" ");
                 if (words.length == 0) {
@@ -141,7 +141,7 @@ Logger.getGlobal().info("Lines: "+lines.length);
                 }
             }
             lines = wrappedLines.toArray(new String[0]);
-Logger.getGlobal().info("Wrapped "+lines.length);
+//Logger.getGlobal().info("Wrapped "+lines.length);
             //add Line prefix
             for(int i = 0; i < lines.length; i++) {
                 lines[i] = (linePrefix + lines[i]).replace('&','§');

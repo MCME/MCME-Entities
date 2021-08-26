@@ -66,9 +66,10 @@ Logger.getGlobal().info("Creating placeholder!");
     public static void writeNonDefaultAttribute(JsonWriter out, AttributeInstance attributeInstance,
                                                 McmeEntityType entityType, Gson gson, boolean writeDefaults) {
         AttributeInstance defaults = VirtualAttributeFactory.getAttributesFor(entityType).get(attributeInstance.getAttribute());
-        if(writeDefaults || !attributeInstance.getModifiers().isEmpty()
+Logger.getGlobal().info("Attribute: "+attributeInstance.getAttribute()+" Defaults: "+defaults);
+        if(writeDefaults || (defaults == null || !attributeInstance.getModifiers().isEmpty()
                 || attributeInstance.getBaseValue()!=defaults.getBaseValue()
-                || attributeInstance.getDefaultValue()!=defaults.getDefaultValue()) {
+                || attributeInstance.getDefaultValue()!=defaults.getDefaultValue())) {
             gson.toJson(attributeInstance, VirtualEntityAttributeInstance.class,out);
         }
     }
