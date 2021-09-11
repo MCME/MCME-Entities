@@ -12,8 +12,11 @@ import com.mcmiddleearth.entities.entities.composite.SpeechBalloonEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.events.McmeEntityDamagedEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityDeathEvent;
+import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
 import com.mcmiddleearth.entities.events.events.goal.GoalChangedEvent;
 import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityAttackEvent;
+import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityStopTalkEvent;
+import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityTalkEvent;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
@@ -215,6 +218,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         speechCounter = Math.max(-1, --speechCounter);
         if(speechCounter == 0) {
 //Logger.getGlobal().info("stop talking");
+            McmeEntityEvent event = new VirtualEntityStopTalkEvent(this);
+            EntitiesPlugin.getEntityServer().handleEvent(event);
             isTalking = false;
             removeSpeechBalloons();
         }
@@ -618,12 +623,16 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public void say(SpeechBalloonLayout factory) {
-        removeSpeechBalloons();
-        isTalking = true;
-        //this.speech = lines;
-        speechCounter = factory.getDuration();
-        currentSpeechBalloonLayout = factory;
-        viewers.forEach(this::createSpeechBalloon);
+        VirtualEntityTalkEvent event = new VirtualEntityTalkEvent(this, factory);
+        EntitiesPlugin.getEntityServer().handleEvent(event);
+        if (!event.isCancelled()) {
+            removeSpeechBalloons();
+            isTalking = true;
+            //this.speech = lines;
+            speechCounter = factory.getDuration();
+            currentSpeechBalloonLayout = factory;
+            viewers.forEach(this::createSpeechBalloon);
+        }
     }
 
     private void createSpeechBalloon(Player viewer) {
@@ -642,6 +651,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     public void stopTalking() {
         speechCounter = 1;
+    }
+
+    public boolean isTalking() {
+        return isTalking;
     }
 
     @Override

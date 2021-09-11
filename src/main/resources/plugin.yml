@@ -9,51 +9,67 @@ authors: [ Eriol_Eandur ]
 commands:
   npc:
     description: manges fake players
+    permission: mcmeentities.developer
     usage: /npc
   mob:
     description: manges fake mobs
+    permission: mcmeentities.developer
     usage: /mob
   entity:
     description: manges fake entities
+    permission: mcmeentities.developer
     usage: /entity
   animation:
     description: manges entity animations
+    permission: mcmeentities.developer
     usage: /animation
   vspawn:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   varmy:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   vset:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   vremove:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   vtest:
     description: manages virtual entities
+    permission: mcmeentities.developer
     usage: /virtual spawn | kill | animate
   vsay:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   vload:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   vsave:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   vselect:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   vfactory:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   vanimate:
     description: manages virtual entities
+    permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
   vserver:
     description: manages entities plugin
+    permission: mcmeentities.admin
     usage: /entities reload | restart
 
 permissions:

@@ -137,6 +137,6 @@ Logger.getGlobal().info("ShiftZ-");
     }
 
     public RotationMatrix multiply(RotationMatrix other) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
