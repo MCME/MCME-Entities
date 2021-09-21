@@ -3,10 +3,10 @@ package com.mcmiddleearth.entities.entities;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.ai.goal.Goal;
-import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
+import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
@@ -20,7 +20,6 @@ import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityTalkEvent;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
-import com.mcmiddleearth.entities.protocol.packets.DisplayNamePacket;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attributable;
@@ -31,7 +30,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
@@ -44,7 +42,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private final Set<Player> viewers = new HashSet<>();
 
-    private Set<UUID> whiteList;
+    private final Set<UUID> whiteList;
 
     private boolean useWhitelistAsBlacklist = false;
 
@@ -100,7 +98,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private Set<McmeEntity> enemies = new HashSet<>();
 
-    private Map<Player, SpeechBalloonEntity> speechBallons = new HashMap<>();
+    private final Map<Player, SpeechBalloonEntity> speechBallons = new HashMap<>();
     //private String[] speech;
     private boolean isTalking;
     private int speechCounter;
@@ -120,7 +118,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         if(uniqueId == null) {
             this.uniqueId = UuidGenerator.fast_random();
         }
-        this.name = factory.getName();
+        this.name = (factory.getName()!=null?factory.getName():"unnamed");
         this.attributes = factory.getAttributes();
         this.displayName = factory.getDisplayName();
         this.useWhitelistAsBlacklist = factory.hasBlackList();
@@ -152,9 +150,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     protected VirtualEntity(McmeEntityType type, Location location) {
         this.updateRandom = new Random().nextInt(updateInterval);
         this.type = type;
+        this.name = "unnamed";
         this.location = location;
         this.uniqueId = UuidGenerator.fast_random();//UuidGenerator.getRandomV2();
         this.boundingBox = new EntityBoundingBox(0,0,0,0);
+        boundingBox.setLocation(location);
         this.movementEngine = null;
         this.whiteList = new HashSet<>();
     }

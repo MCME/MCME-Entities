@@ -9,11 +9,15 @@ import java.util.Objects;
 
 public class EntityBoundingBox {
 
-    private Vector min, max, dMin, dMax;
+    private Vector min, max;
+    private final Vector dMin, dMax;
+
+    private final boolean zeroSize;
 
     public EntityBoundingBox(double dx, double dz, double dyMin, double dyMax) {
         dMin = new Vector(-dx,-dyMin,-dz);
         dMax = new Vector(dx, dyMax,dz);
+        zeroSize = dx == 0 && dz == 0 && dyMin == dyMax;
     }
 
     public EntityBoundingBox(EntityBoundingBox other) {
@@ -21,6 +25,7 @@ public class EntityBoundingBox {
         dMax = other.dMax.clone();
         min = (other.min!=null?other.min.clone():null);
         max = (other.max!=null?other.max.clone():null);
+        zeroSize = other.zeroSize;
     }
 
     public void setLocation(Location location) {
@@ -40,6 +45,9 @@ public class EntityBoundingBox {
         return new BoundingBox(min.getX(),min.getY(),min.getZ(),max.getX(),max.getY(), max.getZ());
     }
 
+    public boolean isZero() {
+        return zeroSize;
+    }
     public Vector getMin() {
         return min;
     }

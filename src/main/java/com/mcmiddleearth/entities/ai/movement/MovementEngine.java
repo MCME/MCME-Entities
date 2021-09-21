@@ -147,13 +147,14 @@ if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
     }
 
     private Vector handleCollisions(Vector velocity) {
+        if(entity.getBoundingBox().isZero()) return velocity;
         BoundingBox entityBB = entity.getBoundingBox().getBoundingBox().clone();
         Collection<McmeEntity> closeEntities = EntitiesPlugin.getEntityServer()
                                         .getEntitiesAt(entity.getLocation(), (int) (entityBB.getWidthX()*2+1),
                                                                              (int)(entityBB.getHeight()*2+1),
                                                                              (int)(entityBB.getWidthZ()*2+1));
         for(McmeEntity search: closeEntities) {
-            if(search != entity && search.getBoundingBox() != null
+            if(search != entity && search.getBoundingBox() != null && !search.getBoundingBox().isZero()
                     && entityBB.overlaps(search.getBoundingBox().getBoundingBox())) {
                 double speed = velocity.length();
                 if(Double.isFinite(speed)) {
