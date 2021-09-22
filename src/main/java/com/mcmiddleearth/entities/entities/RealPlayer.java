@@ -26,7 +26,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public String getName() {
-        return null;
+        return getBukkitPlayer().getName();
     }
 
     public Location getLocation() {
@@ -40,12 +40,12 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public McmeEntityType getType() {
-        return null;
+        return McmeEntityType.valueOf("player");
     }
 
     @Override
     public Vector getVelocity() {
-        return null;
+        return getBukkitPlayer().getVelocity();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public EntityBoundingBox getBoundingBox() {
-        return null;
+        return new EntityBoundingBox(0,0,0,0);
     }
 
     @Override

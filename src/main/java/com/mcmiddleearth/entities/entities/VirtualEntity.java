@@ -30,6 +30,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
@@ -441,17 +442,22 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public synchronized void removeViewer(Player player) {
-        removePacket.send(player);
-        viewers.remove(player);
         SpeechBalloonEntity balloon = speechBallons.get(player);
         if(balloon != null) {
+//Logger.getGlobal().info("REmove ballon!"+this.getClass().getSimpleName());
+            //balloon.removeAllViewers();
+            balloon.terminate();
             speechBallons.remove(player);
-            EntitiesPlugin.getEntityServer().removeEntity(balloon);
+            //EntitiesPlugin.getEntityServer().removeEntity(balloon);
         }
+//Logger.getGlobal().info("REmove entity!"+this.getClass().getSimpleName());
+        removePacket.send(player);
+        viewers.remove(player);
     }
 
     public void removeAllViewers() {
         List<Player> removal = new ArrayList<>(viewers);
+//Logger.getGlobal().info("REmove viewers! "+this.getClass().getSimpleName());
         removal.forEach(this::removeViewer);
     }
 
