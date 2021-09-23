@@ -218,4 +218,8 @@ public abstract class GoalVirtualEntity implements Goal {
         return factory;
     }
 
+    @Override
+    public GoalType getType() {
+        return type;
+    }
 }

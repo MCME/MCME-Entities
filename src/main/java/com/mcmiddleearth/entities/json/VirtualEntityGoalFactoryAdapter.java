@@ -20,20 +20,35 @@ import java.util.logging.Logger;
 
 public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGoalFactory> {
 
+    private final String
+    GOAL_TYPE               = "goal_type",
+    MOVEMENT_SPEED          = "movement_speed",
+    TARGET_LOCATION         = "target_location",
+    CHECKPOINTS             = "checkpoint",
+    START_CHECKPOINT        = "start_checkpoint",
+    TARGET_ENTITY           = "target_entity",
+    UPDATE_INTERVAL         = "update_interval",
+    LOOP                    = "loop",
+    HEAD_GOALS              = "head_goals",
+    DURATION                = "duration",
+    TYPE                    = "type",
+    YAW                     = "yaw",
+    PITCH                   = "pitch";
+
     @Override
     public void write(JsonWriter out, VirtualEntityGoalFactory factory) throws IOException {
         boolean writeDefaults = factory.isWriteDefaultsToFile();
         Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
         VirtualEntityGoalFactory defaults = VirtualEntityGoalFactory.getDefaults();
         out.beginObject();
-            JsonUtil.writeNonDefaultString(out,"goalType",factory.getGoalType().name().toLowerCase(),
+            JsonUtil.writeNonDefaultString(out,GOAL_TYPE,factory.getGoalType().name().toLowerCase(),
                                                                 defaults.getGoalType().name().toLowerCase(), writeDefaults);
-            JsonUtil.writeNonDefaultString(out,"movementSpeed",factory.getMovementSpeed().name().toLowerCase(),
+            JsonUtil.writeNonDefaultString(out,MOVEMENT_SPEED,factory.getMovementSpeed().name().toLowerCase(),
                                                                  defaults.getMovementSpeed().name().toLowerCase(),writeDefaults);
-            JsonUtil.writeNonDefaultLocation(out,"targetLocation",factory.getTargetLocation(),
+            JsonUtil.writeNonDefaultLocation(out,TARGET_LOCATION,factory.getTargetLocation(),
                                                                 defaults.getTargetLocation(), gson, writeDefaults);
             if(writeDefaults || (factory.getCheckpoints()!=null && factory.getCheckpoints().length>0)) {
-                out.name("checkpoints").beginArray();
+                out.name(CHECKPOINTS).beginArray();
                 if(factory.getCheckpoints()!=null) {
                     for (Location checkpoint : factory.getCheckpoints()) {
                         gson.toJson(checkpoint, Location.class, out);
@@ -41,48 +56,41 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                 }
                 out.endArray();
             }
-            JsonUtil.writeNonDefaultInt(out,"startCheckPoint",factory.getStartCheckpoint(),
+            JsonUtil.writeNonDefaultInt(out,START_CHECKPOINT,factory.getStartCheckpoint(),
                                             defaults.getStartCheckpoint(), writeDefaults);
             if(writeDefaults || factory.getTargetEntity() != null) {
-                out.name("targetEntity");
+                out.name(TARGET_ENTITY);
                 JsonUtil.writeEntityLink(factory.getTargetEntity(), false, out);
             }
-            JsonUtil.writeNonDefaultInt(out,"updateInterval",factory.getUpdateInterval(),
+            JsonUtil.writeNonDefaultInt(out,UPDATE_INTERVAL,factory.getUpdateInterval(),
                                             defaults.getUpdateInterval(),writeDefaults);
-            JsonUtil.writeNonDefaultBoolean(out, "loop", factory.isLoop(), defaults.isLoop(),writeDefaults);
+            JsonUtil.writeNonDefaultBoolean(out, LOOP, factory.isLoop(), defaults.isLoop(),writeDefaults);
             if(writeDefaults || (factory.getHeadGoals()!=null && !factory.getHeadGoals().isEmpty())) {
-               out.name("headGoals").beginArray();
+               out.name(HEAD_GOALS).beginArray();
                if(factory.getHeadGoals()!=null) {
                    for (HeadGoal headGoal : factory.getHeadGoals()) {
                        out.beginObject();
-                       out.name("duration").value(headGoal.getDuration());
-                       switch (headGoal.getClass().getSimpleName()) {
-                           case "HeadGoalEntityTarget":
-                               out.name("type").value(HeadGoalType.ENTITY_TARGET.name().toLowerCase());
-                               break;
-                           case "HeadGoalLocationTarget":
-                               out.name("type").value(HeadGoalType.LOCATION_TARGET.name().toLowerCase());
-                               break;
-                           case "HeadGoalLook":
-                               out.name("type").value(HeadGoalType.LOOK.name().toLowerCase());
-                               out.name("targetLocation");
+                       out.name(DURATION).value(headGoal.getDuration());
+                       if(headGoal.getClass().equals(HeadGoalEntityTarget.class)) {
+                           out.name(TYPE).value(HeadGoalType.ENTITY_TARGET.name().toLowerCase());
+                       } else if(headGoal.getClass().equals(HeadGoalLocationTarget.class)) {
+                               out.name(TYPE).value(HeadGoalType.LOCATION_TARGET.name().toLowerCase());
+                       } else if(headGoal.getClass().equals(HeadGoalLook.class)) {
+                               out.name(TYPE).value(HeadGoalType.LOOK.name().toLowerCase());
+                               out.name(TARGET_LOCATION);
                                gson.toJson(((HeadGoalLook) headGoal).getTarget(), Location.class, out);
-                               break;
-                           case "HeadGoalStare":
-                               out.name("type").value(HeadGoalType.STARE.name().toLowerCase());
-                               out.name("yaw").value(headGoal.getHeadYaw())
-                                       .name("pitch").value(headGoal.getHeadPitch());
-                               break;
-                           case "HeadGoalWatch":
-                               out.name("type").value(HeadGoalType.WATCH.name().toLowerCase());
-                               out.name("targetEntity");
+                       } else if(headGoal.getClass().equals(HeadGoalStare.class)) {
+                               out.name(TYPE).value(HeadGoalType.STARE.name().toLowerCase());
+                               out.name(YAW).value(headGoal.getHeadYaw())
+                                       .name(PITCH).value(headGoal.getHeadPitch());
+                       } else if(headGoal.getClass().equals(HeadGoalWatch.class)) {
+                               out.name(TYPE).value(HeadGoalType.WATCH.name().toLowerCase());
+                               out.name(TARGET_ENTITY);
                                JsonUtil.writeEntityLink(((HeadGoalWatch) headGoal).getTarget(), false, out);
-                               break;
-                           case "HeadGoalWaypointTarget":
-                               out.name("type").value(HeadGoalType.WAYPOINT_TARGET.name().toLowerCase());
-                               break;
-                           default:
-                               out.name("type").value(headGoal.getClass().getSimpleName());
+                       } else if(headGoal.getClass().equals(HeadGoalWaypointTarget.class)) {
+                           out.name(TYPE).value(HeadGoalType.WAYPOINT_TARGET.name().toLowerCase());
+                       } else {
+                               out.name(TYPE).value(headGoal.getClass().getSimpleName());
                        }
                        out.endObject();
                    }
@@ -101,16 +109,16 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
             String key = in.nextName();
             try {
                 switch(key) {
-                    case "goalType":
+                    case GOAL_TYPE:
                         factory.withGoalType(GoalType.valueOf(in.nextString().toUpperCase()));
                         break;
-                    case "movementSpeed":
+                    case MOVEMENT_SPEED:
                         factory.withMovementSpeed(MovementSpeed.valueOf(in.nextString().toUpperCase()));
                         break;
-                    case "targetLocation":
+                    case TARGET_LOCATION:
                         factory.withTargetLocation(gson.fromJson(in,Location.class));
                         break;
-                    case "checkpoints":
+                    case CHECKPOINTS:
                         List<Location> checkpoints = new ArrayList<>();
                         in.beginArray();
                         try {
@@ -120,19 +128,19 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                         } finally { in.endArray(); }
                         factory.withCheckpoints(checkpoints.toArray(new Location[0]));
                         break;
-                    case "startCheckPoint":
+                    case START_CHECKPOINT:
                         factory.withStartCheckpoint(in.nextInt());
                         break;
-                    case "targetEntity":
+                    case TARGET_ENTITY:
                         factory.withTargetEntity(JsonUtil.readEntityLink(in));
                         break;
-                    case "updateInterval":
+                    case UPDATE_INTERVAL:
                         factory.withUpdateInterval(in.nextInt());
                         break;
-                    case "loop":
+                    case LOOP:
                         factory.withLoop(in.nextBoolean());
                         break;
-                    case "headGoals":
+                    case HEAD_GOALS:
                         Set<HeadGoal>headGoals = new HashSet<>();
                         in.beginArray();
                         //try {
@@ -146,22 +154,22 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                                     float yaw = 0, pitch = 0;
                                     while(in.hasNext()) {
                                         switch(in.nextName()) {
-                                            case "type":
+                                            case TYPE:
                                                 type = HeadGoalType.valueOf(in.nextString().toUpperCase());
                                                 break;
-                                            case "targetLocation":
+                                            case TARGET_LOCATION:
                                                 targetLocation = gson.fromJson(in,Location.class);
                                                 break;
-                                            case "targetEntity":
+                                            case TARGET_ENTITY:
                                                 targetEntity = JsonUtil.readEntityLink(in);
                                                 break;
-                                            case "yaw":
+                                            case YAW:
                                                 yaw = (float) in.nextDouble();
                                                 break;
-                                            case "pitch":
+                                            case PITCH:
                                                 pitch = (float) in.nextDouble();
                                                 break;
-                                            case "duration":
+                                            case DURATION:
                                                 duration = in.nextInt();
                                                 break;
                                             default:

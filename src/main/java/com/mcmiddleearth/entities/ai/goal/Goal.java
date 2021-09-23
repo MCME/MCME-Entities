@@ -31,4 +31,6 @@ public interface Goal {
     float getYaw();
     float getPitch();
     float getRoll();
+
+    GoalType getType();
 }
