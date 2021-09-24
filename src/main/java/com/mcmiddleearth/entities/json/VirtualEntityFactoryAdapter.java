@@ -26,6 +26,39 @@ import java.util.logging.Logger;
 
 public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactory> {
 
+    private static final String
+    TYPE                = "type",
+    BLACKLIST           = "blacklist",
+    WHITELIST           = "whitelist",
+    UNIQUE_ID           = "unique_id",
+    NAME                = "name",
+    DATA_FILE           = "data_file",
+    DISPLAY_NAME        = "display_name",
+    DISPLAY_NAME_POSITION   = "display_name_position",
+    SPAWN_LOCATION_ENTITY   = "spawn_location_entity",
+    SPAWN_LOCATION          = "spawn_location",
+    ROLL                    = "roll",
+    HEAD_YAW                = "head_yaw",
+    HEAD_PITCH              = "head_pitch",
+    HEALTH                  = "health",
+    MOVEMENT_TYPE           = "movement_type",
+    ATTRIBUTES              = "attributes",
+    BOUNDING_BOX            = "bounding_box",
+    GOAL_FACTORY            = "goal_factory",
+    HEAD_PITCH_CENTER       = "head_pitch_center",
+    SPEECH_BALLOON_LAYOUT   = "speech_balloon_layout",
+    MOUTH                   = "mouth",
+    MANUAL_ANIMATION        = "manual_animation",
+    HEAD_POSE_DELAY         = "head_pose_delay",
+    VIEW_DISTANCE           = "view_distance",
+    MAX_ROTATION_STEP       = "max_rotation_step",
+    MAX_ROTATION_STEP_FLIGHT    = "max_rotation_step_flight",
+    UPDATE_INTERVAL             = "update_interval",
+    JUMP_HEIGHT                 = "jump_height",
+    KNOCK_BACK_BASE             = "knock_back_base",
+    KNOCK_BACK_PER_DAMAGE       = "knock_back_per_damage",
+    ENEMIES                     = "enemies";
+    
 
     @Override
     public void write(JsonWriter out, VirtualEntityFactory factory) throws IOException {
@@ -33,77 +66,77 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
         VirtualEntityFactory defaults = VirtualEntityFactory.getDefaults();
         Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
         out.beginObject();
-        out.name("type").value(factory.getType().name());
-        JsonUtil.writeNonDefaultBoolean(out, "blacklist", factory.hasBlackList(), defaults.hasBlackList(), writeDefaults);
+        out.name(TYPE).value(factory.getType().name());
+        JsonUtil.writeNonDefaultBoolean(out, BLACKLIST, factory.hasBlackList(), defaults.hasBlackList(), writeDefaults);
         if (writeDefaults || factory.getWhitelist() != null) {
-            out.name("whitelist").beginArray();
+            out.name(WHITELIST).beginArray();
             if(factory.getWhitelist()!=null) {
                 for (UUID uuid : factory.getWhitelist()) out.value(uuid.toString());
             }
             out.endArray();
         }
-        JsonUtil.writeNonDefaultUuid(out, "uniqueId", factory.getUniqueId(), defaults.getUniqueId(),writeDefaults);
-        JsonUtil.writeNonDefaultString(out, "name", factory.getName(), defaults.getName(),writeDefaults);
-        JsonUtil.writeNonDefaultString(out, "datafile", factory.getDataFile(), defaults.getDataFile(),writeDefaults);
-        JsonUtil.writeNonDefaultString(out, "displayName", factory.getDisplayName(), defaults.getDisplayName(),writeDefaults);
-        JsonUtil.writeNonDefaultVector(out, "displayNamePosition", factory.getDisplayNamePosition(), defaults.getDisplayNamePosition(), gson, writeDefaults);
+        JsonUtil.writeNonDefaultUuid(out, UNIQUE_ID, factory.getUniqueId(), defaults.getUniqueId(),writeDefaults);
+        JsonUtil.writeNonDefaultString(out, NAME, factory.getName(), defaults.getName(),writeDefaults);
+        JsonUtil.writeNonDefaultString(out, DATA_FILE, factory.getDataFile(), defaults.getDataFile(),writeDefaults);
+        JsonUtil.writeNonDefaultString(out, DISPLAY_NAME, factory.getDisplayName(), defaults.getDisplayName(),writeDefaults);
+        JsonUtil.writeNonDefaultVector(out, DISPLAY_NAME_POSITION, factory.getDisplayNamePosition(), defaults.getDisplayNamePosition(), gson, writeDefaults);
         if (writeDefaults || factory.getSpawnLocationEntity() != null) {
-            out.name("spawnLocationEntity");
+            out.name(SPAWN_LOCATION_ENTITY);
             JsonUtil.writeEntityLink(factory.getSpawnLocationEntity(), true, out);
         } else {
-            out.name("spawnLocation");
+            out.name(SPAWN_LOCATION);
             gson.toJson(factory.getLocation(), Location.class, out);
         }
-        JsonUtil.writeNonDefaultFloat(out, "roll", factory.getRoll(), defaults.getRoll(),writeDefaults);
-        JsonUtil.writeNonDefaultFloat(out, "headYaw", factory.getHeadYaw(), defaults.getHeadYaw(),writeDefaults);
-        JsonUtil.writeNonDefaultFloat(out, "headPitch", factory.getHeadPitch(), defaults.getHeadPitch(),writeDefaults);
-        JsonUtil.writeNonDefaultDouble(out, "health", factory.getHealth(), defaults.getHealth(),writeDefaults);
-        JsonUtil.writeNonDefaultString(out, "movementType", factory.getMovementType().name().toLowerCase(),
+        JsonUtil.writeNonDefaultFloat(out, ROLL, factory.getRoll(), defaults.getRoll(),writeDefaults);
+        JsonUtil.writeNonDefaultFloat(out, HEAD_YAW, factory.getHeadYaw(), defaults.getHeadYaw(),writeDefaults);
+        JsonUtil.writeNonDefaultFloat(out, HEAD_PITCH, factory.getHeadPitch(), defaults.getHeadPitch(),writeDefaults);
+        JsonUtil.writeNonDefaultDouble(out, HEALTH, factory.getHealth(), defaults.getHealth(),writeDefaults);
+        JsonUtil.writeNonDefaultString(out, MOVEMENT_TYPE, factory.getMovementType().name().toLowerCase(),
                                                                   defaults.getMovementType().name().toLowerCase(),writeDefaults);
         if (writeDefaults || !factory.getAttributes().isEmpty()) {
-            out.name("attributes").beginArray();
+            out.name(ATTRIBUTES).beginArray();
             for (AttributeInstance attributeInstance : factory.getAttributes().values()) {
                 JsonUtil.writeNonDefaultAttribute(out, attributeInstance, factory.getType(), gson, writeDefaults);
             }
             out.endArray();
         }
         if (writeDefaults || !factory.getBoundingBox().equals(defaults.getBoundingBox())) {
-            out.name("boundingBox");
+            out.name(BOUNDING_BOX);
             gson.toJson(factory.getBoundingBox(), EntityBoundingBox.class, out);
         }
         if (writeDefaults || factory.getGoalFactory() != null) {
-            out.name("goalFactory");
+            out.name(GOAL_FACTORY);
             VirtualEntityGoalFactory goalFactory = factory.getGoalFactory();
             if(writeDefaults) goalFactory.withWriteDefaultsToFile(true);
             gson.toJson(goalFactory, VirtualEntityGoalFactory.class, out);
         }
-        JsonUtil.writeNonDefaultVector(out, "headPitchCenter", factory.getHeadPitchCenter(),
+        JsonUtil.writeNonDefaultVector(out, HEAD_PITCH_CENTER, factory.getHeadPitchCenter(),
                                         defaults.getHeadPitchCenter(), gson,writeDefaults);
         if (writeDefaults || !factory.getSpeechBalloonLayout().equals(defaults.getSpeechBalloonLayout())) {
-            out.name("speechBalloonLayout");
+            out.name(SPEECH_BALLOON_LAYOUT);
             gson.toJson(factory.getSpeechBalloonLayout(), SpeechBalloonLayout.class, out);
         }
-        JsonUtil.writeNonDefaultVector(out, "mouth", factory.getMouth(), defaults.getMouth(), gson,writeDefaults);
-        JsonUtil.writeNonDefaultBoolean(out, "manualAnimation", factory.getManualAnimationControl(),
+        JsonUtil.writeNonDefaultVector(out, MOUTH, factory.getMouth(), defaults.getMouth(), gson,writeDefaults);
+        JsonUtil.writeNonDefaultBoolean(out, MANUAL_ANIMATION, factory.getManualAnimationControl(),
                                         defaults.getManualAnimationControl(),writeDefaults);
-        JsonUtil.writeNonDefaultInt(out, "headPoseDelay", factory.getHeadPoseDelay(),
+        JsonUtil.writeNonDefaultInt(out, HEAD_POSE_DELAY, factory.getHeadPoseDelay(),
                                         defaults.getHeadPoseDelay(),writeDefaults);
-        JsonUtil.writeNonDefaultInt(out, "viewDistance", factory.getViewDistance(),
+        JsonUtil.writeNonDefaultInt(out, VIEW_DISTANCE, factory.getViewDistance(),
                                         defaults.getViewDistance(),writeDefaults);
-        JsonUtil.writeNonDefaultFloat(out, "maxRotationStep", factory.getMaxRotationStep(),
+        JsonUtil.writeNonDefaultFloat(out, MAX_ROTATION_STEP, factory.getMaxRotationStep(),
                                         defaults.getMaxRotationStep(),writeDefaults);
-        JsonUtil.writeNonDefaultFloat(out, "maxRotationStepFlight", factory.getMaxRotationStepFlight(),
+        JsonUtil.writeNonDefaultFloat(out, MAX_ROTATION_STEP_FLIGHT, factory.getMaxRotationStepFlight(),
                                         defaults.getMaxRotationStepFlight(),writeDefaults);
-        JsonUtil.writeNonDefaultInt(out, "updateInterval", factory.getUpdateInterval(),
+        JsonUtil.writeNonDefaultInt(out, UPDATE_INTERVAL, factory.getUpdateInterval(),
                                         defaults.getUpdateInterval(),writeDefaults);
-        JsonUtil.writeNonDefaultInt(out, "jumpHeight", factory.getJumpHeight(),
+        JsonUtil.writeNonDefaultInt(out, JUMP_HEIGHT, factory.getJumpHeight(),
                                         defaults.getJumpHeight(),writeDefaults);
-        JsonUtil.writeNonDefaultFloat(out, "knockBackBase", factory.getKnockBackBase(),
+        JsonUtil.writeNonDefaultFloat(out, KNOCK_BACK_BASE, factory.getKnockBackBase(),
                                         defaults.getKnockBackBase(),writeDefaults);
-        JsonUtil.writeNonDefaultFloat(out, "knockBackPerDamage", factory.getKnockBackPerDamage(),
+        JsonUtil.writeNonDefaultFloat(out, KNOCK_BACK_PER_DAMAGE, factory.getKnockBackPerDamage(),
                                         defaults.getKnockBackPerDamage(),writeDefaults);
         if (writeDefaults || !factory.getEnemies().isEmpty()) {
-            out.name("enemies").beginArray();
+            out.name(ENEMIES).beginArray();
             for (McmeEntity enemy : factory.getEnemies()) {
                 JsonUtil.writeEntityLink(enemy, false, out);
             }
@@ -121,13 +154,13 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
             String key = in.nextName();
             try {
                 switch (key) {
-                    case "type":
+                    case TYPE:
                         factory.withEntityType(McmeEntityType.valueOf(in.nextString().toUpperCase()));
                         break;
-                    case "blacklist":
+                    case BLACKLIST:
                         factory.withBlackList(in.nextBoolean());
                         break;
-                    case "whitelist":
+                    case WHITELIST:
                         Set<UUID> whitelist = new HashSet<>();
                         in.beginArray();
                         //try {
@@ -138,43 +171,43 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                         in.endArray();//}
                         factory.withWhitelist(whitelist);
                         break;
-                    case "uniqueId":
+                    case UNIQUE_ID:
                         factory.withUuid(UUID.fromString(in.nextString()));
                         break;
-                    case "name":
+                    case NAME:
                         factory.withName(in.nextString());
                         break;
-                    case "datafile":
+                    case DATA_FILE:
                         factory.withDataFile(in.nextString());
                         break;
-                    case "displayName":
+                    case DISPLAY_NAME:
                         factory.withDisplayName(in.nextString());
                         break;
-                    case "displayNamePosition":
+                    case DISPLAY_NAME_POSITION:
                         factory.withDisplayNamePosition(gson.fromJson(in, Vector.class));
                         break;
-                    case "spawnLocationEntity":
+                    case SPAWN_LOCATION_ENTITY:
                         factory.useEntityForSpawnLocation(JsonUtil.readEntityLink(in));
                         break;
-                    case "spawnLocation":
+                    case SPAWN_LOCATION:
                         factory.withLocation(gson.fromJson(in,Location.class));
                         break;
-                    case "roll":
+                    case ROLL:
                         factory.withRoll((float)in.nextDouble());
                         break;
-                    case "headYaw":
+                    case HEAD_YAW:
                         factory.withHeadYaw((float)in.nextDouble());
                         break;
-                    case "headPitch":
+                    case HEAD_PITCH:
                         factory.withHeadPitch((float)in.nextDouble());
                         break;
-                    case "health":
+                    case HEALTH:
                         factory.withHealth(in.nextInt());
                         break;
-                    case "movementType":
+                    case MOVEMENT_TYPE:
                         factory.withMovementType(MovementType.valueOf(in.nextString().toUpperCase()));
                         break;
-                    case "attributes":
+                    case ATTRIBUTES:
                         Map<Attribute,AttributeInstance> attributes = new HashMap<>();
                         in.beginArray();
                         //try {
@@ -186,49 +219,49 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                         in.endArray(); //}
                         factory.withAttributes(attributes);
                         break;
-                    case "boundingBox":
+                    case BOUNDING_BOX:
                         factory.withBoundingBox(gson.fromJson(in, EntityBoundingBox.class));
                         break;
-                    case "goalFactory":
+                    case GOAL_FACTORY:
                         factory.withGoalFactory(gson.fromJson(in,VirtualEntityGoalFactory.class));
                         break;
-                    case "headPitchCenter":
+                    case HEAD_PITCH_CENTER:
                         factory.withHeadPitchCenter(gson.fromJson(in, Vector.class));
                         break;
-                    case "speechBalloonLayout":
+                    case SPEECH_BALLOON_LAYOUT:
                         factory.withSpeechBalloonLayout(gson.fromJson(in, SpeechBalloonLayout.class));
                         break;
-                    case "mouth":
+                    case MOUTH:
                         factory.withMouth(gson.fromJson(in, Vector.class));
                         break;
-                    case "manualAnimation":
+                    case MANUAL_ANIMATION:
                         factory.withManualAnimationControl(in.nextBoolean());
                         break;
-                    case "headPoseDelay":
+                    case HEAD_POSE_DELAY:
                         factory.withHeadPoseDelay(in.nextInt());
                         break;
-                    case "viewDistance":
+                    case VIEW_DISTANCE:
                         factory.withViewDistance(in.nextInt());
                         break;
-                    case "maxRotationStep":
+                    case MAX_ROTATION_STEP:
                         factory.withMaxRotationStep((float)in.nextDouble());
                         break;
-                    case "maxRotationStepFlight":
+                    case MAX_ROTATION_STEP_FLIGHT:
                         factory.withMaxRotationStepFlight((float)in.nextDouble());
                         break;
-                    case "updateInterval":
+                    case UPDATE_INTERVAL:
                         factory.withUpdateInterval(in.nextInt());
                         break;
-                    case "jumpHeight":
+                    case JUMP_HEIGHT:
                         factory.withJumpHeight(in.nextInt());
                         break;
-                    case "knockBackBase":
+                    case KNOCK_BACK_BASE:
                         factory.withKnockBackBase((float)in.nextDouble());
                         break;
-                    case "knockBackPerDamage":
+                    case KNOCK_BACK_PER_DAMAGE:
                         factory.withKnockBackPerDamage((float)in.nextDouble());
                         break;
-                    case "enemies":
+                    case ENEMIES:
                         Set<McmeEntity> enemies = new HashSet<>();
                         in.beginArray();
                         //try {

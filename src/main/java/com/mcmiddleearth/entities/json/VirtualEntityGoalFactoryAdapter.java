@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGoalFactory> {
 
-    private final String
+    private static final String
     GOAL_TYPE               = "goal_type",
     MOVEMENT_SPEED          = "movement_speed",
     TARGET_LOCATION         = "target_location",

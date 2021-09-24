@@ -13,15 +13,23 @@ import java.io.IOException;
 
 public class LocationAdapter extends TypeAdapter<Location> {
 
+    private static final String
+    WORLD       = "world",
+    X           = "x",
+    Y           = "y",
+    Z           = "z",
+    YAW         = "yaw",
+    PITCH       = "pitch";
+
     @Override
     public void write(JsonWriter out, Location value) throws IOException {
         out.beginObject()
-                .name("world").value(value.getWorld().getName())
-                .name("x").value(value.getX())
-                .name("y").value(value.getY())
-                .name("z").value(value.getZ())
-                .name("yaw").value(value.getYaw())
-                .name("pitch").value(value.getPitch())
+                .name(WORLD).value(value.getWorld().getName())
+                .name(X).value(value.getX())
+                .name(Y).value(value.getY())
+                .name(Z).value(value.getZ())
+                .name(YAW).value(value.getYaw())
+                .name(PITCH).value(value.getPitch())
             .endObject();
     }
 
@@ -29,12 +37,12 @@ public class LocationAdapter extends TypeAdapter<Location> {
     public Location read(JsonReader in) throws IOException {
         JsonParser parser = new JsonParser();
         JsonObject jsonLocation = parser.parse(in).getAsJsonObject();
-        World world = jsonLocation.has("world")?Bukkit.getWorld(jsonLocation.get("world").getAsString()):null;
-        double x = jsonLocation.has("x")?jsonLocation.get("x").getAsDouble():0;
-        double y = jsonLocation.has("y")?jsonLocation.get("y").getAsDouble():0;
-        double z = jsonLocation.has("z")?jsonLocation.get("z").getAsDouble():0;
-        float yaw = jsonLocation.has("yaw")?jsonLocation.get("yaw").getAsFloat():0;
-        float pitch = jsonLocation.has("pitch")?jsonLocation.get("pitch").getAsFloat():0;
+        World world = jsonLocation.has(WORLD)?Bukkit.getWorld(jsonLocation.get(WORLD).getAsString()):null;
+        double x = jsonLocation.has(X)?jsonLocation.get(X).getAsDouble():0;
+        double y = jsonLocation.has(Y)?jsonLocation.get(Y).getAsDouble():0;
+        double z = jsonLocation.has(Z)?jsonLocation.get(Z).getAsDouble():0;
+        float yaw = jsonLocation.has(YAW)?jsonLocation.get(YAW).getAsFloat():0;
+        float pitch = jsonLocation.has(PITCH)?jsonLocation.get(PITCH).getAsFloat():0;
         return new Location(world,x,y,z,yaw,pitch);
     }
 }

@@ -20,10 +20,14 @@ import java.util.logging.Logger;
 
 public class JsonUtil {
 
+    private static final String
+    REQUIRED        = "required",
+    UNIQUE_ID       = "unique_id";
+
     public static void writeEntityLink(Entity entity, boolean required, JsonWriter out) throws IOException {
         out.beginObject()
-                .name("required").value(required)
-                .name("uniqueId").value((entity!=null?entity.getUniqueId().toString():null));
+                .name(REQUIRED).value(required)
+                .name(UNIQUE_ID).value((entity!=null?entity.getUniqueId().toString():null));
         out.endObject();
     }
 
@@ -34,10 +38,10 @@ public class JsonUtil {
         //try {
             while (in.hasNext()) {
                 switch (in.nextName()) {
-                    case "required":
+                    case REQUIRED:
                         required = in.nextBoolean();
                         break;
-                    case "uniqueId":
+                    case UNIQUE_ID:
                         String uuidData = in.nextString();
                         if(uuidData != null && !uuidData.equalsIgnoreCase("null")) {
                             uuid = UUID.fromString(uuidData);

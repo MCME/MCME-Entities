@@ -18,28 +18,43 @@ import java.util.logging.Logger;
 
 public class SpeechBalloonLayoutAdapter extends TypeAdapter<SpeechBalloonLayout> {
 
+    private static final String
+    BALLOON_VISIBLE         = "balloon_visible",
+    BALLOON_MATERIAL        = "balloon_material",
+    LINE_PREFIX             = "line_prefix",
+    LINE_PITCH              = "line_pitch",
+    WIDTH                   = "width",
+    LINE_LENGTH_NARROW      = "line_length_narrow",
+    LINE_LENGTH_WIDE        = "line_length_wide",
+    WIDTH_IN_BLOCKS_NARROW  = "width_in_blocks_narrow",
+    WIDTH_IN_BLOCKS_WIDE    = "width_in_blocks_wide",
+    POSITION                = "position",
+    BASE_OFFSET             = "base_offset",
+    MODEL_DATA_NARROW       = "model_data_narrow",
+    MODEL_DATA_WIDE         = "model_data_wide";
+
     @Override
     public void write(JsonWriter out, SpeechBalloonLayout balloon) throws IOException {
         Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
         out.beginObject();
-        out.name("balloonVisible").value(balloon.hasBalloon())
-           .name("balloonMaterial").value(balloon.getBalloonMaterial().name().toLowerCase())
-           .name("linePrefix").value(balloon.getLinePrefix())
-           .name("linePitch").value(balloon.getLinePitch())
-           .name("width").value(balloon.getWidth().name().toLowerCase())
-           .name("lineLengthNarrow").value(balloon.getLineLengthNarrow())
-           .name("lineLengthWide").value(balloon.getLineLengthWide())
-           .name("widthInBlocksNarrow").value(balloon.getWidthInBlocksNarrow())
-           .name("widthInBlocksWide").value(balloon.getWidthInBlocksWide())
-           .name("position").value(balloon.getPosition().name().toLowerCase());
-        out.name("baseOffset");
+        out.name(BALLOON_VISIBLE).value(balloon.hasBalloon())
+           .name(BALLOON_MATERIAL).value(balloon.getBalloonMaterial().name().toLowerCase())
+           .name(LINE_PREFIX).value(balloon.getLinePrefix())
+           .name(LINE_PITCH).value(balloon.getLinePitch())
+           .name(WIDTH).value(balloon.getWidth().name().toLowerCase())
+           .name(LINE_LENGTH_NARROW).value(balloon.getLineLengthNarrow())
+           .name(LINE_LENGTH_WIDE).value(balloon.getLineLengthWide())
+           .name(WIDTH_IN_BLOCKS_NARROW).value(balloon.getWidthInBlocksNarrow())
+           .name(WIDTH_IN_BLOCKS_WIDE).value(balloon.getWidthInBlocksWide())
+           .name(POSITION).value(balloon.getPosition().name().toLowerCase());
+        out.name(BASE_OFFSET);
         gson.toJson(balloon.getBaseOffset(),Vector.class,out);
-        out.name("modelDataNarrow").beginArray();
+        out.name(MODEL_DATA_NARROW).beginArray();
         for(Integer data: balloon.getModelDataNarrow()) {
             out.value(data);
         }
         out.endArray();
-        out.name("modelDataWide").beginArray();
+        out.name(MODEL_DATA_WIDE).beginArray();
         for(Integer data: balloon.getModelDataWide()) {
             out.value(data);
         }
@@ -56,40 +71,40 @@ public class SpeechBalloonLayoutAdapter extends TypeAdapter<SpeechBalloonLayout>
             String key = in.nextName();
             try {
                 switch(key) {
-                    case "balloonVisible":
+                    case BALLOON_VISIBLE:
                         layout.withBalloon(in.nextBoolean());
                         break;
-                    case "balloonMaterial":
+                    case BALLOON_MATERIAL:
                         layout.withBalloonMaterial(Material.valueOf(in.nextString().toUpperCase()));
                         break;
-                    case "linePrefix":
+                    case LINE_PREFIX:
                         layout.withLinePrefix(in.nextString());
                         break;
-                    case "linePitch":
+                    case LINE_PITCH:
                         layout.withLinePitch(in.nextInt());
                         break;
-                    case "width":
+                    case WIDTH:
                         layout.withWidth(SpeechBalloonLayout.Width.valueOf(in.nextString().toUpperCase()));
                         break;
-                    case "lineLengthNarrow":
+                    case LINE_LENGTH_NARROW:
                         layout.withLineLengthNarrow(in.nextInt());
                         break;
-                    case "lineLengthWide":
+                    case LINE_LENGTH_WIDE:
                         layout.withLineLengthWide(in.nextInt());
                         break;
-                    case "widthInBlocksNarrow":
+                    case WIDTH_IN_BLOCKS_NARROW:
                         layout.withWidthInBlocksNarrow(in.nextDouble());
                         break;
-                    case "widthInBlocksWide":
+                    case WIDTH_IN_BLOCKS_WIDE:
                         layout.withWidthInBlocksWide(in.nextDouble());
                         break;
-                    case "position":
+                    case POSITION:
                         layout.withPosition(SpeechBalloonLayout.Position.valueOf(in.nextString().toUpperCase()));
                         break;
-                    case "baseOffset":
+                    case BASE_OFFSET:
                         layout.withBaseOffset(gson.fromJson(in,Vector.class));
                         break;
-                    case "modelDataNarrow":
+                    case MODEL_DATA_NARROW:
                         List<Integer> data = new ArrayList<>();
                         in.beginArray();
                         //try {
@@ -100,7 +115,7 @@ public class SpeechBalloonLayoutAdapter extends TypeAdapter<SpeechBalloonLayout>
                         in.endArray(); //}
                         layout.withBalloonModelData(data.toArray(new Integer[0]),false);
                         break;
-                    case "modelDataWide":
+                    case MODEL_DATA_WIDE:
                         data = new ArrayList<>();
                         in.beginArray();
                         //try {
