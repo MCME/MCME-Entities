@@ -8,8 +8,6 @@ import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import org.bukkit.util.Vector;
 
-import java.util.logging.Logger;
-
 public class WingedFlightEntity extends BakedAnimationEntity {
 
     //private float pitch;

@@ -2,7 +2,6 @@ package com.mcmiddleearth.entities.protocol.packets;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.entity.Player;
 
 public class SimpleEntityStatusPacket extends AbstractPacket {

@@ -8,7 +8,7 @@ public abstract class GoalEvent implements McmeEntityEvent {
 
     private final Goal goal;
 
-    private McmeEntity entity;
+    private final McmeEntity entity;
 
     public GoalEvent(McmeEntity entity, Goal goal) {
         this.entity = entity;

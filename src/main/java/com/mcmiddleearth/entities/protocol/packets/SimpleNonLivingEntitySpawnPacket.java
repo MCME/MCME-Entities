@@ -3,12 +3,8 @@ package com.mcmiddleearth.entities.protocol.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.entities.SimpleNonLivingEntity;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
-import java.util.logging.Logger;
 
 public class SimpleNonLivingEntitySpawnPacket extends AbstractPacket {
 

@@ -2,9 +2,9 @@ package com.mcmiddleearth.entities.exception;
 
 public class InvalidJsonDataException extends InvalidDataException {
 
-    private String jsonPath;
-    private String reason;
-    private String reasonMessage;
+    private final String jsonPath;
+    private final String reason;
+    private final String reasonMessage;
 
     public InvalidJsonDataException(String message, String reason, String reasonMessage, String jsonPath) {
         super(message);

@@ -4,8 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.entity.Player;
 
-import java.util.logging.Logger;
-
 public class SimpleEntityAnimationPacket extends AbstractPacket {
 
     PacketContainer animation;

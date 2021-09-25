@@ -6,8 +6,6 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.logging.Logger;
-
 public class SimpleEntityMovePacket extends AbstractPacket {
 
     private final PacketContainer move;

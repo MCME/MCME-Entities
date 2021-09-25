@@ -1,10 +1,8 @@
 package com.mcmiddleearth.entities.util;
 
+import org.apache.commons.math3.util.FastMath;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-import org.apache.commons.math3.util.FastMath;
-
-import java.util.logging.Logger;
 
 public class RotationMatrix {
 

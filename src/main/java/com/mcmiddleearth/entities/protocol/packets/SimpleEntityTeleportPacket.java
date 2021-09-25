@@ -6,8 +6,6 @@ import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.logging.Logger;
-
 public class SimpleEntityTeleportPacket extends AbstractPacket {
 
     private final PacketContainer teleport;

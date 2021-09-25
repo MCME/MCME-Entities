@@ -80,9 +80,9 @@ public class MovementEngine {
                             entity.setMovementType(MovementType.UPRIGHT);
                         }
                     } else {
-if (velocity.getY()<-10) {
-    Logger.getGlobal().info("Warning high fall velocity: "+velocity.getY());
-}
+//if (velocity.getY()<-10) {
+//    Logger.getGlobal().info("Warning high fall velocity: "+velocity.getY());
+//}
                     //if(cannotMove(velocity)) {
 //Logger.getGlobal().info("horizontal null");
                         velocity.setX(0);
@@ -108,9 +108,9 @@ if (velocity.getY()<-10) {
                     if(jumpHeight>0 && jumpHeight<= entity.getJumpHeight()+0.01) {
                         entity.setMovementType(MovementType.FALLING);
                         velocity.setY(Math.sqrt(-2 * jumpHeight * gravity.getY()));
-if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
-    Logger.getGlobal().info("Warning! Wrong velocity: "+velocity.getY()+" jump: "+jumpHeight+" maxtJump: "+entity.getJumpHeight()+" gravity: "+gravity.getY());
-}
+//if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
+//    Logger.getGlobal().info("Warning! Wrong velocity: "+velocity.getY()+" jump: "+jumpHeight+" maxtJump: "+entity.getJumpHeight()+" gravity: "+gravity.getY());
+//}
 //Logger.getGlobal().info("entity vel: "+entity.getVelocity());
                     } else {
                         velocity = new Vector(0,0,0);

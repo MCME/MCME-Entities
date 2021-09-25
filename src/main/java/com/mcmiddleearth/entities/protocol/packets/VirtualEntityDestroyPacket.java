@@ -4,9 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.logging.Logger;
-
 public class VirtualEntityDestroyPacket extends AbstractPacket {
 
     PacketContainer destroy;

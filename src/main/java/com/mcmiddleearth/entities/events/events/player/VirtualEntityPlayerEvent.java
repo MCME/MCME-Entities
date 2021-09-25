@@ -6,7 +6,7 @@ import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityEvent;
 
 public abstract class VirtualEntityPlayerEvent extends VirtualEntityEvent {
 
-    private RealPlayer player;
+    private final RealPlayer player;
 
     public VirtualEntityPlayerEvent(RealPlayer player, VirtualEntity entity) {
         super(entity);

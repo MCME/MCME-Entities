@@ -3,12 +3,9 @@ package com.mcmiddleearth.entities.protocol.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.entities.SimpleLivingEntity;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-
-import java.util.logging.Logger;
 
 public class SimpleLivingEntitySpawnPacket extends AbstractPacket {
 

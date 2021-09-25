@@ -5,7 +5,7 @@ import com.mcmiddleearth.entities.entities.VirtualEntity;
 
 public abstract class GoalVirtualEntityEvent extends GoalEvent {
 
-    private VirtualEntity virtualEntity;
+    private final VirtualEntity virtualEntity;
 
     public GoalVirtualEntityEvent(VirtualEntity entity, Goal goal) {
         super(entity, goal);

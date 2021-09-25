@@ -1,19 +1,19 @@
 package com.mcmiddleearth.entities.json;
 
-import com.fasterxml.uuid.UUIDGenerator;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
 
-import javax.swing.table.DefaultTableCellRenderer;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 public class AttributeInstanceAdapter extends TypeAdapter<VirtualEntityAttributeInstance> {
 

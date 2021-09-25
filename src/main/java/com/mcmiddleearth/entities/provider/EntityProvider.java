@@ -9,21 +9,21 @@ import java.util.UUID;
 
 public interface EntityProvider {
 
-    public Collection<McmeEntity> getEntities();
+    Collection<McmeEntity> getEntities();
 
-    public Collection<McmeEntity> getEntitiesAt(Location location, int rangeX, int rangeY, int rangeZ);
+    Collection<McmeEntity> getEntitiesAt(Location location, int rangeX, int rangeY, int rangeZ);
 
-    public Collection<McmeEntity> getEntityByType(McmeEntityType type);
+    Collection<McmeEntity> getEntityByType(McmeEntityType type);
 
-    public Collection<McmeEntity> geEntitiesByClass(Class<? extends McmeEntity> clazz);
+    Collection<McmeEntity> geEntitiesByClass(Class<? extends McmeEntity> clazz);
 
-    public McmeEntity getEntityByName(String name);
+    McmeEntity getEntityByName(String name);
 
-    public McmeEntity getEntity(UUID uniqueId);
+    McmeEntity getEntity(UUID uniqueId);
 
-    public McmeEntity getEntity(int entityId);
+    McmeEntity getEntity(int entityId);
 
-    public void addEntity(McmeEntity entity);
+    void addEntity(McmeEntity entity);
 
-    public void removeEntity(McmeEntity entity);
+    void removeEntity(McmeEntity entity);
 }

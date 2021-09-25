@@ -11,7 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
-import java.util.logging.Logger;
 
 public class SimplePlayerSpawnPacket extends AbstractPacket {
 

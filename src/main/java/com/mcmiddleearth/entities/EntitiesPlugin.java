@@ -2,7 +2,6 @@ package com.mcmiddleearth.entities;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
@@ -19,7 +18,6 @@ import com.mcmiddleearth.entities.server.EntityServer;
 import com.mcmiddleearth.entities.server.SyncEntityServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

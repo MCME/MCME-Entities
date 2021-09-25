@@ -10,15 +10,15 @@ import java.util.UUID;
 
 public interface PlayerProvider {
 
-    public Collection<RealPlayer> getMcmePlayers();
+    Collection<RealPlayer> getMcmePlayers();
 
-    public RealPlayer getOrCreateMcmePlayer(Player player);
+    RealPlayer getOrCreateMcmePlayer(Player player);
 
-    public RealPlayer getMcmePlayer(UUID uniqueId);
+    RealPlayer getMcmePlayer(UUID uniqueId);
     
-    public RealPlayer getMcmePlayer(String name);
+    RealPlayer getMcmePlayer(String name);
 
-    public void removePlayer(Player player);
+    void removePlayer(Player player);
 
     Collection<? extends McmeEntity> getMcmePlayersAt(Location location, int rangeX, int rangeY, int rangeZ);
 }

@@ -6,7 +6,6 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloon;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
@@ -14,7 +13,6 @@ import org.bukkit.util.Vector;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class SpeechBalloonLayoutAdapter extends TypeAdapter<SpeechBalloonLayout> {
 

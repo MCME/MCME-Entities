@@ -30,7 +30,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
@@ -38,7 +37,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private UUID uniqueId;
 
-    private String name;
+    private final String name;
     private String displayName;
 
     private final Set<Player> viewers = new HashSet<>();

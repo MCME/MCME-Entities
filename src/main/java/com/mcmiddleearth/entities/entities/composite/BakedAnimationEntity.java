@@ -54,7 +54,7 @@ public class BakedAnimationEntity extends CompositeEntity {
         super(entityId, factory, rotationMode);
 //Logger.getGlobal().info("Baked Animation Get location "+getLocation());
         manualAnimationControl = factory.getManualAnimationControl();
-Logger.getGlobal().info("Manual animation: "+manualAnimationControl);
+//Logger.getGlobal().info("Manual animation: "+manualAnimationControl);
         movementSpeedAnimation = getMovementSpeed();
         animationFileName = factory.getDataFile();
         File animationFile = new File(EntitiesPlugin.getAnimationFolder(), animationFileName+".json");

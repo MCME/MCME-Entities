@@ -12,7 +12,6 @@ import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import org.bukkit.Location;
@@ -22,7 +21,6 @@ import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 
 public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactory> {
 

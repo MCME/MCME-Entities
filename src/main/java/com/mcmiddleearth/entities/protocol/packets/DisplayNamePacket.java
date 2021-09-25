@@ -7,11 +7,10 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 public class DisplayNamePacket extends AbstractPacket {
 
-    private PacketContainer meta;
+    private final PacketContainer meta;
 
     public DisplayNamePacket(int entityId) {
         meta = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);

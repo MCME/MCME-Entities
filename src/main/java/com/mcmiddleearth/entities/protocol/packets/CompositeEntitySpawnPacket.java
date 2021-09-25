@@ -3,8 +3,6 @@ package com.mcmiddleearth.entities.protocol.packets;
 import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
 import org.bukkit.entity.Player;
 
-import java.util.logging.Logger;
-
 public class CompositeEntitySpawnPacket extends AbstractPacket {
 
     private final CompositeEntity entity;

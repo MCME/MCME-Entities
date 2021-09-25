@@ -4,6 +4,7 @@ import com.fasterxml.uuid.EthernetAddress;
 import com.fasterxml.uuid.Generators;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -50,12 +51,8 @@ Logger.getGlobal().info("UUID version: "+uuid.version());
     }
 
     public static UUID slow_getRandomV3(String namespace, String name) {
-        byte[] bytes = new byte[0];
-        try {
-            bytes = (namespace+name).getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        byte[] bytes;
+        bytes = (namespace+name).getBytes(StandardCharsets.UTF_8);
 
         UUID uuid = UUID.nameUUIDFromBytes(bytes);
 Logger.getGlobal().info("UUID version: "+uuid.version());

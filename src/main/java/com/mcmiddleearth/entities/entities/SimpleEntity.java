@@ -7,8 +7,6 @@ import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.*;
 import org.bukkit.entity.Player;
 
-import java.util.logging.Logger;
-
 public abstract class SimpleEntity extends VirtualEntity {
 
     int entityId;

@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class Placeholder implements McmeEntity {
 
-    private UUID uniqueId;
+    private final UUID uniqueId;
 
     public Placeholder(UUID uniqueId) {
         this.uniqueId = uniqueId;

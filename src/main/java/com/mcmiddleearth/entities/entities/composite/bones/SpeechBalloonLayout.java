@@ -76,7 +76,7 @@ public class SpeechBalloonLayout {
                 baseOffset = ConfigurationUtil.getVector(getConfig(),"PositionTop", new Vector(0,1.2,0));
                 break;
         }
-Logger.getGlobal().info("baseOffset: "+baseOffset.toString());
+//Logger.getGlobal().info("baseOffset: "+baseOffset.toString());
         layoutOffset = baseOffset;
     };
 
@@ -202,7 +202,7 @@ Logger.getGlobal().info("baseOffset: "+baseOffset.toString());
 
     public SpeechBalloonLayout withMessage(String message) {
         this.lines = message.split("\\\\");
-Logger.getGlobal().info("Lines: "+lines.length);
+//Logger.getGlobal().info("Lines: "+lines.length);
         isJson = false;
         return this;
     }

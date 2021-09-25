@@ -16,7 +16,6 @@ import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public class JsonUtil {
 
@@ -53,13 +52,13 @@ public class JsonUtil {
         //}
         if(uuid != null) {
             McmeEntity entity = EntitiesPlugin.getEntityServer().getEntity(uuid);
-Logger.getGlobal().info("Found entity: "+entity);
+//Logger.getGlobal().info("Found entity: "+entity);
             if(entity != null) {
                 return entity;
             } else if(required){
                 throw new IllegalArgumentException("Required entity not found!");
             } else {
-Logger.getGlobal().info("Creating placeholder!");
+//Logger.getGlobal().info("Creating placeholder!");
                 return new Placeholder(uuid);
             }
         } else {
@@ -70,7 +69,7 @@ Logger.getGlobal().info("Creating placeholder!");
     public static void writeNonDefaultAttribute(JsonWriter out, AttributeInstance attributeInstance,
                                                 McmeEntityType entityType, Gson gson, boolean writeDefaults) {
         AttributeInstance defaults = VirtualAttributeFactory.getAttributesFor(entityType).get(attributeInstance.getAttribute());
-Logger.getGlobal().info("Attribute: "+attributeInstance.getAttribute()+" Defaults: "+defaults);
+//Logger.getGlobal().info("Attribute: "+attributeInstance.getAttribute()+" Defaults: "+defaults);
         if(writeDefaults || (defaults == null || !attributeInstance.getModifiers().isEmpty()
                 || attributeInstance.getBaseValue()!=defaults.getBaseValue()
                 || attributeInstance.getDefaultValue()!=defaults.getDefaultValue())) {

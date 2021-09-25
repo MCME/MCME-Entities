@@ -22,7 +22,7 @@ public class BoneMetaPacket extends AbstractPacket {
 
     private boolean hasPoseUpdate, hasItemUpdate;
 
-    private List<WrappedDataWatcher> headPoseQueue = new ArrayList<>();
+    private final List<WrappedDataWatcher> headPoseQueue = new ArrayList<>();
 
     public BoneMetaPacket(Bone bone, int headPoseDelay) {
         this.bone = bone;

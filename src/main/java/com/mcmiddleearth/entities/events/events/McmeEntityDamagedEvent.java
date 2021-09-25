@@ -5,7 +5,7 @@ import com.mcmiddleearth.entities.events.Cancelable;
 
 public class McmeEntityDamagedEvent implements McmeEntityEvent, Cancelable {
 
-    private McmeEntity entity;
+    private final McmeEntity entity;
 
     private double damage;
 

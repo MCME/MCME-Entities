@@ -22,48 +22,48 @@ import java.util.UUID;
 
 public interface EntityServer {
 
-    public void start();
+    void start();
 
-    public void stop();
+    void stop();
 
-    public void doTick();
+    void doTick();
 
-    public McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException;
+    McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException;
 
-    public void removeEntity(Entity entity);
+    void removeEntity(Entity entity);
 
-    public void removeEntity(Collection<? extends Entity> entities);
+    void removeEntity(Collection<? extends Entity> entities);
 
-    public Collection<? extends McmeEntity> getEntities(Class<? extends Entity> clazz);
+    Collection<? extends McmeEntity> getEntities(Class<? extends Entity> clazz);
 
-    public McmeEntity getEntity(UUID uniqueId);
+    McmeEntity getEntity(UUID uniqueId);
 
-    public McmeEntity getEntity(String name);
+    McmeEntity getEntity(String name);
 
-    public McmeEntity getEntity(int entityId);
+    McmeEntity getEntity(int entityId);
 
-    public Collection<McmeEntity> getEntitiesAt(Location location, int rangeX, int rangeY, int rangeZ);
+    Collection<McmeEntity> getEntitiesAt(Location location, int rangeX, int rangeY, int rangeZ);
 
-    public PlayerProvider getPlayerProvider();
+    PlayerProvider getPlayerProvider();
 
-    public BlockProvider getBlockProvider(UUID worldUniqueId);
+    BlockProvider getBlockProvider(UUID worldUniqueId);
 
-    public void registerEvents(Plugin plugin, McmeEventListener handler);
+    void registerEvents(Plugin plugin, McmeEventListener handler);
 
-    public void unregisterEvents(Plugin plugin, McmeEventListener handler);
+    void unregisterEvents(Plugin plugin, McmeEventListener handler);
 
-    public void unregisterEvents(Plugin plugin);
+    void unregisterEvents(Plugin plugin);
 
-    public void handleEvent(McmeEntityEvent event);
+    void handleEvent(McmeEntityEvent event);
 
     SpeechBalloonEntity spawnSpeechBalloon(VirtualEntity virtualEntity, Player viewer,
                                            SpeechBalloonLayout layout) throws InvalidLocationException;
 
     //public boolean isPassable(int x, int y, int z);
-    public Collection<RealPlayer> getMcmePlayers();
+    Collection<RealPlayer> getMcmePlayers();
 
-    public RealPlayer getOrCreateMcmePlayer(Player player);
+    RealPlayer getOrCreateMcmePlayer(Player player);
 
-    public RealPlayer getMcmePlayer(UUID uniqueId);
+    RealPlayer getMcmePlayer(UUID uniqueId);
 
 }

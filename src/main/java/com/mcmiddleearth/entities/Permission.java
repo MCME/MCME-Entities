@@ -6,9 +6,9 @@ public enum Permission {
     VIEWER  ("mcmeentities.viewer"),
     ADMIN   ("mcmeentities.admin");
 
-    private String node;
+    private final String node;
 
-    private Permission(String node) {
+    Permission(String node) {
         this.node = node;
     }
 

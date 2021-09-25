@@ -1,19 +1,16 @@
 package com.mcmiddleearth.entities.entities.composite;
 
-import com.google.common.base.Joiner;
+import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.api.McmeEntityType;
+import com.mcmiddleearth.entities.entities.composite.bones.Bone;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloon;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
-import com.mcmiddleearth.entities.entities.composite.bones.Bone;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-
-import java.util.logging.Logger;
 
 public class SpeechBalloonEntity extends CompositeEntity {
 

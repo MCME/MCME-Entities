@@ -66,7 +66,7 @@ public class SyncEntityServer implements EntityServer {
             public void run() {
                 if(serverTask == null || serverTask.isShutdownComplete()) {
                     serverTask = newTask;
-Logger.getGlobal().info("Start new server task");
+//Logger.getGlobal().info("Start new server task");
                     serverTask.start();
                     cancel();
                 } else {
@@ -269,10 +269,8 @@ Logger.getGlobal().info("Start new server task");
 
     @Override
     public void unregisterEvents(Plugin plugin) {
-        eventHandlers.values().forEach(handlerList-> {
-            handlerList.stream().filter(handler->handler.getPlugin().equals(plugin))
-                       .collect(Collectors.toSet()).forEach(handlerList::remove);
-        });
+        eventHandlers.values().forEach(handlerList-> handlerList.stream().filter(handler->handler.getPlugin().equals(plugin))
+                   .collect(Collectors.toSet()).forEach(handlerList::remove));
     }
 
     @Override
