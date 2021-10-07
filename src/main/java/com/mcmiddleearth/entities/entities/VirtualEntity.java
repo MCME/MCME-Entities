@@ -162,7 +162,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     @Override
     public void doTick() {
 //Logger.getGlobal().info("VirtualEntity: tick ");
-        if(teleported) {
+        if(teleported || goal!=null && goal.isForceTeleport()) {
             teleport();
             if(goal!=null) {
                 goal.update();

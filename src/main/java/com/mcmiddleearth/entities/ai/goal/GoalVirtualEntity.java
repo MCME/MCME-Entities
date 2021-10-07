@@ -130,6 +130,9 @@ public abstract class GoalVirtualEntity implements Goal {
         headGoalTicks++;
     }
 
+    public boolean isForceTeleport() {
+        return false;
+    }
     @Override
     public MovementSpeed getMovementSpeed() {
         return movementSpeed;

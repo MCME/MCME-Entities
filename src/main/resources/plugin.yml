@@ -76,9 +76,13 @@ permissions:
   mcmeentities.admin:
     description: allows to manage plugin
     default: op
+    children:
+      mcmeentities.user: true
   mcmeentities.user:
     description: allow to use plugin commands
     default: op
+    children:
+      mcmeentities.viewer: true
   mcmeentities.viewer:
     description: allow to see virtual entities
     default: op
