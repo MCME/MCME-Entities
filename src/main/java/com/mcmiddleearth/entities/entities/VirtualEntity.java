@@ -26,6 +26,9 @@ import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +71,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private MovementType movementType;
     private MovementSpeed movementSpeed = MovementSpeed.STAND;
 
-    private ActionType actionType = ActionType.IDLE;
+    //private ActionType actionType = ActionType.IDLE;
 
     private GoalVirtualEntity goal = null;
 
@@ -130,6 +133,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 //Logger.getGlobal().info("This location: "+this.getLocation());
         if(factory.getGoalFactory()!=null) {
             this.goal = factory.getGoalFactory().build(this);
+            this.goal.activate();
         }
 //Logger.getGlobal().info("this goal: "+getGoal());
         this.health = factory.getHealth();
@@ -197,18 +201,18 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             move();
             attackCoolDown = Math.max(0, --attackCoolDown);
             hurtCoolDown = Math.max(0, --hurtCoolDown);
-            if(attackCoolDown<30 && actionType.equals(ActionType.ATTACK)) {
+            /*if(attackCoolDown<30 && actionType.equals(ActionType.ATTACK)) {
 //Logger.getGlobal().info("unset attack");
                 actionType = ActionType.IDLE;
             }
             if(hurtCoolDown==0 && actionType.equals(ActionType.HURT)) {
                 actionType = ActionType.IDLE;
-            }
+            }*/
         }
         tickCounter++;
 //Logger.getGlobal().info("+");
         if(isDead() && !isTerminated) {
-            actionType = ActionType.DEATH;
+            //actionType = ActionType.DEATH;
             deathCounter++;
             if(deathCounter>20) {
                 terminate();
@@ -342,7 +346,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             GoalChangedEvent event = new GoalChangedEvent(this, this.goal, goal);
             EntitiesPlugin.getEntityServer().handleEvent(event);
             if(!event.isCancelled()) {
+                this.goal.deactivate();
                 this.goal = (GoalVirtualEntity) goal;
+                this.goal.activate();
             }
         }
     }
@@ -386,9 +392,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 || movementType.equals(MovementType.UPRIGHT);
     }
 
-    public ActionType getActionType() {
+    /*public ActionType getActionType() {
         return actionType;
-    }
+    }*/
 
     @Override
     public boolean hasLookUpdate() {
@@ -550,11 +556,13 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         if(isOnGround()) {
             setMovementType(MovementType.FALLING);
         }
-        actionType = ActionType.HURT;
+        //actionType = ActionType.HURT;
         hurtCoolDown = 10;
 //Logger.getGlobal().info("Set Velocity: "+ knockBack.getX()+" "+knockBack.getY()+" "+knockBack.getZ());
         setVelocity(knockBack);
-        enemies.add(damager);
+        if(damager!=null) {
+            enemies.add(damager);
+        }
     }
 
     @Override
@@ -563,7 +571,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             VirtualEntityAttackEvent event = new VirtualEntityAttackEvent(this, target);
             EntitiesPlugin.getEntityServer().handleEvent(event);
             if (!event.isCancelled()) {
-                actionType = ActionType.ATTACK;
+                //actionType = ActionType.ATTACK;
 //Logger.getGlobal().info("Attack");
                 playAnimation(ActionType.ATTACK);
                 AttributeInstance attribute = getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
@@ -682,6 +690,21 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     public boolean isOnGround() {
         return movementType.equals(MovementType.SNEAKING)
                 || movementType.equals(MovementType.UPRIGHT);
+    }
+
+    @Override
+    public void addPotionEffect(PotionEffect effect) {
+        //TODO
+    }
+
+    @Override
+    public void removePotionEffect(PotionEffect effect) {
+        //TODO
+    }
+
+    @Override
+    public void addItem(ItemStack item, EquipmentSlot slot, int slotId) {
+        //TODO
     }
 
     public VirtualEntityFactory getFactory() {

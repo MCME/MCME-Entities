@@ -12,7 +12,9 @@ import com.mcmiddleearth.entities.protocol.packets.*;
 import com.mcmiddleearth.entities.util.RotationMatrix;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
@@ -59,13 +61,13 @@ public class Bone implements McmeEntity {
         this.isHeadBone = isHeadBone;
         uniqueId = UuidGenerator.fast_nullUUID();//UuidGenerator.getRandomV2();
 //Logger.getGlobal().info("UUID: "+(System.currentTimeMillis()-start));
-        entityId = parent.getEntityId()+parent.getBones().size();
+        entityId = parent.getEntityId() + parent.getBones().size();
         this.parent = parent;
 //Logger.getGlobal().info("Bone get parent parent: "+parent);
         this.relativePosition = relativePosition;
         relativePositionRotated = relativePosition.clone();
 //Logger.getGlobal().info("position cloned: "+(System.currentTimeMillis()-start));
-        velocity = new Vector(0,0,0);
+        velocity = new Vector(0, 0, 0);
         this.headPose = headPose;
         this.rotatedHeadPose = headPose;
         yaw = 0;
@@ -94,23 +96,23 @@ public class Bone implements McmeEntity {
 
     public void move() {
 //Logger.getGlobal().info("move bone to: "+getLocation());
-       if(hasHeadPoseUpdate) {
+        if (hasHeadPoseUpdate) {
             //currentPitch = turn(currentPitch, pitch);
             rotatedHeadPose = /*RotationMatrix.rotateXEulerAngleDegree(*/headPose/*,pitch)*/;
         }
         Vector shift;
-        if(hasRotationUpdate()) {
+        if (hasRotationUpdate()) {
 //Logger.getGlobal().info("Pitch: "+name+" "+relativePosition.toString());
             //Vector pitchCenter = new Vector(0,0,0.3);
             //currentYaw = turn(currentYaw, yaw);
 //Logger.getGlobal().info("headpitchcenter: "+parent.getHeadPitchCenter());
-             Vector newRelativePositionRotated = RotationMatrix.fastRotateY(/*RotationMatrix
-                    .fastRotateX(*/relativePosition/*.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter())*/,-yaw);
+            Vector newRelativePositionRotated = RotationMatrix.fastRotateY(/*RotationMatrix
+                    .fastRotateX(*/relativePosition/*.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter())*/, -yaw);
             shift = newRelativePositionRotated.clone().subtract(this.relativePositionRotated);
             relativePositionRotated = newRelativePositionRotated;
         } else {
 //Logger.getGlobal().info("null vector");
-            shift = new Vector(0,0,0);
+            shift = new Vector(0, 0, 0);
         }
 
 
@@ -120,13 +122,13 @@ public class Bone implements McmeEntity {
 
     public void teleport() {
 //Logger.getGlobal().info("Teleport bone!");
-        if(hasHeadPoseUpdate) {
+        if (hasHeadPoseUpdate) {
             //currentYaw = yaw;
             //currentPitch = pitch;
             rotatedHeadPose = /*RotationMatrix.rotateXEulerAngleDegree(*/headPose/*, pitch)*/;
         }
         relativePositionRotated = RotationMatrix.fastRotateY(/*RotationMatrix
-                    .fastRotateX(*/relativePosition/*.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter())*/,-yaw);
+                    .fastRotateX(*/relativePosition/*.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter())*/, -yaw);
     }
 
     public void resetUpdateFlags() {
@@ -147,7 +149,7 @@ public class Bone implements McmeEntity {
     }
 
     public void setHeadItem(ItemStack headItem) {
-        if(!headItem.equals(this.headItem)) {
+        if (!headItem.equals(this.headItem)) {
             hasItemUpdate = true;
             this.headItem = headItem;
         }
@@ -169,13 +171,17 @@ public class Bone implements McmeEntity {
         return movePacket;
     }
 
-    public AbstractPacket getMetaPacket() { return metaPacket; }
+    public AbstractPacket getMetaPacket() {
+        return metaPacket;
+    }
 
     public AbstractPacket getInitPacket() {
         return initPacket;
     }
 
-    public SimpleEntityAnimationPacket getAnimationPacket() { return animationPacket; }
+    public SimpleEntityAnimationPacket getAnimationPacket() {
+        return animationPacket;
+    }
 
     public boolean isHeadBone() {
         return isHeadBone;
@@ -199,7 +205,8 @@ public class Bone implements McmeEntity {
     }
 
     @Override
-    public void setLocation(Location location) {}
+    public void setLocation(Location location) {
+    }
 
     @Override
     public McmeEntityType getType() {
@@ -212,7 +219,8 @@ public class Bone implements McmeEntity {
     }
 
     @Override
-    public void setVelocity(Vector velocity) {}
+    public void setVelocity(Vector velocity) {
+    }
 
     @Override
     public Location getTarget() {
@@ -275,7 +283,9 @@ public class Bone implements McmeEntity {
     }
 
     @Override
-    public float getHeadYaw() { return 0; }
+    public float getHeadYaw() {
+        return 0;
+    }
 
     @Override
     public float getHeadPitch() {
@@ -288,7 +298,7 @@ public class Bone implements McmeEntity {
     }
 
     @Override
-    public  void setRotation(float yaw) {
+    public void setRotation(float yaw) {
         this.yaw = yaw;//-parent.getRotation();
         rotationUpdate = true;
     }
@@ -314,7 +324,7 @@ public class Bone implements McmeEntity {
     }
 
     public void setHeadPose(EulerAngle headPose) {
-        if(!headPose.equals(this.headPose)) {
+        if (!headPose.equals(this.headPose)) {
             hasHeadPoseUpdate = true;
             this.headPose = headPose;
         }
@@ -379,7 +389,7 @@ public class Bone implements McmeEntity {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-        ((DisplayNamePacket)namePacket).setName(displayName);
+        ((DisplayNamePacket) namePacket).setName(displayName);
         namePacket.send(parent.getViewers());
     }
 
@@ -388,11 +398,12 @@ public class Bone implements McmeEntity {
     }
 
     @Override
-    public void finalise() {}
+    public void finalise() {
+    }
 
     @Override
     public Vector getMouth() {
-        return new Vector(0,0,0);
+        return new Vector(0, 0, 0);
     }
 
     @Override
@@ -410,9 +421,23 @@ public class Bone implements McmeEntity {
         return MovementSpeed.STAND;
     }
 
-    @Override
+    /*@Override
     public ActionType getActionType() {
         return ActionType.IDLE;
+    }*/
+
+    @Override
+    public void addPotionEffect(PotionEffect effect) {
+        //do nothing
     }
 
+    @Override
+    public void removePotionEffect(PotionEffect effect) {
+        //do nothing
+    }
+
+    @Override
+    public void addItem(ItemStack item, EquipmentSlot slot, int slotId) {
+        //do nothing
+    }
 }

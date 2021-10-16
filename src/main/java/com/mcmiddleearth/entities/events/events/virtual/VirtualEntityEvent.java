@@ -14,7 +14,7 @@ public abstract class VirtualEntityEvent implements McmeEntityEvent {
 
     @Override
     public McmeEntity getEntity() {
-        return null;
+        return entity;
     }
 
     public VirtualEntity getVirtualEntity() { return entity;}

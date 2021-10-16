@@ -4,13 +4,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
-import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationTree;
 import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimationType;
-import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimationEntityAnimationChangedEvent;
+import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimationEntityAnimationChangeEvent;
+import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimationEntityAnimationSetEvent;
 import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimationEntityStateChangedEvent;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
@@ -21,7 +22,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class BakedAnimationEntity extends CompositeEntity {
@@ -36,12 +36,12 @@ public class BakedAnimationEntity extends CompositeEntity {
 
     private int currentState;
 
-    private boolean manualAnimationControl = false;
+    private boolean manualAnimationControl, manualOverride;
 
     private MovementSpeed movementSpeedAnimation;
     private int startMovementCounter, stopMovementCounter;
 
-    private String animationFileName;
+    private final String animationFileName;
 
     protected boolean instantAnimationSwitching = true;
 
@@ -130,7 +130,8 @@ public class BakedAnimationEntity extends CompositeEntity {
 //Logger.getGlobal().info("Expected: "+(expected == null?"none":expected.getName()));
             if(currentAnimation!=expected) {
 //Logger.getGlobal().info("Switch from: "+(currentAnimation == null?"none":currentAnimation.getName()));
-                if(instantAnimationSwitching) {
+                if(!manualOverride && instantAnimationSwitching
+                                   && callAnimationChangeEvent(currentAnimation,expected)) {
                     currentAnimation = expected;
                     if (currentAnimation != null)
                         currentAnimation.reset();
@@ -142,19 +143,26 @@ public class BakedAnimationEntity extends CompositeEntity {
         if(currentAnimation!=null) {
             if (currentAnimation.isFinished()) {
                 if (currentAnimation.getType().equals(BakedAnimationType.CHAIN)) {
-                    currentAnimation = animationTree.getAnimation(currentAnimation.getNext());
-                    currentAnimation.reset();
+                    BakedAnimation nextAnim = animationTree.getAnimation(currentAnimation.getNext());
+                    if(callAnimationChangeEvent(currentAnimation,nextAnim)) {
+                        currentAnimation = nextAnim;
+                        currentAnimation.reset();
+                    }
+                } else {
+                    manualOverride = false;
                 }
             }
-            if((currentAnimation.isAtLastFrame() || currentAnimation.isFinished())
-                    && nextAnimation != null) {
+            if(!manualOverride
+                    && (currentAnimation.isAtLastFrame() || currentAnimation.isFinished())
+                    && nextAnimation != null && callAnimationChangeEvent(currentAnimation,nextAnimation)) {
                 currentAnimation = nextAnimation;
                 currentAnimation.reset();
                 nextAnimation = null;
             }
             currentAnimation.doTick();
         } else {
-            if(nextAnimation != null) {
+            if(!manualOverride && nextAnimation != null
+                               && callAnimationChangeEvent(null,nextAnimation)) {
                 currentAnimation = nextAnimation;
                 currentAnimation.reset();
                 nextAnimation = null;
@@ -164,18 +172,41 @@ public class BakedAnimationEntity extends CompositeEntity {
         super.doTick();
     }
 
-    public void setAnimation(String name) {
-        BakedAnimationEntityAnimationChangedEvent event = new BakedAnimationEntityAnimationChangedEvent(this, name);
+    public void setAnimation(String name, boolean manualOverride) {
+        BakedAnimationEntityAnimationSetEvent event = new BakedAnimationEntityAnimationSetEvent(this, name);
         EntitiesPlugin.getEntityServer().handleEvent(event);
         if(!event.isCancelled()) {
+            this.manualOverride = manualOverride;
             BakedAnimation newAnim = animationTree.getAnimation(event.getNextAnimationKey());
-            if (newAnim != null) {
-                currentAnimation = newAnim;
-                currentAnimation.reset();
+            if(instantAnimationSwitching) {
+                if(callAnimationChangeEvent(currentAnimation, newAnim)) {
+                    if (newAnim != null) {
+                        currentAnimation = newAnim;
+                        currentAnimation.reset();
+                    } else {
+                        currentAnimation = null;
+                    }
+                }
             } else {
-                currentAnimation = null;
+                nextAnimation = newAnim;
             }
         }
+    }
+
+    @Override
+    public void playAnimation(ActionType type) {
+        setAnimation(this.getMovementType().name().toLowerCase()
+                        +"."+this.getMovementSpeed().name().toLowerCase()
+                        +"."+type.name().toLowerCase(),
+                    true);
+    }
+
+    private boolean callAnimationChangeEvent(BakedAnimation current, BakedAnimation next) {
+        BakedAnimationEntityAnimationChangeEvent event
+                = new BakedAnimationEntityAnimationChangeEvent(this, current, next, manualAnimationControl,
+                                                               instantAnimationSwitching);
+        EntitiesPlugin.getEntityServer().handleEvent(event);
+        return !event.isCancelled();
     }
 
     public void setState(String state) {
@@ -199,6 +230,7 @@ public class BakedAnimationEntity extends CompositeEntity {
 
     public void setAnimationFrame(String animation, int frameIndex) {
 //Logger.getGlobal().info("set Animation Frame "+animation + " "+ frameIndex);
+        manualOverride = true;
         currentAnimation = null;
         BakedAnimation anim = animationTree.getAnimation(animation);
         if (anim != null) {
@@ -213,6 +245,18 @@ public class BakedAnimationEntity extends CompositeEntity {
 
     public void setManualAnimationControl(boolean manualAnimationControl) {
         this.manualAnimationControl = manualAnimationControl;
+    }
+
+    public boolean isManualOverride() {
+        return manualOverride;
+    }
+
+    public boolean isInstantAnimationSwitching() {
+        return instantAnimationSwitching;
+    }
+
+    public BakedAnimation getCurrentAnimation() {
+        return currentAnimation;
     }
 
     public List<String> getAnimations() {

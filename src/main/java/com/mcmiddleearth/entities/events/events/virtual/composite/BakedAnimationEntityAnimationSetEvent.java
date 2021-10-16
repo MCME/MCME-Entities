@@ -3,13 +3,13 @@ package com.mcmiddleearth.entities.events.events.virtual.composite;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import com.mcmiddleearth.entities.events.Cancelable;
 
-public class BakedAnimationEntityAnimationChangedEvent extends BakedAnimationEntityEvent implements Cancelable {
+public class BakedAnimationEntityAnimationSetEvent extends BakedAnimationEntityEvent implements Cancelable {
 
     private String nextAnimationKey;
 
     private boolean isCancelled;
 
-    public BakedAnimationEntityAnimationChangedEvent(BakedAnimationEntity entity, String nextAnimationKey) {
+    public BakedAnimationEntityAnimationSetEvent(BakedAnimationEntity entity, String nextAnimationKey) {
         super(entity);
         this.nextAnimationKey = nextAnimationKey;
     }

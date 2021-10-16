@@ -1,5 +1,6 @@
 package com.mcmiddleearth.entities.entities.composite.animation;
 
+import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 
 import java.util.*;
@@ -9,16 +10,24 @@ import java.util.stream.Collectors;
 
 public class BakedAnimationTree {
 
-    private BakedAnimation animation;
+    private final List<BakedAnimation> animations;
 
     private final Map<String,BakedAnimationTree> children = new HashMap<>();
 
+    private final Random random = new Random();
+
     public BakedAnimationTree(BakedAnimation animation) {
-        this.animation = animation;
+        this.animations = new ArrayList<>();
+        if(animation != null) this.animations.add(animation);
     }
 
     public void addAnimation(String path, BakedAnimation animation) {
-        addAnimation(path.split("\\."),animation);
+        String[] pathArray = path.split("\\.");
+        try {
+            Integer.parseInt(pathArray[pathArray.length]);
+            pathArray = Arrays.copyOf(pathArray, pathArray.length-1);
+        } catch (NumberFormatException ignore) {}
+        addAnimation(pathArray,animation);
     }
 
     public void addAnimation(String[] path, BakedAnimation animation) {
@@ -33,7 +42,7 @@ public class BakedAnimationTree {
         if(path.length>1) {
             child.addAnimation(subPath(path)/*Arrays.copyOfRange(path,1,path.length-1)*/,animation);
         } else {
-            child.animation = animation;
+            child.animations.add(animation);
         }
     }
 
@@ -53,7 +62,7 @@ public class BakedAnimationTree {
                 return null;
             } else {
                 if(path.length==1) {
-                    return child.animation;
+                    return child.getAnimation();
                 } else {
 //Logger.getGlobal().info("rekurse");
                     return child.getAnimation(subPath(path));
@@ -66,48 +75,22 @@ public class BakedAnimationTree {
         String[] path = new String[] {
                 entity.getMovementType().name().toLowerCase(),
                 entity.getMovementSpeedAnimation().name().toLowerCase(),
-                entity.getActionType().name().toLowerCase()
+                ActionType.IDLE.name().toLowerCase()
+                //entity.getActionType().name().toLowerCase()
         };
-        /*switch(entity.getMovementType()) {
-            case FLYING:
-                path = path + "flying";
-                break;
-        } else if(entity.isFlying()) {
-            path = path + "air";
-        } else {
-            path = path + "water";
-        }
-        double speed = entity.getVelocity().lengthSquared();
-        if(speed < 0.1) {
-            path = path + ".idle";
-        } else if(speed < 2) {
-            path = path + ".walk";
-        } else {
-            path = path + ".sprint";
-        }
-        if(entity.isDead()) {
-            path = path + ".death";
-        } else if(entity.isAttacking()) {
-            path = path + ".attack";
-        } else if(entity.isInteracting()) {
-            path = path + ".interact";
-        }*/
         SearchResult searchResult = searchAnimation(path/*.split("\\.")*/);
-        BakedAnimation result = searchResult.getBestMatch();
-/*if(result == null ){// || entity.getActionType().equals(ActionType.ATTACK)) {
-    Logger.getGlobal().info("Path: "+Joiner.on('.').join(path));
-}
-/*if(entity.getActionType().equals(ActionType.ATTACK)) {
-    Logger.getGlobal().info("Attack result: "+(result == null?"null":result.getName()));
-}*/
-        return result;
+        return searchResult.getBestMatch();
+    }
+
+    private BakedAnimation getAnimation() {
+        return animations.get(random.nextInt(animations.size()));
     }
 
     private SearchResult searchAnimation(String[] path) {
         BakedAnimationTree next = children.get(path[0]);
         if(next != null) {
             if(path.length == 1) {
-                return new SearchResult(next.animation,null,true);
+                return new SearchResult(next.getAnimation(),null,true);
             } else {
                 path = subPath(path);//Arrays.copyOfRange(path, 1, path.length - 1);
                 SearchResult searchResult = next.searchAnimation(path);
@@ -128,7 +111,7 @@ public class BakedAnimationTree {
                     return alternative;
                 }
             }
-            return new SearchResult(null,animation,false);
+            return new SearchResult(null,getAnimation(),false);
         }
     }
 
@@ -137,7 +120,7 @@ public class BakedAnimationTree {
             BakedAnimationTree next = children.get(path[0]);
             if(next != null) {
                 if(path.length == 1) {
-                    return new SearchResult(next.animation,null,false);
+                    return new SearchResult(next.getAnimation(),null,false);
                 } else {
                     path = subPath(path);
                     SearchResult alternative = next.searchAlternative(path);
@@ -149,20 +132,6 @@ public class BakedAnimationTree {
             } else {
                 path = subPath(path);
             }
-            /*for (Map.Entry<String, BakedAnimationTree> entry : children.entrySet()) {
-                //if (entry.getValue() != next) {
-                    SearchResult alternative = entry.getValue().searchAnimation(path);
-                    if (alternative.getAnimation() != null) {
-                        alternative.setExactMatch(false);
-                        return alternative;
-                    }
-                //}
-            }
-            if(path.length>1) {
-                path = Arrays.copyOfRange(path, 1, path.length - 1);
-            } else {
-                path = new String[0];
-            }*/
         }
         return null;
     }
@@ -209,18 +178,16 @@ public class BakedAnimationTree {
     }
 
     public void debug() {
-        Logger.getGlobal().info("Node: "+this.toString()+" "+(animation==null?"null":animation.getName()));
+        Logger.getGlobal().info("Node: "+ this +" Animations: "+ animations.size());
         children.forEach((key,value)->{
-            Logger.getGlobal().info("child:"+ this.toString()+" -> "+key);
+            Logger.getGlobal().info("child:"+ this +" -> "+key);
             value.debug();
         });
     }
 
     public List<String> getAnimationKeys() {
         List<String> result = new ArrayList<>();
-        if(animation != null) {
-            result.add(animation.getName());
-        }
+        animations.forEach(anim -> result.add(anim.getName()));
         children.forEach((key, child) -> result.addAll(child.getAnimationKeys()));
         return result.stream().sorted().collect(Collectors.toList());
     }

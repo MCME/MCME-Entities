@@ -12,6 +12,7 @@ import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +35,8 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
     DURATION                = "duration",
     TYPE                    = "type",
     YAW                     = "yaw",
-    PITCH                   = "pitch";
+    PITCH                   = "pitch",
+    RELATIVE_POSITION       = "relative_position";
 
     @Override
     public void write(JsonWriter out, VirtualEntityGoalFactory factory) throws IOException {
@@ -96,6 +98,8 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                        out.endObject();
                    }
                }
+               JsonUtil.writeNonDefaultVector(out,RELATIVE_POSITION,factory.getRelativePosition(),
+                                              defaults.getRelativePosition(),gson,writeDefaults);
                out.endArray();
             }
         out.endObject();
@@ -140,6 +144,9 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                         break;
                     case LOOP:
                         factory.withLoop(in.nextBoolean());
+                        break;
+                    case RELATIVE_POSITION:
+                        factory.withRelativePosition(gson.fromJson(in, Vector.class));
                         break;
                     case HEAD_GOALS:
                         Set<HeadGoal>headGoals = new HashSet<>();

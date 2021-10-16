@@ -10,6 +10,11 @@ import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
@@ -226,9 +231,39 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
         return getBukkitPlayer().isOnGround();
     }
 
-    @Override
+    /*@Override
     public ActionType getActionType() {
         return null;
+    }*/
+
+    @Override
+    public void addPotionEffect(PotionEffect effect) {
+        getBukkitPlayer().addPotionEffect(effect);
+    }
+
+    @Override
+    public void removePotionEffect(PotionEffect effect) {
+        getBukkitPlayer().removePotionEffect(effect.getType());
+    }
+
+    @Override
+    public void addItem(ItemStack item, EquipmentSlot slot, int slotId) {
+        ItemStack temp = null;
+        PlayerInventory inventory = getBukkitPlayer().getInventory();
+        if(slot != null) {
+            temp = inventory.getItem(slot);
+            inventory.setItem(slot, item);
+        } else if(slotId>=0 && slotId < inventory.getSize()){
+            temp = inventory.getItem(slotId);
+            inventory.setItem(slotId, item);
+        } else {
+            inventory.addItem(item);
+            //TODO drop if inventory full
+        }
+        if(temp != null) {
+            inventory.addItem(temp);
+            //TODO drop if inventory full
+        }
     }
 
     @Override

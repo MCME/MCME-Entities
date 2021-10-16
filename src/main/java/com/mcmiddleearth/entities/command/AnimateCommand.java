@@ -57,16 +57,21 @@ public class AnimateCommand extends McmeEntitiesCommandHandler {
         player.getSelectedEntities().forEach(entity -> {
             if (entity instanceof BakedAnimationEntity) {
                 if(animationId.equals("auto")) {
-                    ((BakedAnimationEntity)entity).setManualAnimationControl(false);
+                    ((BakedAnimationEntity) entity).setManualAnimationControl(false);
+                } else if(animationId.equals("manual")) {
+                        ((BakedAnimationEntity)entity).setManualAnimationControl(true);
                 } else {
-                    ((BakedAnimationEntity) entity).setManualAnimationControl(true);
-                    ((BakedAnimationEntity) entity).setAnimation(animationId);
+                    //((BakedAnimationEntity) entity).setManualAnimationControl(true);
+                    ((BakedAnimationEntity) entity).setAnimation(animationId, true);
                 }
             }
         });
         if(animationId.equals("auto")) {
-            sender.sendMessage(new ComponentBuilder("Setting automated animation mode."+" for "
-                    +player.getSelectedEntities().size()+" entities.").create());
+            sender.sendMessage(new ComponentBuilder("Setting automated animation mode." + " for "
+                    + player.getSelectedEntities().size() + " entities.").create());
+        } else if(animationId.equals("manual")) {
+                sender.sendMessage(new ComponentBuilder("Setting manual animation mode."+" for "
+                        +player.getSelectedEntities().size()+" entities.").create());
         } else {
             sender.sendMessage(new ComponentBuilder("Playing animation " + animationId+" for "
                     +player.getSelectedEntities().size()+" entities.").create());

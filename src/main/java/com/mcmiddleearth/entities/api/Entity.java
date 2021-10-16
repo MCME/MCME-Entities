@@ -4,6 +4,9 @@ import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.Location;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
@@ -107,6 +110,11 @@ public interface Entity {
 
     public MovementSpeed getMovementSpeed();
 
-    public ActionType getActionType();
+    //public ActionType getActionType();
 
+    public void addPotionEffect(PotionEffect effect);
+
+    public void removePotionEffect(PotionEffect effect);
+
+    public void addItem(ItemStack item, EquipmentSlot slot, int slotId);
 }

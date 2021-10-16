@@ -11,10 +11,12 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        RealPlayer player = EntitiesPlugin.getEntityServer().getMcmePlayer(event.getPlayer().getUniqueId());
-        if(player != null) {
-            EntitiesPlugin.getEntityServer().getPlayerProvider().removePlayer(event.getPlayer());
-        }
+        EntitiesPlugin.getEntityServer().removePlayer(event.getPlayer());
+        //RealPlayer player = EntitiesPlugin.getEntityServer().getMcmePlayer(event.getPlayer().getUniqueId());
+        //if(player != null) {
+            //EntitiesPlugin.getEntityServer().getPlayerProvider().removePlayer(event.getPlayer());
+
+        //}
     }
 
     /*@EntityEventHandler

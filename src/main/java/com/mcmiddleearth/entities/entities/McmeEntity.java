@@ -80,7 +80,7 @@ public interface McmeEntity extends Entity {
 
     public MovementSpeed getMovementSpeed();
 
-    public ActionType getActionType();
+    //public ActionType getActionType();
 
     public boolean hasId(int entityId);
 }

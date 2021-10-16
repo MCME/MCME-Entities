@@ -33,4 +33,7 @@ public interface Goal {
     float getRoll();
 
     GoalType getType();
+
+    void activate();
+    void deactivate();
 }

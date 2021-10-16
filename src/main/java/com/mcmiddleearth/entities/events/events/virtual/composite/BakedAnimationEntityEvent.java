@@ -3,18 +3,15 @@ package com.mcmiddleearth.entities.events.events.virtual.composite;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
+import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityEvent;
 
-public abstract class BakedAnimationEntityEvent implements McmeEntityEvent {
+public abstract class BakedAnimationEntityEvent extends VirtualEntityEvent {
 
     private final BakedAnimationEntity entity;
 
     public BakedAnimationEntityEvent(BakedAnimationEntity entity) {
+        super(entity);
         this.entity = entity;
-    }
-
-    @Override
-    public McmeEntity getEntity() {
-        return entity;
     }
 
     public BakedAnimationEntity getBakedAnimationEntity() {

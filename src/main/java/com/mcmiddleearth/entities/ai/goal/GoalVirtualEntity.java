@@ -225,4 +225,11 @@ public abstract class GoalVirtualEntity implements Goal {
     public GoalType getType() {
         return type;
     }
+
+    @Override
+    public void activate() {}
+
+    @Override
+    public void deactivate() {}
+
 }

@@ -14,5 +14,7 @@ public enum GoalType {
 //    FOLLOW_CHECKPOINTS_WINGED,
     RANDOM_CHECKPOINTS,
     GOTO_LOCATION,
+    MIMIC,
+    JOCKEY,
     NONE;
 }

@@ -7,6 +7,9 @@ import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
 import org.bukkit.Location;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
@@ -205,13 +208,28 @@ public class Placeholder implements McmeEntity {
         return null;
     }
 
-    @Override
+    /*@Override
     public ActionType getActionType() {
         return null;
-    }
+    }*/
 
     @Override
     public boolean hasId(int entityId) {
         return false;
+    }
+
+    @Override
+    public void addPotionEffect(PotionEffect effect) {
+        //do nothing
+    }
+
+    @Override
+    public void removePotionEffect(PotionEffect effect) {
+        //do nothing
+    }
+
+    @Override
+    public void addItem(ItemStack item, EquipmentSlot slot, int slotId) {
+        //do nothing
     }
 }

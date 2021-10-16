@@ -12,6 +12,7 @@ import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.Constrain;
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.Set;
@@ -37,6 +38,8 @@ public class VirtualEntityGoalFactory {
     private Set<HeadGoal> headGoals = null;
 
     private int updateInterval = 10;
+
+    private Vector relativePosition = new Vector(0d,1d,0d);
 
     private boolean writeDefaultsToFile = false;
 
@@ -131,6 +134,15 @@ public class VirtualEntityGoalFactory {
         return this;
     }
 
+    public Vector getRelativePosition() {
+        return relativePosition;
+    }
+
+    public VirtualEntityGoalFactory withRelativePosition(Vector relativePosition) {
+        this.relativePosition = relativePosition;
+        return this;
+    }
+
     public boolean isWriteDefaultsToFile() {
         return writeDefaultsToFile;
     }
@@ -218,6 +230,18 @@ public class VirtualEntityGoalFactory {
                 Constrain.checkTargetLocation(targetLocation);
                 Constrain.checkSameWorld(targetLocation,entity.getLocation().getWorld());
                 goal = new GoalHoldPosition(entity,this);
+                break;
+            case MIMIC:
+                Constrain.checkEntity(targetEntity);
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalMimic(entity,this);
+                break;
+            case JOCKEY:
+                Constrain.checkEntity(targetEntity);
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalJockey(entity,this);
                 break;
             default:
                 goal = null;

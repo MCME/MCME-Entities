@@ -146,6 +146,20 @@ public class SyncEntityServer implements EntityServer {
     }
 
     @Override
+    public void removePlayer(Player player) {
+        RealPlayer realPlayer = getMcmePlayer(player.getUniqueId());
+        entityProvider.getEntities().forEach(entity -> {
+            if(entity instanceof VirtualEntity
+                    && ((VirtualEntity)entity).isViewer(player)) {
+                ((VirtualEntity)entity).removeViewer(player);
+            }
+        });
+        if(realPlayer != null) {
+            playerProvider.removePlayer(player);
+        }
+    }
+
+    @Override
     public SpeechBalloonEntity spawnSpeechBalloon(VirtualEntity speaker, Player viewer,
                                                   SpeechBalloonLayout layout) throws InvalidLocationException {
         SpeechBalloonEntity balloon =  new SpeechBalloonEntity(lastEntityId+1, speaker, viewer, layout);

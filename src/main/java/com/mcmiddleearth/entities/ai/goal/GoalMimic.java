@@ -1,21 +1,26 @@
 package com.mcmiddleearth.entities.ai.goal;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalMimic;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.events.listener.MimicListener;
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
-public class GoalEntityTargetMimic extends GoalVirtualEntity {
+public class GoalMimic extends GoalVirtualEntity {
 
-    private double followDistance = GoalDistance.POINT;
+    private Listener listener;
 
     private McmeEntity mimic;
 
-    public GoalEntityTargetMimic(VirtualEntity entity, McmeEntity mimic, VirtualEntityGoalFactory factory) {
+    public GoalMimic(VirtualEntity entity, VirtualEntityGoalFactory factory) {
         super(entity, factory);
-        this.mimic = mimic;
+        this.mimic = factory.getTargetEntity();
     }
 
     @Override
@@ -49,5 +54,19 @@ public class GoalEntityTargetMimic extends GoalVirtualEntity {
         addHeadGoal(new HeadGoalMimic(getEntity(), mimic));
     }
 
+    @Override
+    public void activate() {
+        listener = new MimicListener(getEntity(),mimic);
+        Bukkit.getPluginManager().registerEvents(listener, EntitiesPlugin.getInstance());
+    }
 
+    @Override
+    public void deactivate() {
+        HandlerList.unregisterAll(listener);
+    }
+
+    @Override
+    public VirtualEntityGoalFactory getFactory() {
+        return super.getFactory().withTargetEntity(mimic);
+    }
 }
