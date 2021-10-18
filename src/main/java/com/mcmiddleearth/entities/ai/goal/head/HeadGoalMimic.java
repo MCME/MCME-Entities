@@ -4,20 +4,25 @@ import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 
+import java.util.logging.Logger;
+
 public class HeadGoalMimic extends HeadGoal {
 
     private McmeEntity mimic;
-    private VirtualEntity entity;
+    private final VirtualEntity entity;
 
-    public HeadGoalMimic(VirtualEntity entity, McmeEntity mimic) {
+    public HeadGoalMimic(VirtualEntity entity, McmeEntity mimic, int duration) {
         this.entity = entity;
         this.mimic = mimic;
+        setDuration(duration);
     }
 
     @Override
     public void doTick() {
         if (mimic != null) {
-            entity.setHeadRotation(mimic.getHeadYaw(), mimic.getHeadPitch());
+//Logger.getGlobal().info("Yaw: "+);
+            yaw = mimic.getHeadYaw();
+            pitch = mimic.getHeadPitch();
         }
     }
 

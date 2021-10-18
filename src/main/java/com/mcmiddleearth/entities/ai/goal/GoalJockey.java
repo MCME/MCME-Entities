@@ -14,6 +14,8 @@ public class GoalJockey extends GoalVirtualEntity {
 
     private Vector relativePosition;
 
+    private Vector velocity;
+
     public GoalJockey(VirtualEntity entity, VirtualEntityGoalFactory factory) {
         super(entity, factory);
         this.steed = factory.getTargetEntity();
@@ -26,14 +28,17 @@ public class GoalJockey extends GoalVirtualEntity {
     }
 
     @Override
-    public void update() {
+    public void doTick() {
         super.doTick();
         movementSpeed = steed.getMovementSpeed();
-        getEntity().setLocation(steed.getLocation()
-                .clone().add(RotationMatrix.fastRotateY(relativePosition,steed.getYaw())));
+        //getEntity().setLocation(steed.getLocation()
+          //      .clone().add(RotationMatrix.fastRotateY(relativePosition,steed.getYaw())));
+        steed.getYaw();
+        velocity = steed.getLocation().clone().add(RotationMatrix.fastRotateY(relativePosition,steed.getYaw()))
+                        .subtract(getEntity().getLocation()).toVector();
     }
 
-    public boolean isForceTeleport() {
+    public boolean isDirectMovementControl() {
         return true;
     }
 
@@ -58,6 +63,11 @@ public class GoalJockey extends GoalVirtualEntity {
         return super.getFactory()
                     .withTargetEntity(steed)
                     .withRelativePosition(relativePosition);
+    }
+
+    @Override
+    public Vector getVelocity() {
+        return velocity;
     }
 
 }

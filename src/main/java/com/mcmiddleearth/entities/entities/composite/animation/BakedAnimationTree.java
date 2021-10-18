@@ -24,7 +24,7 @@ public class BakedAnimationTree {
     public void addAnimation(String path, BakedAnimation animation) {
         String[] pathArray = path.split("\\.");
         try {
-            Integer.parseInt(pathArray[pathArray.length]);
+            Integer.parseInt(pathArray[pathArray.length-1]);
             pathArray = Arrays.copyOf(pathArray, pathArray.length-1);
         } catch (NumberFormatException ignore) {}
         addAnimation(pathArray,animation);
@@ -48,7 +48,9 @@ public class BakedAnimationTree {
 
     public BakedAnimation getAnimation(String path) {
         String[] pathKeys = path.split("\\.");
-        return getAnimation(pathKeys);
+        //return getAnimation(pathKeys);
+        SearchResult searchResult = searchAnimation(pathKeys/*.split("\\.")*/);
+        return searchResult.getBestMatch();
     }
 
     public BakedAnimation getAnimation(String[] path) {
@@ -83,7 +85,11 @@ public class BakedAnimationTree {
     }
 
     private BakedAnimation getAnimation() {
-        return animations.get(random.nextInt(animations.size()));
+        if(animations.size()>0) {
+            return animations.get(random.nextInt(animations.size()));
+        } else {
+            return null;
+        }
     }
 
     private SearchResult searchAnimation(String[] path) {

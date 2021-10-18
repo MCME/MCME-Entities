@@ -38,6 +38,10 @@ public final class EntitiesPlugin extends JavaPlugin {
 
         saveDefaultConfig();
 
+        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+        //manager.addPacketListener(new EntityListener(this));
+        Logger.getGlobal().info("Manager: "+manager);
+
         server = new SyncEntityServer(this);
         EntityAPI.init();
 
@@ -66,9 +70,6 @@ public final class EntitiesPlugin extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(playerListener,this);
 
-        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-        //manager.addPacketListener(new EntityListener(this));
-        Logger.getGlobal().info("Manager: "+manager);
         manager.addPacketListener(new VirtualEntityUseListener(this, server));
 
         server.start();

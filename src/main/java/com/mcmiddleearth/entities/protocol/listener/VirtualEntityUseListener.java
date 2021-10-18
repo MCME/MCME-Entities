@@ -5,6 +5,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.ai.goal.GoalMimic;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
@@ -31,6 +32,7 @@ public class VirtualEntityUseListener extends EntityListener {
         int entityId = packet.getIntegers().read(0);
         McmeEntity entity = entityServer.getEntity(entityId);
         if(entity instanceof VirtualEntity) {
+            if(entity.getGoal() instanceof GoalMimic && ((GoalMimic)entity.getGoal()).getMimic().equals(player)) return;
             event.setCancelled(true);
             EnumWrappers.EntityUseAction action = packet.getEntityUseActions().read(0);
             EquipmentSlot hand;

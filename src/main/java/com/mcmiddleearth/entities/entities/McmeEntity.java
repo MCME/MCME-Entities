@@ -83,4 +83,6 @@ public interface McmeEntity extends Entity {
     //public ActionType getActionType();
 
     public boolean hasId(int entityId);
+
+    void setInvisible(boolean visible);
 }

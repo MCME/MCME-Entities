@@ -19,6 +19,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
@@ -62,12 +63,12 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public float getYaw() {
-        return 0;
+        return getBukkitPlayer().getLocation().getYaw();
     }
 
     @Override
     public float getHeadYaw() {
-        return 0;
+        return getBukkitPlayer().getEyeLocation().getYaw();
     }
 
     @Override
@@ -97,7 +98,6 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public void doTick() {
-
     }
 
     @Override
@@ -278,11 +278,16 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public float getHeadPitch() {
-        return 0;
+        return getBukkitPlayer().getEyeLocation().getPitch();
     }
 
     @Override
     public void setRotation(float yaw, float pitch, float roll) {
 
+    }
+
+    @Override
+    public void setInvisible(boolean visible) {
+        getBukkitPlayer().setInvisible(visible);
     }
 }

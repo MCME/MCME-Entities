@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class BakedAnimationEntity extends CompositeEntity {
@@ -107,6 +108,7 @@ public class BakedAnimationEntity extends CompositeEntity {
 //Logger.getGlobal().info("Movementspeed: "+getMovementSpeed());
         if(movementSpeedAnimation.equals(MovementSpeed.STAND)
                 && (getMovementSpeed().equals(MovementSpeed.WALK) || getMovementSpeed().equals(MovementSpeed.SPRINT)
+                                                                  || getMovementSpeed().equals(MovementSpeed.BACKWARD)
                                                                   || getMovementSpeed().equals(MovementSpeed.SLOW))) {
             startMovementCounter++;
             if(startMovementCounter>0) {
@@ -115,7 +117,8 @@ public class BakedAnimationEntity extends CompositeEntity {
             }
         } else if(getMovementSpeed().equals(MovementSpeed.STAND)
                 && (movementSpeedAnimation.equals(MovementSpeed.WALK) || movementSpeedAnimation.equals(MovementSpeed.SPRINT)
-                || movementSpeedAnimation.equals(MovementSpeed.SLOW))) {
+                                                                      || movementSpeedAnimation.equals(MovementSpeed.BACKWARD)
+                                                                      || movementSpeedAnimation.equals(MovementSpeed.SLOW))) {
             stopMovementCounter++;
             if(stopMovementCounter>3) {
                 movementSpeedAnimation = getMovementSpeed();
@@ -124,6 +127,9 @@ public class BakedAnimationEntity extends CompositeEntity {
         } else {
             startMovementCounter = 0;
             stopMovementCounter = 0;
+            if(!getMovementSpeed().equals(movementSpeedAnimation)) {
+                movementSpeedAnimation = getMovementSpeed();
+            }
         }
         if(!manualAnimationControl) {
             BakedAnimation expected = animationTree.getAnimation(this);
@@ -159,9 +165,11 @@ public class BakedAnimationEntity extends CompositeEntity {
                 currentAnimation.reset();
                 nextAnimation = null;
             }
+//Logger.getGlobal().info("Cur: "+currentAnimation.getName()+" OR: "+manualOverride+" MC: "+manualAnimationControl);
             currentAnimation.doTick();
         } else {
-            if(!manualOverride && nextAnimation != null
+            manualOverride = false;
+            if(nextAnimation != null
                                && callAnimationChangeEvent(null,nextAnimation)) {
                 currentAnimation = nextAnimation;
                 currentAnimation.reset();
@@ -178,6 +186,7 @@ public class BakedAnimationEntity extends CompositeEntity {
         if(!event.isCancelled()) {
             this.manualOverride = manualOverride;
             BakedAnimation newAnim = animationTree.getAnimation(event.getNextAnimationKey());
+    Logger.getGlobal().info("New Anim: "+name+" -> "+newAnim);
             if(instantAnimationSwitching) {
                 if(callAnimationChangeEvent(currentAnimation, newAnim)) {
                     if (newAnim != null) {

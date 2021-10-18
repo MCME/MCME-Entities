@@ -232,4 +232,9 @@ public class Placeholder implements McmeEntity {
     public void addItem(ItemStack item, EquipmentSlot slot, int slotId) {
         //do nothing
     }
+
+    @Override
+    public void setInvisible(boolean visible) {
+        //do nothing
+    }
 }

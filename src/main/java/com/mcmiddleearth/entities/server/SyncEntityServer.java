@@ -120,6 +120,9 @@ public class SyncEntityServer implements EntityServer {
 //Logger.getGlobal().info("Server: tick entity "+entity);
             entity.doTick();
         });
+        /*for(RealPlayer p : playerProvider.getMcmePlayers()) {
+            p.doTick();
+        }*/
     }
 
     @Override

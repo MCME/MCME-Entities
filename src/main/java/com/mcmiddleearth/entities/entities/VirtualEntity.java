@@ -33,6 +33,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
@@ -166,7 +167,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     @Override
     public void doTick() {
 //Logger.getGlobal().info("VirtualEntity: tick ");
-        if(teleported || goal!=null && goal.isForceTeleport()) {
+        if(teleported) {
             teleport();
             if(goal!=null) {
                 goal.update();
@@ -185,7 +186,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                         goal.doTick();
                 }*/
                 movementSpeed = goal.getMovementSpeed();
-                movementEngine.calculateMovement(goal.getDirection());
+                if(goal.isDirectMovementControl()) {
+                    velocity = goal.getVelocity();
+                } else {
+                    movementEngine.calculateMovement(goal.getDirection());
+                }
+//Logger.getGlobal().info("Goal: "+goal.getType()+" has Rotation: "+goal.hasRotation()+" "+goal.getYaw()+" head Rot: "+goal.hasHeadRotation()+" HeadGo: "+goal.getCurrentHeadGoal());
                 if(goal.hasRotation()) {
 //Logger.getGlobal().info("rotation: "+ goal.getRotation());
                     setRotation(goal.getYaw(),goal.getPitch(),goal.getRoll());
@@ -607,6 +613,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     @Override
     public  void finalise() {
         removeSpeechBalloons();
+        if(goal!=null) goal.deactivate();
     }
 
     @Override
@@ -681,6 +688,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     public boolean isUseWhitelistAsBlacklist() {
         return useWhitelistAsBlacklist;
+    }
+
+    @Override
+    public void setInvisible(boolean visible) {
+        //TODO
     }
 
     public boolean hasId(int entityId) {
