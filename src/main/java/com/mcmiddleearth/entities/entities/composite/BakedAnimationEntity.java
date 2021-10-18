@@ -106,19 +106,13 @@ public class BakedAnimationEntity extends CompositeEntity {
     @Override
     public void doTick() {
 //Logger.getGlobal().info("Movementspeed: "+getMovementSpeed());
-        if(movementSpeedAnimation.equals(MovementSpeed.STAND)
-                && (getMovementSpeed().equals(MovementSpeed.WALK) || getMovementSpeed().equals(MovementSpeed.SPRINT)
-                                                                  || getMovementSpeed().equals(MovementSpeed.BACKWARD)
-                                                                  || getMovementSpeed().equals(MovementSpeed.SLOW))) {
+        if(movementSpeedAnimation.equals(MovementSpeed.STAND) && !getMovementSpeed().equals(MovementSpeed.STAND)) {
             startMovementCounter++;
             if(startMovementCounter>0) {
                 movementSpeedAnimation = getMovementSpeed();
                 startMovementCounter = 0;
             }
-        } else if(getMovementSpeed().equals(MovementSpeed.STAND)
-                && (movementSpeedAnimation.equals(MovementSpeed.WALK) || movementSpeedAnimation.equals(MovementSpeed.SPRINT)
-                                                                      || movementSpeedAnimation.equals(MovementSpeed.BACKWARD)
-                                                                      || movementSpeedAnimation.equals(MovementSpeed.SLOW))) {
+        } else if(getMovementSpeed().equals(MovementSpeed.STAND) && !movementSpeedAnimation.equals(MovementSpeed.STAND)) {
             stopMovementCounter++;
             if(stopMovementCounter>3) {
                 movementSpeedAnimation = getMovementSpeed();
@@ -186,7 +180,7 @@ public class BakedAnimationEntity extends CompositeEntity {
         if(!event.isCancelled()) {
             this.manualOverride = manualOverride;
             BakedAnimation newAnim = animationTree.getAnimation(event.getNextAnimationKey());
-    Logger.getGlobal().info("New Anim: "+name+" -> "+newAnim);
+    //Logger.getGlobal().info("New Anim: "+name+" -> "+newAnim);
             if(instantAnimationSwitching) {
                 if(callAnimationChangeEvent(currentAnimation, newAnim)) {
                     if (newAnim != null) {

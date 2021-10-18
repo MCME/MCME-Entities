@@ -45,15 +45,7 @@ public class GoalMimic extends GoalVirtualEntity {
         super.doTick();
 
         double distance = mimic.getLocation().distanceSquared(getEntity().getLocation());
-        if(distance < 0.0001) {
-            movementSpeed = MovementSpeed.STAND;
-        } else if(distance < 0.001) {
-            movementSpeed = MovementSpeed.SLOW;
-        } else if(distance < 0.1) {
-            movementSpeed = MovementSpeed.WALK;
-        } else {
-            movementSpeed = MovementSpeed.SPRINT;
-        }
+        boolean backward = false;
 
         if(distance > 0.0001) {
             Vector move = mimic.getLocation().subtract(getEntity().getLocation()).toVector();
@@ -71,7 +63,7 @@ public class GoalMimic extends GoalVirtualEntity {
             } else {
                 bodyYaw = mimic.getLocation().getYaw();
             }
-            if(yawDiff > 100 || yawDiff < -100) movementSpeed = MovementSpeed.BACKWARD;
+            if(yawDiff > 100 || yawDiff < -100) backward = true;
         } else {
             float bukkitYaw = mimic.getLocation().getYaw();
             while(bukkitYaw < -180) bukkitYaw += 360;
@@ -90,6 +82,27 @@ public class GoalMimic extends GoalVirtualEntity {
             }
             while(bodyYaw > 180) bodyYaw -= 360;
             while(bodyYaw <= -180) bodyYaw += 360;
+        }
+        if(!backward) {
+            if (distance < 0.0001) {
+                movementSpeed = MovementSpeed.STAND;
+            } else if (distance < 0.001) {
+                movementSpeed = MovementSpeed.SLOW;
+            } else if (distance < 0.1) {
+                movementSpeed = MovementSpeed.WALK;
+            } else {
+                movementSpeed = MovementSpeed.SPRINT;
+            }
+        } else {
+            if(distance < 0.0001) {
+                movementSpeed = MovementSpeed.STAND;
+            } else if(distance < 0.001) {
+                movementSpeed = MovementSpeed.BACKWARD_SLOW;
+            } else if(distance < 0.1) {
+                movementSpeed = MovementSpeed.BACKWARD_WALK;
+            } else {
+                movementSpeed = MovementSpeed.BACKWARD_SPRINT;
+            }
         }
         //getEntity().setLocation(mimic.getLocation());
         setYaw(bodyYaw);

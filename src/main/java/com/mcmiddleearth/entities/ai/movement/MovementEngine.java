@@ -1,6 +1,7 @@
 package com.mcmiddleearth.entities.ai.movement;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.ai.goal.GoalJockey;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
@@ -9,6 +10,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import sun.rmi.runtime.Log;
 
 import java.util.Collection;
 import java.util.logging.Logger;
@@ -98,8 +100,10 @@ public class MovementEngine {
             case SNEAKING:
             default:
                 velocity = direction.normalize().multiply(entity.getGenericSpeed());
+//Logger.getGlobal().info("vector: "+velocity.getX()+" "+velocity.getY()+" "+velocity.getZ());
                 velocity.setY(0);
                 Vector collisionVelocity = handleCollisions(velocity.clone());
+//Logger.getGlobal().info("colision vec: "+collisionVelocity.getX()+" "+collisionVelocity.getY()+" "+collisionVelocity.getZ());
                 if(!cannotMove(collisionVelocity)) {
                     velocity = collisionVelocity;
                 }
@@ -131,6 +135,7 @@ public class MovementEngine {
 
     public boolean cannotMove(Vector velocity) {
         BoundingBox entityBB = entity.getBoundingBox().getBoundingBox().clone();
+//Logger.getGlobal().info("bb x1 "+entityBB.getMinX()+ " x2 "+entityBB.getMaxX()+" vec x: "+velocity.getX());
         entityBB.shift(velocity);
         for (int i = getBlock(entityBB.getMinX()); i <= getBlock(entityBB.getMaxX()); i++) {
             for (int j = getBlock(entityBB.getMinY()); j <= getBlock(entityBB.getMaxY()); j++) {
@@ -154,13 +159,18 @@ public class MovementEngine {
                                                                              (int)(entityBB.getHeight()*2+1),
                                                                              (int)(entityBB.getWidthZ()*2+1));
         for(McmeEntity search: closeEntities) {
-            if(search != entity && search.getBoundingBox() != null && !search.getBoundingBox().isZero()
+            if(!((search.getGoal() instanceof GoalJockey) && ((GoalJockey)search.getGoal()).getSteed().equals(entity))
+                    && search != entity && search.getBoundingBox() != null && !search.getBoundingBox().isZero()
                     && entityBB.overlaps(search.getBoundingBox().getBoundingBox())) {
                 double speed = velocity.length();
                 if(Double.isFinite(speed)) {
                     speed = Math.max(speed,0.01);
                     Vector distance = search.getLocation().toVector().subtract(entity.getLocation().toVector());
+//Logger.getGlobal().info("distance: "+distance.getX()+" "+distance.getY()+" "+distance.getZ());
                     distance.setY(0);
+                    if(distance.getX()==0 && distance.getZ()==0) {
+                        distance = Vector.getRandom().setY(0);
+                    }
                     //Vector oldDistance = distance.clone();
                     distance.normalize().multiply(speed);
                     velocity.subtract(distance).normalize().multiply(speed);

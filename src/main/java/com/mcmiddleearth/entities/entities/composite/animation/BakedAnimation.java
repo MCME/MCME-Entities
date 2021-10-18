@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class BakedAnimation {
 
@@ -119,4 +118,11 @@ public class BakedAnimation {
         return animation;
     }
 
+    public BakedAnimation getReverse(String name) {
+        BakedAnimation reverse = new BakedAnimation(entity, type, name, next, interval);
+        for(int i = frames.size()-1; i >= 0; i--) {
+            reverse.addFrame(frames.get(i));
+        }
+        return reverse;
+    }
 }

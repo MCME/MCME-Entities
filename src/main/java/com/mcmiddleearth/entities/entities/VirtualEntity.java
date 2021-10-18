@@ -522,6 +522,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         EntitiesPlugin.getEntityServer().handleEvent(event);
         if(!event.isCancelled()) {
             health -= event.getDamage();
+//Logger.getGlobal().info("Damage: "+damage+" Health: "+health);
             if (health <= 0) {
                 EntitiesPlugin.getEntityServer().handleEvent(new McmeEntityDeathEvent(this));
                 dead = true;

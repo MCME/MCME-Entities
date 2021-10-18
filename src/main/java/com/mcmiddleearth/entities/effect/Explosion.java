@@ -2,13 +2,17 @@ package com.mcmiddleearth.entities.effect;
 
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import org.apache.commons.math3.util.FastMath;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class Explosion {
 
@@ -22,7 +26,11 @@ public class Explosion {
 
     private double velocity = 1;
 
+    private Particle particle = Particle.SPELL_INSTANT;
+
     private Set<McmeEntity> unaffected = new HashSet<>();
+
+    private Set<McmeEntity> settled = new HashSet<>();
 
     private Set<Player> viewer = new HashSet<>();
 
@@ -38,6 +46,8 @@ public class Explosion {
         new BukkitRunnable() {
 
             private double currentRadius = velocity;
+            private double currentKnockback = knockback;
+            private double currentDamage = damage;
 
             private Set<McmeEntity> affected = new HashSet<>();
 
@@ -47,14 +57,31 @@ public class Explosion {
                 int ceil = (int) Math.ceil(currentRadius);
                 Collection<McmeEntity> entities = EntitiesPlugin.getEntityServer().getEntitiesAt(location,
                                                                                         ceil,ceil,ceil);
+//Logger.getGlobal().info("Radius: "+currentRadius+" Entities: "+entities.size()+" damage: "+damage);
                 entities.stream().filter(entity -> location.distanceSquared(entity.getLocation()) <= square
-                                                && !entities.contains(entity))
+                                                && !settled.contains(entity))
                         .forEach(entity -> {
-                            entity.receiveAttack(damager,damage,knockback);
-                            entities.add(entity);
+                            entity.receiveAttack(damager,currentDamage,currentKnockback);
+                            settled.add(entity);
                         });
-                if(currentRadius == radius) cancel();
-                else currentRadius = Math.min(currentRadius+=velocity,radius);
+                double start = FastMath.random()*5;
+                double phi = start;
+                while(phi < start+2*FastMath.PI) {
+                    Location particleLoc = location.clone().add(new Vector(FastMath.sin(phi)*currentRadius,
+                                                                           1,FastMath.cos(phi)*currentRadius));
+                    double offset = velocity/2d;
+                    location.getWorld().spawnParticle(particle, particleLoc, 1,offset,offset,offset,
+                                                      2, null,true);
+                    phi += 1.0/radius;
+                }
+                if(currentRadius == radius) {
+//Logger.getGlobal().info("cancel");
+                    cancel();
+                } else {
+                    currentRadius = Math.min(currentRadius+=velocity,radius);
+                    currentDamage = damage * (1 - currentRadius/radius);//Math.max(0,currentDamage - 0.3);
+                    currentKnockback = knockback * (1 - currentRadius/radius); //Math.max(0, currentKnockback - 1.0/radius)
+                }
             }
         }.runTaskTimer(EntitiesPlugin.getInstance(),0,1);
     }
@@ -86,6 +113,11 @@ public class Explosion {
 
     public Explosion setDamage(double damage) {
         this.damage = damage;
+        return this;
+    }
+
+    public Explosion setParticle(Particle particle) {
+        this.particle = particle;
         return this;
     }
 

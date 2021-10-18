@@ -118,6 +118,9 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
             case "checkpoints":
                 getOrCreateGoalFactory(factory).withCheckpoints(player.getSelectedPoints().toArray(new Location[0]));
                 break;
+            case "relative_position":
+                getOrCreateGoalFactory(factory).withRelativePosition(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
+                break;
             case "headgoal":
                 String[] split = value.split(" ");
                 int paramA = 10, paramB = 0, paramC = 0;

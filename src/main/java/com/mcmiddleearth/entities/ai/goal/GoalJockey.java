@@ -1,12 +1,15 @@
 package com.mcmiddleearth.entities.ai.goal;
 
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalStare;
+import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.util.RotationMatrix;
 import org.bukkit.util.Vector;
+
+import java.util.logging.Logger;
 
 public class GoalJockey extends GoalVirtualEntity {
 
@@ -20,6 +23,7 @@ public class GoalJockey extends GoalVirtualEntity {
         super(entity, factory);
         this.steed = factory.getTargetEntity();
         this.relativePosition = factory.getRelativePosition();
+Logger.getGlobal().info("relative: "+relativePosition);
     }
 
     @Override
@@ -30,10 +34,10 @@ public class GoalJockey extends GoalVirtualEntity {
     @Override
     public void doTick() {
         super.doTick();
-        movementSpeed = steed.getMovementSpeed();
+        movementSpeed = MovementSpeed.STAND;//steed.getMovementSpeed();
         //getEntity().setLocation(steed.getLocation()
           //      .clone().add(RotationMatrix.fastRotateY(relativePosition,steed.getYaw())));
-        steed.getYaw();
+        setYaw(steed.getYaw());
         velocity = steed.getLocation().clone().add(RotationMatrix.fastRotateY(relativePosition,steed.getYaw()))
                         .subtract(getEntity().getLocation()).toVector();
     }
@@ -70,4 +74,7 @@ public class GoalJockey extends GoalVirtualEntity {
         return velocity;
     }
 
+    public McmeEntity getSteed() {
+        return steed;
+    }
 }

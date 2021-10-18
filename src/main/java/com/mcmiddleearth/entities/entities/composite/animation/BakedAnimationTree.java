@@ -1,6 +1,8 @@
 package com.mcmiddleearth.entities.entities.composite.animation;
 
+import com.google.common.base.Joiner;
 import com.mcmiddleearth.entities.api.ActionType;
+import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 
 import java.util.*;
@@ -28,6 +30,33 @@ public class BakedAnimationTree {
             pathArray = Arrays.copyOf(pathArray, pathArray.length-1);
         } catch (NumberFormatException ignore) {}
         addAnimation(pathArray,animation);
+        for(int i = 0; i < pathArray.length; i++) {
+            try{
+                String[] temp = pathArray.clone();
+                MovementSpeed speed = MovementSpeed.valueOf(temp[i].toUpperCase());
+                switch (speed) {
+                    case SLOW:
+                        temp[i] = MovementSpeed.BACKWARD_SLOW.name().toLowerCase();
+                        addBackwardFallbackAnimation(temp, animation);
+                        break;
+                    case WALK:
+                        temp[i] = MovementSpeed.BACKWARD_WALK.name().toLowerCase();
+                        addBackwardFallbackAnimation(temp, animation);
+                        break;
+                    case SPRINT:
+                        temp[i] = MovementSpeed.BACKWARD_SPRINT.name().toLowerCase();
+                        addBackwardFallbackAnimation(temp, animation);
+                        break;
+                }
+            } catch (IllegalArgumentException ignore) {}
+        }
+    }
+
+    private void addBackwardFallbackAnimation(String[] path, BakedAnimation animation) {
+        if(getAnimation(path) == null) {
+            addAnimation(path, animation.getReverse(Joiner.on('.').join(path)));
+//Logger.getGlobal().info("adding fallback: "+Joiner.on('.').join(path));
+        }
     }
 
     public void addAnimation(String[] path, BakedAnimation animation) {

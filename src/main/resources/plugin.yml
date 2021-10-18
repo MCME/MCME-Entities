@@ -35,6 +35,10 @@ commands:
     description: manages virtual entities
     permission: mcmeentities.user
     usage: /virtual spawn | kill | animate
+  vexplode:
+    description: manages virtual explosions
+    permission: mcmeentities.user
+    usage: /virtual explode <radius> <damage> [velocity] [knockback]
   vremove:
     description: manages virtual entities
     permission: mcmeentities.user
