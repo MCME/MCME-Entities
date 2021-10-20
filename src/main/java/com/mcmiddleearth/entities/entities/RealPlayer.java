@@ -102,7 +102,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public int getEntityId() {
-        return 0;
+        return getBukkitPlayer().getEntityId();
     }
 
     @Override
@@ -289,5 +289,10 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     @Override
     public void setInvisible(boolean visible) {
         getBukkitPlayer().setInvisible(visible);
+    }
+
+    @Override
+    public void setEquipment(EquipmentSlot slot, ItemStack item) {
+        getBukkitPlayer().getInventory().setItem(slot, item);
     }
 }

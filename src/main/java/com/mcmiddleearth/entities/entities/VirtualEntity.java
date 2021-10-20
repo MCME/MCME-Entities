@@ -134,7 +134,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 //Logger.getGlobal().info("This location: "+this.getLocation());
         if(factory.getGoalFactory()!=null) {
             this.goal = factory.getGoalFactory().build(this);
-            this.goal.activate();
+            if(this.goal!=null) {
+                this.goal.activate();
+            }
         }
 //Logger.getGlobal().info("this goal: "+getGoal());
         this.health = factory.getHealth();
@@ -558,7 +560,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         double resistance = 0;
         if(attribute!=null) resistance = attribute.getValue();
         double length = knockBackFactor * (knockBackBase+Math.max(0,damage-resistance)*knockBackPerDamage);
-        Vector normal = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize();
+        Vector normal;
+        if(damager!=null) {
+            normal = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize();
+        } else {
+            normal = new Vector(0,1,0);
+        }
         Vector knockBack = normal.multiply(-length).add(new Vector(0,length*2,0));
         if(isOnGround()) {
             setMovementType(MovementType.FALLING);
@@ -717,6 +724,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void addItem(ItemStack item, EquipmentSlot slot, int slotId) {
+        //TODO
+    }
+
+    @Override
+    public void setEquipment(EquipmentSlot slot, ItemStack item) {
         //TODO
     }
 

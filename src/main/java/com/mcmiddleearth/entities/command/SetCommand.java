@@ -21,6 +21,7 @@ import com.mcmiddleearth.entities.command.argument.AttributeTypeArgument;
 import com.mcmiddleearth.entities.command.argument.GoalTypeArgument;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
+import com.mcmiddleearth.entities.entities.SimpleEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
@@ -35,6 +36,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.*;
@@ -64,12 +66,55 @@ public class SetCommand extends McmeEntitiesCommandHandler {
                 .then(HelpfulLiteralBuilder.literal("displayname")
                     .then(HelpfulRequiredArgumentBuilder.argument("displayname", word())
                         .executes(context -> setDisplayName(context.getSource(), context.getArgument("displayname", String.class)))))
+                .then(HelpfulLiteralBuilder.literal("item")
+                    .then(HelpfulRequiredArgumentBuilder.argument("slot", word())
+                        .then(HelpfulRequiredArgumentBuilder.argument("item", word())
+                            .executes(context -> setItem(context.getSource(), context.getArgument("slot",String.class),
+                                                                              context.getArgument("item",String.class))))))
                 .then(HelpfulLiteralBuilder.literal("attribute")
                     .then(HelpfulRequiredArgumentBuilder.argument("type", new AttributeTypeArgument())
                         .then(HelpfulRequiredArgumentBuilder.argument("value", word())
                             .executes(context -> setAttribute(context.getSource(),context.getArgument("type",String.class),
                                                                                   context.getArgument("value", String.class))))));
         return commandNodeBuilder;
+    }
+
+    public int setItem(McmeCommandSender sender, String slotName, String itemMaterial) {
+        Entity entity = ((BukkitCommandSender)sender).getSelectedEntities().stream().findFirst().orElse(null);
+        if(entity instanceof VirtualEntity) {
+            if(slotName.equalsIgnoreCase("saddle")) {
+                if(entity instanceof SimpleEntity) {
+                    if(itemMaterial.equalsIgnoreCase("saddle")) {
+                        ((SimpleEntity)entity).setSaddled(true);
+                        sender.sendMessage(new ComponentBuilder("Entity saddled.").color(ChatColor.GREEN).create());
+                    } else {
+                        ((SimpleEntity)entity).setSaddled(false);
+                        sender.sendMessage(new ComponentBuilder("Entity unsaddled.").color(ChatColor.GREEN).create());
+                    }
+                } else {
+                    sender.sendMessage(new ComponentBuilder("Not implemented for custom entities.").color(ChatColor.RED).create());
+                }
+            } else {
+                EquipmentSlot slot = EquipmentSlot.HAND;
+                try {
+                    slot = EquipmentSlot.valueOf(slotName.toUpperCase());
+                } catch (IllegalArgumentException ex) {
+                    sender.sendMessage(new ComponentBuilder("Can't parse equipment slot. Using main hand.").color(ChatColor.RED).create());
+                }
+                Material material = Material.LEATHER_CHESTPLATE;
+                try {
+                    material = Material.valueOf(itemMaterial.toUpperCase());
+                } catch (IllegalArgumentException ex) {
+                    sender.sendMessage(new ComponentBuilder("Can't parse item material. Using leather chest plate.").color(ChatColor.RED).create());
+                }
+                ItemStack item = new ItemStack(material);
+                ((VirtualEntity) entity).setEquipment(slot, item);
+                sender.sendMessage(new ComponentBuilder(slot.name().toLowerCase() + " item set to " + material.name().toLowerCase() + ".").color(ChatColor.GREEN).create());
+            }
+        } else {
+            sender.sendMessage(new ComponentBuilder("You need to select an entity first!").color(ChatColor.RED).create());
+        }
+        return 0;
     }
 
     private int setAttribute(McmeCommandSender sender, String type, String valueString) {

@@ -4,6 +4,8 @@ import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import org.bukkit.Location;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
@@ -85,4 +87,6 @@ public interface McmeEntity extends Entity {
     public boolean hasId(int entityId);
 
     void setInvisible(boolean visible);
+
+    void setEquipment(EquipmentSlot slot, ItemStack item);
 }

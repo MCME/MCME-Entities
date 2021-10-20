@@ -445,4 +445,9 @@ public class Bone implements McmeEntity {
     public void setInvisible(boolean visible) {
         //TODO
     }
+
+    @Override
+    public void setEquipment(EquipmentSlot slot, ItemStack item) {
+        //do nothing
+    }
 }

@@ -237,4 +237,9 @@ public class Placeholder implements McmeEntity {
     public void setInvisible(boolean visible) {
         //do nothing
     }
+
+    @Override
+    public void setEquipment(EquipmentSlot slot, ItemStack item) {
+        //do nothing
+    }
 }

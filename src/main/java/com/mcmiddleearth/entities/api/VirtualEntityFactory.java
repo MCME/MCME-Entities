@@ -1,10 +1,7 @@
 package com.mcmiddleearth.entities.api;
 
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
-import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.entities.SimpleLivingEntity;
-import com.mcmiddleearth.entities.entities.SimpleNonLivingEntity;
-import com.mcmiddleearth.entities.entities.SimplePlayer;
+import com.mcmiddleearth.entities.entities.*;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
@@ -12,7 +9,6 @@ import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
-import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -20,7 +16,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -77,6 +72,8 @@ public class VirtualEntityFactory {
 
     private int jumpHeight = 1;
     private float knockBackBase = 0.2f, knockBackPerDamage = 0.01f;
+
+    private McmeEntity shooter = null;
 
     private Set<McmeEntity> enemies = null;
 
@@ -399,6 +396,15 @@ public class VirtualEntityFactory {
         return this;
     }
 
+    public McmeEntity getShooter() {
+        return shooter;
+    }
+
+    public VirtualEntityFactory withShooter(McmeEntity shooter) {
+        this.shooter = shooter;
+        return this;
+    }
+
     public static VirtualEntityFactory getDefaults() {
         return new VirtualEntityFactory(null,null,false,
                                          null ,"",null);
@@ -438,22 +444,29 @@ public class VirtualEntityFactory {
                     throw new RuntimeException("EntityType not implemented");
                 case PLAYER:
                     return new SimplePlayer(entityId, this);
+                case ARROW:
+                case SPECTRAL_ARROW:
+                case SNOWBALL:
+                case EGG:
+                case SPLASH_POTION:
+                case THROWN_EXP_BOTTLE:
+                case TRIDENT:
+                case ENDER_PEARL:
+                case FIREWORK:
+                case FALLING_BLOCK:
+                case LLAMA_SPIT:
+                    return new Projectile(entityId,this);
                 case AREA_EFFECT_CLOUD:
                 case ARMOR_STAND:
-                case ARROW:
                 case BOAT:
                 case DRAGON_FIREBALL:
                 case ENDER_CRYSTAL:
                 case EVOKER:
-                case ENDER_PEARL:
-                case FALLING_BLOCK:
-                case FIREWORK:
                 case IRON_GOLEM:
                 case ITEM_FRAME:
                 case FIREBALL:
                 case LEASH_HITCH:
                 case LIGHTNING:
-                case LLAMA_SPIT:
                 case MINECART:
                 case MINECART_CHEST:
                 case MINECART_COMMAND:
@@ -463,12 +476,6 @@ public class VirtualEntityFactory {
                 case MINECART_TNT:
                 case SHULKER_BULLET:
                 case SMALL_FIREBALL:
-                case SNOWBALL:
-                case SPECTRAL_ARROW:
-                case EGG:
-                case THROWN_EXP_BOTTLE:
-                case SPLASH_POTION:
-                case TRIDENT:
                 case WITHER_SKULL:
                 case FISHING_HOOK:
                     return new SimpleNonLivingEntity(entityId, this);

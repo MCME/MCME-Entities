@@ -9,6 +9,7 @@ import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.command.argument.AnimationFileArgument;
 import com.mcmiddleearth.entities.command.argument.EntityTypeArgument;
 import com.mcmiddleearth.entities.command.argument.GoalTypeArgument;
+import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
@@ -65,7 +66,8 @@ public class SpawnCommand extends McmeEntitiesCommandHandler {
                 .withHeadPitchCenter(new Vector(0,0,0.3))
                 .withGoalType(GoalType.valueOf(goal.toUpperCase()))
                 .withTargetEntity((RealPlayer)sender);*/
-        VirtualEntityFactory factory = getFactory(sender, type, name, goal, dataFile);
+        VirtualEntityFactory factory = getFactory(sender, type, name, goal, dataFile)
+                                            .withShooter((McmeEntity) sender);
         try {
             VirtualEntity entity = (VirtualEntity) EntityAPI.spawnEntity(factory);
             /*if(goal.equalsIgnoreCase("hold_position")) {
