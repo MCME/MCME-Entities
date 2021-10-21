@@ -72,8 +72,10 @@ public class VirtualEntityFactory {
 
     private int jumpHeight = 1;
     private float knockBackBase = 0.2f, knockBackPerDamage = 0.01f;
+    private float projectileDamage = 2;
 
     private McmeEntity shooter = null;
+    private float projectileVelocity = 1.6f;
 
     private Set<McmeEntity> enemies = null;
 
@@ -206,7 +208,7 @@ public class VirtualEntityFactory {
         return this;
     }
 
-    public VirtualEntityFactory useEntityForSpawnLocation(Entity entity) {
+    public VirtualEntityFactory withEntityForSpawnLocation(Entity entity) {
         this.spawnLocationEntity = entity;
         return this;
     }
@@ -342,6 +344,15 @@ public class VirtualEntityFactory {
         return this;
     }
 
+    public float getProjectileDamage() {
+        return projectileDamage;
+    }
+
+    public VirtualEntityFactory withProjectileDamage(float projectileDamage) {
+        this.projectileDamage = projectileDamage;
+        return this;
+    }
+
     public int getViewDistance() {
         return viewDistance;
     }
@@ -402,6 +413,15 @@ public class VirtualEntityFactory {
 
     public VirtualEntityFactory withShooter(McmeEntity shooter) {
         this.shooter = shooter;
+        return this;
+    }
+
+    public float getProjectileVelocity() {
+        return projectileVelocity;
+    }
+
+    public VirtualEntityFactory withProjectileVelocity(float velocity) {
+        this.projectileVelocity = velocity;
         return this;
     }
 

@@ -4,17 +4,20 @@ import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
 import com.mcmiddleearth.entities.Permission;
+import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.api.EntityAPI;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.command.argument.AnimationFileArgument;
 import com.mcmiddleearth.entities.command.argument.EntityTypeArgument;
 import com.mcmiddleearth.entities.command.argument.GoalTypeArgument;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.Projectile;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Location;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 
@@ -68,6 +71,15 @@ public class SpawnCommand extends McmeEntitiesCommandHandler {
                 .withTargetEntity((RealPlayer)sender);*/
         VirtualEntityFactory factory = getFactory(sender, type, name, goal, dataFile)
                                             .withShooter((McmeEntity) sender);
+        Location loc = factory.getLocation();
+        Entity spawnLocationEntity = factory.getSpawnLocationEntity();
+        if(type.equalsIgnoreCase("arrow") && factory.getGoalFactory()!=null) {
+            if(factory.getGoalFactory().getTargetEntity()!=null) {
+                Projectile.takeAim(factory, factory.getGoalFactory().getTargetEntity().getLocation());
+            } else if(factory.getGoalFactory().getTargetLocation()!=null) {
+                Projectile.takeAim(factory, factory.getGoalFactory().getTargetLocation());
+            }
+        }
         try {
             VirtualEntity entity = (VirtualEntity) EntityAPI.spawnEntity(factory);
             /*if(goal.equalsIgnoreCase("hold_position")) {
@@ -82,6 +94,7 @@ public class SpawnCommand extends McmeEntitiesCommandHandler {
         } catch (InvalidDataException e) {
             sender.sendMessage(new ComponentBuilder(e.getMessage()).create());
         }
+        factory.withLocation(loc).withEntityForSpawnLocation(spawnLocationEntity);
         return 0;
     }
 

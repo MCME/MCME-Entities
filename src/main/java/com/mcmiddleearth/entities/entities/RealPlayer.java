@@ -9,6 +9,8 @@ import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -16,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
+import sun.rmi.runtime.Log;
 
 import java.util.Set;
 import java.util.UUID;
@@ -23,8 +26,13 @@ import java.util.logging.Logger;
 
 public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
+    private EntityBoundingBox bb = new EntityBoundingBox(0.5,0.3,0,2);
+
     public RealPlayer(Player bukkitPlayer) {
         super(bukkitPlayer);
+        bb.setLocation(bukkitPlayer.getLocation());
+        //getBoundingBox();
+//Logger.getGlobal().info("Create bb: "+bukkitPlayer.getName());
     }
 
     @Override
@@ -78,7 +86,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public EntityBoundingBox getBoundingBox() {
-        return new EntityBoundingBox(0,0,0,0);
+        return bb;
     }
 
     @Override
@@ -96,8 +104,28 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     }
 
+    double damage = 0;
     @Override
     public void doTick() {
+        bb.setLocation(getBukkitPlayer().getLocation());
+//        bb.getBoundingBox();
+        double attack = 0;
+        AttributeInstance attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+        if(attribute!=null) attack = attribute.getValue();
+        double cooldown = 0;
+        attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
+        if(attribute!=null) cooldown = attribute.getValue();
+Logger.getGlobal().info("Attack: "+attack+" Cooldown: "+cooldown);
+        double defense = 0;
+        attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ARMOR);
+        if(attribute!=null) defense = attribute.getValue();
+        double toughness = 0;
+        attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
+        if(attribute!=null) toughness = attribute.getValue();
+        damage++;
+        if(damage == 20) damage = 0;
+        double dam = damage * (1-Math.min(20,Math.max(defense/5,defense - 4*damage/(toughness+8)))/25);
+        Logger.getGlobal().info("defense: "+defense+" toughness: "+toughness+" damage: "+damage+" dam: "+dam);
     }
 
     @Override
@@ -167,15 +195,28 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     @Override
     public void receiveAttack(McmeEntity damager, double damage, double knockDownFactor) {
         //knock back?
-        damage(damage);
+        double defense = 0;
+        AttributeInstance attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ARMOR);
+        if(attribute!=null) defense = attribute.getValue();
+        double toughness = 0;
+        attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
+        if(attribute!=null) toughness = attribute.getValue();
+        damage(damage*(1-Math.min(20,Math.max(defense/5,defense - 4*damage/(toughness+8)))/25));
+        //        damage(damage);
     }
 
     @Override
     public void attack(McmeEntity target) {
         if(getLocation().distanceSquared(target.getLocation()) < GoalDistance.ATTACK*1.5) {
-            int damage = (int) (Math.random() * 8);
+            //int damage = (int) (Math.random() * 8);
 //Logger.getGlobal().info("Attack: " + event.getEntity().getType().getBukkitEntityType() + " " + damage);
-            target.receiveAttack(this, damage, 1);
+            AttributeInstance attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+            double damage = 2;
+            if(attribute!= null) damage = attribute.getValue();
+            double knockback = 0;
+            attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
+            if(attribute!=null) knockback = attribute.getValue();
+            target.receiveAttack(this, damage, knockback+1);
         }
 
     }

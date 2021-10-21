@@ -47,7 +47,7 @@ public abstract class McmeEntitiesCommandHandler extends AbstractCommandHandler 
         }
         if(factory.getLocation()==null)
         {
-            factory.useEntityForSpawnLocation(player);
+            factory.withEntityForSpawnLocation(player);
         }
         if(goal !=null)
         {

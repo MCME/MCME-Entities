@@ -49,6 +49,8 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
     MANUAL_ANIMATION        = "manual_animation",
     HEAD_POSE_DELAY         = "head_pose_delay",
     VIEW_DISTANCE           = "view_distance",
+    PROJECTILE_VELOCITY     = "projectile_velocity",
+    PROJECTILE_DAMAGE       = "projectile_damage",
     MAX_ROTATION_STEP       = "max_rotation_step",
     MAX_ROTATION_STEP_FLIGHT    = "max_rotation_step_flight",
     UPDATE_INTERVAL             = "update_interval",
@@ -56,7 +58,6 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
     KNOCK_BACK_BASE             = "knock_back_base",
     KNOCK_BACK_PER_DAMAGE       = "knock_back_per_damage",
     ENEMIES                     = "enemies";
-    
 
     @Override
     public void write(JsonWriter out, VirtualEntityFactory factory) throws IOException {
@@ -121,6 +122,10 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                                         defaults.getHeadPoseDelay(),writeDefaults);
         JsonUtil.writeNonDefaultInt(out, VIEW_DISTANCE, factory.getViewDistance(),
                                         defaults.getViewDistance(),writeDefaults);
+        JsonUtil.writeNonDefaultFloat(out, PROJECTILE_VELOCITY, factory.getProjectileVelocity(),
+                                        defaults.getProjectileVelocity(),writeDefaults);
+        JsonUtil.writeNonDefaultFloat(out, PROJECTILE_DAMAGE, factory.getProjectileDamage(),
+                                        defaults.getProjectileDamage(), writeDefaults);
         JsonUtil.writeNonDefaultFloat(out, MAX_ROTATION_STEP, factory.getMaxRotationStep(),
                                         defaults.getMaxRotationStep(),writeDefaults);
         JsonUtil.writeNonDefaultFloat(out, MAX_ROTATION_STEP_FLIGHT, factory.getMaxRotationStepFlight(),
@@ -185,7 +190,7 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                         factory.withDisplayNamePosition(gson.fromJson(in, Vector.class));
                         break;
                     case SPAWN_LOCATION_ENTITY:
-                        factory.useEntityForSpawnLocation(JsonUtil.readEntityLink(in));
+                        factory.withEntityForSpawnLocation(JsonUtil.readEntityLink(in));
                         break;
                     case SPAWN_LOCATION:
                         factory.withLocation(gson.fromJson(in,Location.class));
@@ -240,6 +245,12 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                         break;
                     case VIEW_DISTANCE:
                         factory.withViewDistance(in.nextInt());
+                        break;
+                    case PROJECTILE_VELOCITY:
+                        factory.withProjectileVelocity((float)in.nextDouble());
+                        break;
+                    case PROJECTILE_DAMAGE:
+                        factory.withProjectileDamage((float)in.nextDouble());
                         break;
                     case MAX_ROTATION_STEP:
                         factory.withMaxRotationStep((float)in.nextDouble());

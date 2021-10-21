@@ -106,6 +106,18 @@ public class McmeEntityType {
         }
     }
 
+    public boolean isProjectile() {
+        return bukkitEntityType!=null && (bukkitEntityType.equals(EntityType.ARROW)
+                                            || bukkitEntityType.equals(EntityType.LLAMA_SPIT)
+                                            || bukkitEntityType.equals(EntityType.SNOWBALL)
+                                            || bukkitEntityType.equals(EntityType.SPECTRAL_ARROW)
+                                            || bukkitEntityType.equals(EntityType.EGG)
+                                            || bukkitEntityType.equals(EntityType.THROWN_EXP_BOTTLE)
+                                            || bukkitEntityType.equals(EntityType.SPLASH_POTION)
+                                            || bukkitEntityType.equals(EntityType.TRIDENT)
+                                            || bukkitEntityType.equals(EntityType.ENDER_PEARL));
+    }
+
     @Override
     public boolean equals(Object other) {
         if ((other instanceof McmeEntityType) && this.isCustomType == ((McmeEntityType) other).isCustomType) {

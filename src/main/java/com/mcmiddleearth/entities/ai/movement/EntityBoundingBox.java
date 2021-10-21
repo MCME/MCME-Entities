@@ -6,6 +6,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class EntityBoundingBox {
 
@@ -29,8 +30,13 @@ public class EntityBoundingBox {
     }
 
     public void setLocation(Location location) {
+//Logger.getGlobal().info("setLocation: "+location);
+//Logger.getGlobal().info("max: "+max);
+//Logger.getGlobal().info("min: "+min);
         min = location.toVector().add(dMin);
         max = location.toVector().add(dMax);
+//Logger.getGlobal().info("max: "+max);
+//Logger.getGlobal().info("min: "+min);
     }
 
     public Vector getLocation() {
@@ -42,6 +48,8 @@ public class EntityBoundingBox {
     }
 
     public BoundingBox getBoundingBox() {
+//Logger.getGlobal().info("max: "+max);
+//Logger.getGlobal().info("min: "+min);
         return new BoundingBox(min.getX(),min.getY(),min.getZ(),max.getX(),max.getY(), max.getZ());
     }
 

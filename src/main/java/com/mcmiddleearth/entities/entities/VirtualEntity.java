@@ -192,8 +192,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                     velocity = goal.getVelocity();
                 } else {
                     movementEngine.calculateMovement(goal.getDirection());
+//Logger.getGlobal().info("Goal: "+goal.getType()+" direction: "+goal.getDirection()+" vel: "+velocity);
                 }
-//Logger.getGlobal().info("Goal: "+goal.getType()+" has Rotation: "+goal.hasRotation()+" "+goal.getYaw()+" head Rot: "+goal.hasHeadRotation()+" HeadGo: "+goal.getCurrentHeadGoal());
                 if(goal.hasRotation()) {
 //Logger.getGlobal().info("rotation: "+ goal.getRotation());
                     setRotation(goal.getYaw(),goal.getPitch(),goal.getRoll());
@@ -238,6 +238,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public void teleport() {
+//if(!(this instanceof Projectile)) Logger.getGlobal().info("teleport");
         teleportPacket.update();
         teleportPacket.send(viewers);
         teleported = false;
@@ -252,7 +253,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 //Logger.getGlobal().info("location old: "+ getLocation());
 //Logger.getGlobal().info("velocity: "+ velocity+" yaw: "+getRotation()+" head: "+location.getYaw()+" "+location.getPitch());
         location = location.add(velocity);
-//Logger.getGlobal().info("location new: "+ getLocation().getX()+" "+getLocation().getY()+" "+getLocation().getZ());
+//if(!(this instanceof Projectile)) Logger.getGlobal().info("velocity: "+ velocity);
+//if(!(this instanceof Projectile)) Logger.getGlobal().info("location new: "+ getLocation().getX()+" "+getLocation().getY()+" "+getLocation().getZ());
         boundingBox.setLocation(location);
 
         if((tickCounter % updateInterval == updateRandom)) {
@@ -270,7 +272,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void setLocation(Location location) {
-//Logger.getGlobal().info("Teleport!");
+//if(!(this instanceof Projectile)) Logger.getGlobal().info("set location!");
         this.location = location.clone();
         this.boundingBox.setLocation(location);
         teleported = true;
@@ -591,11 +593,40 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 AttributeInstance attribute = getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
                 double damage = 2;
                 if(attribute!= null) damage = attribute.getValue();
+                double knockback = 0;
                 attribute = getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
-                double knockback = 1;
                 if(attribute!=null) knockback = attribute.getValue();
-                target.receiveAttack(this, damage, knockback);
+                target.receiveAttack(this, damage, knockback+1);
                 attackCoolDown = 40;
+                attribute = getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+                if(attribute!=null) attackCoolDown = (int) (20 / attribute.getValue());
+            }
+        }
+    }
+
+    public void shoot(McmeEntity target, McmeEntityType projectile) {
+        if(projectile.isProjectile()
+                && target.getLocation().getWorld().equals(getLocation().getWorld())
+                && attackCoolDown == 0 && hurtCoolDown == 0) {
+            AttributeInstance attribute = getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+            float damage = 2;
+            if(attribute!= null) damage = (float) attribute.getValue();
+            double knockback = 1;
+            attribute = getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
+            if(attribute!=null) knockback = attribute.getValue();
+            VirtualEntityFactory factory = new VirtualEntityFactory(projectile, getLocation().clone().add(-0.4,1.4,0))
+                        .withShooter(this)
+                        .withProjectileDamage(damage)
+                        .withKnockBackBase((float)knockback)
+                        .withKnockBackPerDamage(0);
+            Projectile.takeAim(factory, target.getLocation());
+            try {
+                EntityAPI.spawnEntity(factory);
+                attackCoolDown = 40;
+                attribute = getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+                if(attribute!=null) attackCoolDown = (int) (20 / attribute.getValue());
+            } catch (InvalidLocationException | InvalidDataException e) {
+                e.printStackTrace();
             }
         }
     }

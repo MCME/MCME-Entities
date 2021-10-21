@@ -182,6 +182,12 @@ public class VirtualEntityGoalFactory {
                     Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalWatchEntity(entity,this);
                 break;
+            case RANGED_ATTACK_ENTITY:
+                Constrain.checkEntity(targetEntity);
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalRangedAttack(entity,this);
+                break;
             case FOLLOW_ENTITY:
                 Constrain.checkEntity(targetEntity);
                 if(!(targetEntity instanceof Placeholder))

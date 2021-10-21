@@ -12,8 +12,8 @@ import org.bukkit.util.Vector;
 
 public class GoalWatchEntity extends GoalVirtualEntity {
 
-    private McmeEntity target;
-    private boolean targetIncomplete = false;
+    protected McmeEntity target;
+    protected boolean targetIncomplete = false;
 
     //private boolean hasRotation;
     //private float rotation;

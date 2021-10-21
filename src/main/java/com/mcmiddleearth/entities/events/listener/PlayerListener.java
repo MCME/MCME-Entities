@@ -5,6 +5,7 @@ import com.mcmiddleearth.entities.api.EntityAPI;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener {
@@ -28,12 +29,13 @@ public class PlayerListener implements Listener {
         }
     }*/
 
-    /*@EventHandler
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+        EntitiesPlugin.getEntityServer().getOrCreateMcmePlayer(event.getPlayer());
+        /*ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         //manager.addPacketListener(new EntityListener(this));
         Logger.getGlobal().info("Manager: "+manager);
         manager.addPacketListener(new VirtualEntityUseListener(EntitiesPlugin.getInstance(), EntitiesPlugin.getEntityServer()));
-
-    }*/
+            */
+    }
 }

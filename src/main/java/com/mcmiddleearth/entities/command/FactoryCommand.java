@@ -89,7 +89,7 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
             case "location":
                 try {
                     if(value.equalsIgnoreCase("@p") && (player instanceof RealPlayer)) {
-                        factory.useEntityForSpawnLocation((RealPlayer)player);
+                        factory.withEntityForSpawnLocation((RealPlayer)player);
                     } else {
                         factory.withLocation(parseLocation(((RealPlayer) player).getBukkitPlayer(), value));
                     }

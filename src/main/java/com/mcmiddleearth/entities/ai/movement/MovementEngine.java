@@ -4,6 +4,8 @@ import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.GoalJockey;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.Projectile;
+import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.provider.BlockProvider;
 import org.bukkit.attribute.Attribute;
@@ -25,6 +27,8 @@ public class MovementEngine {
 
     private double fallStart = 0;
 
+    private static final Vector zero = new Vector(0,0,0);
+
     public MovementEngine(VirtualEntity entity) {
         this.entity = entity;
         this.blockProvider = EntitiesPlugin.getEntityServer().getBlockProvider(entity.getLocation().getWorld().getUID());
@@ -32,10 +36,11 @@ public class MovementEngine {
 
     public void calculateMovement(Vector direction) {
 //Logger.getGlobal().info("direction: "+direction);
-        if ((direction == null || direction.equals(new Vector(0,0,0))) && !entity.getMovementType().equals(MovementType.FALLING)) {
+        /*if ((direction == null || direction.equals(new Vector(0,0,0))) && !entity.getMovementType().equals(MovementType.FALLING)) {
             entity.setVelocity(new Vector(0, 0, 0));
             return;
-        }
+        }*/
+        if(direction == null) direction = zero.clone();
         if(entity.isDead()) {
             switch (entity.getMovementType()) {
                 case FLYING:
@@ -52,7 +57,10 @@ public class MovementEngine {
             case FLYING:
 //Logger.getGlobal().info("location: "+ entity.getLocation());
 //Logger.getGlobal().info("speed: "+ getFlyingSpeed());
-                Vector velocity = direction.normalize().multiply(entity.getFlyingSpeed());
+                Vector velocity = zero.clone();
+                if(!direction.equals(zero)) {
+                    velocity = direction.normalize().multiply(entity.getFlyingSpeed());
+                }
 //Logger.getGlobal().info("velocity: "+ velocity);
                 if(cannotMove(velocity)) {
                     velocity = new Vector(0,0,0);
@@ -99,7 +107,10 @@ public class MovementEngine {
             case UPRIGHT:
             case SNEAKING:
             default:
-                velocity = direction.normalize().multiply(entity.getGenericSpeed());
+                velocity = zero.clone();
+                if(!direction.equals(zero)) {
+                    velocity = direction.normalize().multiply(entity.getGenericSpeed());
+                }
 //Logger.getGlobal().info("vector: "+velocity.getX()+" "+velocity.getY()+" "+velocity.getZ());
                 velocity.setY(0);
                 Vector collisionVelocity = handleCollisions(velocity.clone());
@@ -159,10 +170,20 @@ public class MovementEngine {
                                                                              (int)(entityBB.getHeight()*2+1),
                                                                              (int)(entityBB.getWidthZ()*2+1));
         for(McmeEntity search: closeEntities) {
+/*if(search instanceof RealPlayer) {
+    Logger.getGlobal().info("player: "+search.getBoundingBox().isZero());
+    search.getBoundingBox().setLocation(search.getLocation());
+    Logger.getGlobal().info("max: "+search.getBoundingBox().getMax());
+    Logger.getGlobal().info("min: "+search.getBoundingBox().getMin());
+    Logger.getGlobal().info("bb: "+search.getBoundingBox().getBoundingBox());
+}
+Logger.getGlobal().info("type: "+search.getClass().getSimpleName()+" "+search.getType().name());*/
             if(!((search.getGoal() instanceof GoalJockey) && ((GoalJockey)search.getGoal()).getSteed().equals(entity))
+                    && !(search instanceof Projectile)
                     && search != entity && search.getBoundingBox() != null && !search.getBoundingBox().isZero()
                     && entityBB.overlaps(search.getBoundingBox().getBoundingBox())) {
                 double speed = velocity.length();
+//Logger.getGlobal().info("colision: "+search);
                 if(Double.isFinite(speed)) {
                     speed = Math.max(speed,0.01);
                     Vector distance = search.getLocation().toVector().subtract(entity.getLocation().toVector());
@@ -176,6 +197,7 @@ public class MovementEngine {
                     velocity.subtract(distance).normalize().multiply(speed);
                 }
             }
+//Logger.getGlobal().info("next");
         }
         return velocity;
     }
