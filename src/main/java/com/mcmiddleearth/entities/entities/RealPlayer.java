@@ -109,13 +109,13 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     public void doTick() {
         bb.setLocation(getBukkitPlayer().getLocation());
 //        bb.getBoundingBox();
-        double attack = 0;
+        /*double attack = 0;
         AttributeInstance attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
         if(attribute!=null) attack = attribute.getValue();
         double cooldown = 0;
         attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
         if(attribute!=null) cooldown = attribute.getValue();
-Logger.getGlobal().info("Attack: "+attack+" Cooldown: "+cooldown);
+//ogger.getGlobal().info("Attack: "+attack+" Cooldown: "+cooldown);
         double defense = 0;
         attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ARMOR);
         if(attribute!=null) defense = attribute.getValue();
@@ -125,7 +125,7 @@ Logger.getGlobal().info("Attack: "+attack+" Cooldown: "+cooldown);
         damage++;
         if(damage == 20) damage = 0;
         double dam = damage * (1-Math.min(20,Math.max(defense/5,defense - 4*damage/(toughness+8)))/25);
-        Logger.getGlobal().info("defense: "+defense+" toughness: "+toughness+" damage: "+damage+" dam: "+dam);
+        Logger.getGlobal().info("defense: "+defense+" toughness: "+toughness+" damage: "+damage+" dam: "+dam);*/
     }
 
     @Override
