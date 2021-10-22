@@ -30,9 +30,9 @@ public class Explosion {
 
     private Set<McmeEntity> unaffected = new HashSet<>();
 
-    private Set<McmeEntity> settled = new HashSet<>();
+    private Set<McmeEntity> settled;
 
-    private Set<Player> viewer = new HashSet<>();
+    //private Set<Player> viewer = new HashSet<>();
 
     private McmeEntity damager;
 
@@ -43,6 +43,7 @@ public class Explosion {
     }
 
     public void explode() {
+        settled = new HashSet<>();
         new BukkitRunnable() {
 
             private double currentRadius = velocity;
@@ -106,6 +107,10 @@ public class Explosion {
         return this;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
     public Explosion setRadius(double radius) {
         this.radius = radius;
         return this;
@@ -124,5 +129,9 @@ public class Explosion {
     public Explosion addUnaffected(McmeEntity unaffected) {
         this.unaffected.add(unaffected);
         return this;
+    }
+
+    public void clearUnaffected() {
+        unaffected.clear();
     }
 }
