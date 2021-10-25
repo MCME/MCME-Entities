@@ -19,7 +19,7 @@ public class SimpleEntityEquipmentPacket extends AbstractPacket {
     public SimpleEntityEquipmentPacket(int entityId) {
         equipment = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
         equipment.getIntegers().write(0, entityId);
-        setItem(EquipmentSlot.HAND, new ItemStack(Material.STICK));
+        setItem(EquipmentSlot.HAND, new ItemStack(Material.AIR));
     }
 
     public void setItem(EquipmentSlot slot, ItemStack item) {

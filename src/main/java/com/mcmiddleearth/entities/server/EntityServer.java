@@ -67,4 +67,6 @@ public interface EntityServer {
     RealPlayer getMcmePlayer(UUID uniqueId);
 
     void removePlayer(Player player);
+
+    long getCurrentTick();
 }

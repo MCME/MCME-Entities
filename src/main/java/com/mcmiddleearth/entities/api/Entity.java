@@ -117,4 +117,6 @@ public interface Entity {
     public void removePotionEffect(PotionEffect effect);
 
     public void addItem(ItemStack item, EquipmentSlot slot, int slotId);
+
+    public void removeItem(ItemStack item);
 }

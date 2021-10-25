@@ -20,6 +20,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import sun.rmi.runtime.Log;
 
+import java.util.Arrays;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -28,11 +30,19 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     private EntityBoundingBox bb = new EntityBoundingBox(0.5,0.3,0,2);
 
+    private static final Random random = new Random();
+
+    private final int updateRandom = random.nextInt(40);
+
     public RealPlayer(Player bukkitPlayer) {
         super(bukkitPlayer);
         bb.setLocation(bukkitPlayer.getLocation());
         //getBoundingBox();
 //Logger.getGlobal().info("Create bb: "+bukkitPlayer.getName());
+    }
+
+    public int getUpdateRandom() {
+        return updateRandom;
     }
 
     @Override
@@ -305,6 +315,13 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
             inventory.addItem(temp);
             //TODO drop if inventory full
         }
+    }
+
+    @Override
+    public void removeItem(ItemStack item) {
+        PlayerInventory inventory = getBukkitPlayer().getInventory();
+        Arrays.stream(inventory.getContents()).filter(search -> search!=null && search.isSimilar(item))
+              .forEach(inventory::removeItemAnySlot);
     }
 
     @Override

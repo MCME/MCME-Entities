@@ -310,10 +310,12 @@ public class VirtualEntityFactory {
      */
     public Map<Attribute, AttributeInstance> getAttributes() {
         Map<Attribute,AttributeInstance> result = new HashMap<>();
-        attributes.forEach((attribute, instance)
-                -> result.put(attribute, new VirtualEntityAttributeInstance(attribute,
-                                                                            instance.getDefaultValue(),
-                                                                            instance.getBaseValue())));
+        if(attributes!=null) {
+            attributes.forEach((attribute, instance)
+                    -> result.put(attribute, new VirtualEntityAttributeInstance(attribute,
+                    instance.getDefaultValue(),
+                    instance.getBaseValue())));
+        }
         return result;
     }
 

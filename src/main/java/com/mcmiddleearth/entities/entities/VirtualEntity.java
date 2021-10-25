@@ -763,6 +763,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         //TODO
     }
 
+    @Override
+    public void removeItem(ItemStack item) {
+        //TODO
+    }
+
     public VirtualEntityFactory getFactory() {
         VirtualEntityFactory factory = new VirtualEntityFactory(type,location, useWhitelistAsBlacklist,uniqueId,name,attributes)
                 .withBoundingBox(boundingBox)

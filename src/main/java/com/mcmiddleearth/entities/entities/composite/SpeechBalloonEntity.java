@@ -69,6 +69,4 @@ public class SpeechBalloonEntity extends CompositeEntity {
     public void setMovementType(MovementType movementType) {
     }
 
-
-
 }

@@ -18,6 +18,7 @@ import com.mcmiddleearth.entities.server.EntityServer;
 import com.mcmiddleearth.entities.server.SyncEntityServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -149,6 +150,10 @@ public final class EntitiesPlugin extends JavaPlugin {
             file.mkdir();
         }
         return file;
+    }
+
+    public NamespacedKey getPersistentDataKey(PersistentDataKey key) {
+        return new NamespacedKey(this, key.name());
     }
 
 }

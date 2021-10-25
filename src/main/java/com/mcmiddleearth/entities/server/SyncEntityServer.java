@@ -2,6 +2,7 @@ package com.mcmiddleearth.entities.server;
 
 import com.google.common.base.Joiner;
 import com.mcmiddleearth.entities.EntitiesPlugin;
+import com.mcmiddleearth.entities.PersistentDataKey;
 import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
@@ -23,6 +24,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -122,6 +125,19 @@ public class SyncEntityServer implements EntityServer {
         });
         for(RealPlayer p : playerProvider.getMcmePlayers()) {
             p.doTick();
+            if(getCurrentTick()%40==p.getUpdateRandom()) {
+                for(int i=0; i< p.getBukkitPlayer().getInventory().getSize(); i++) {
+                    ItemStack item = p.getBukkitPlayer().getInventory().getItem(i);
+                    if (item != null) {
+                        Long removalTime = item.getItemMeta().getPersistentDataContainer().get(EntitiesPlugin.getInstance()
+                                        .getPersistentDataKey(PersistentDataKey.ITEM_REMOVAL_TIME),
+                                PersistentDataType.PrimitivePersistentDataType.LONG);
+                        if (removalTime != null && removalTime < getCurrentTick()) {
+                            p.getBukkitPlayer().getInventory().setItem(i, null);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -392,4 +408,7 @@ public class SyncEntityServer implements EntityServer {
         return playerProvider.getMcmePlayer(uniqueId);
     }
 
+    public long getCurrentTick() {
+        return Bukkit.getCurrentTick();
+    }
 }
