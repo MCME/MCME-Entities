@@ -5,17 +5,12 @@ import com.mcmiddleearth.entities.ai.goal.GoalJockey;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Projectile;
-import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.provider.BlockProvider;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import sun.rmi.runtime.Log;
 
 import java.util.Collection;
-import java.util.logging.Logger;
 
 public class MovementEngine {
 
@@ -45,7 +40,7 @@ public class MovementEngine {
             switch (entity.getMovementType()) {
                 case FLYING:
                 case GLIDING:
-                    entity.setMovementType(MovementType.FALLING);
+                    entity.setMovementType(MovementType.FALL);
                     break;
                 case UPRIGHT:
                 case SNEAKING:
@@ -69,7 +64,7 @@ public class MovementEngine {
 //Logger.getGlobal().info("speed: "+getFlyingSpeed()+" velocity: "+velocity);
                 entity.setVelocity(velocity);
                 break;
-            case FALLING:
+            case FALL:
 //Logger.getGlobal().info("falling entity vel: "+entity.getVelocity());
                 velocity = entity.getVelocity().clone().add(gravity);
 //Logger.getGlobal().info("FALLING: "+velocity);
@@ -121,7 +116,7 @@ public class MovementEngine {
                 if(cannotMove(velocity)) {
                     double jumpHeight = jumpHeight();
                     if(jumpHeight>0 && jumpHeight<= entity.getJumpHeight()+0.01) {
-                        entity.setMovementType(MovementType.FALLING);
+                        entity.setMovementType(MovementType.FALL);
                         velocity.setY(Math.sqrt(-2 * jumpHeight * gravity.getY()));
 //if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
 //    Logger.getGlobal().info("Warning! Wrong velocity: "+velocity.getY()+" jump: "+jumpHeight+" maxtJump: "+entity.getJumpHeight()+" gravity: "+gravity.getY());
@@ -132,7 +127,7 @@ public class MovementEngine {
                     }
                 } else if(distanceToGround()>0.01) {
                     if(!cannotMove(velocity.clone().add(gravity))) {
-                        entity.setMovementType(MovementType.FALLING);
+                        entity.setMovementType(MovementType.FALL);
                     }
                 }
                 entity.setVelocity(velocity);

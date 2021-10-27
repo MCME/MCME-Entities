@@ -13,18 +13,15 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
-import sun.rmi.runtime.Log;
 
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
@@ -262,7 +259,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
         } else if(getBukkitPlayer().isOnGround()) {
             return MovementType.UPRIGHT;
         } else {
-            return MovementType.FALLING;
+            return MovementType.FALL;
         }
     }
 

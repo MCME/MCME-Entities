@@ -2,6 +2,6 @@ package com.mcmiddleearth.entities.api;
 
 public enum MovementType {
 
-    UPRIGHT, FLYING, FALLING, GLIDING, SWIMMING, SNEAKING, RIDING;
+    UPRIGHT, FLYING, FALL, GLIDING, SWIMMING, SNEAKING, RIDING;
 
 }

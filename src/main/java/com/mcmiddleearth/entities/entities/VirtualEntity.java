@@ -33,7 +33,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
@@ -390,8 +389,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     public void setMovementType(MovementType movementType) {
-        if(!this.movementType.equals(MovementType.FALLING)
-                && movementType.equals(MovementType.FALLING)) {
+        if(!this.movementType.equals(MovementType.FALL)
+                && movementType.equals(MovementType.FALL)) {
             movementEngine.setFallStart(boundingBox.getMin().getY());
         }
         this.movementType = movementType;
@@ -570,7 +569,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         }
         Vector knockBack = normal.multiply(-length).add(new Vector(0,length*2,0));
         if(isOnGround()) {
-            setMovementType(MovementType.FALLING);
+            setMovementType(MovementType.FALL);
         }
         //actionType = ActionType.HURT;
         hurtCoolDown = 10;
