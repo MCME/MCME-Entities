@@ -11,6 +11,8 @@ import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -18,10 +20,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
@@ -305,13 +304,23 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
             temp = inventory.getItem(slotId);
             inventory.setItem(slotId, item);
         } else {
-            inventory.addItem(item);
-            //TODO drop if inventory full
+            drop(inventory.addItem(item));
         }
         if(temp != null) {
-            inventory.addItem(temp);
-            //TODO drop if inventory full
+            drop(inventory.addItem(temp));
         }
+    }
+
+    private void drop(Map<Integer,ItemStack> drops) {
+        Location loc = getBukkitPlayer().getLocation().clone();
+        loc.setPitch(0);
+        loc.add(loc.getDirection().multiply(2));
+        Block block = loc.getBlock();
+        while(!block.isPassable() && block.getY()<loc.getWorld().getMaxHeight()) {
+            block = block.getRelative(BlockFace.UP);
+        }
+        Location location = block.getLocation();
+        drops.values().forEach(drop -> location.getWorld().dropItemNaturally(location,drop));
     }
 
     @Override
