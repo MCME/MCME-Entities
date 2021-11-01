@@ -8,19 +8,24 @@ import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
+import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
@@ -29,6 +34,9 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     private static final Random random = new Random();
 
     private final int updateRandom = random.nextInt(40);
+
+    private final VirtualEntityAttributeInstance knockBackAttribute
+            = new VirtualEntityAttributeInstance(Attribute.GENERIC_ATTACK_KNOCKBACK,0.4,0.4);
 
     public RealPlayer(Player bukkitPlayer) {
         super(bukkitPlayer);
@@ -220,9 +228,15 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
             double damage = 2;
             if(attribute!= null) damage = attribute.getValue();
             double knockback = 0;
-            attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
-            if(attribute!=null) knockback = attribute.getValue();
+            ItemStack weapon = getBukkitPlayer().getInventory().getItemInMainHand();
+            ItemMeta meta = weapon.getItemMeta();
+            try {
+                knockBackAttribute.setModifiers(meta.getAttributeModifiers(Attribute.GENERIC_ATTACK_KNOCKBACK));
+                knockback = knockBackAttribute.getValue();
+            } catch(NullPointerException ignore) {}
+           //if(attribute!=null) knockback = attribute.getValue();
             target.receiveAttack(this, damage, knockback+1);
+Logger.getGlobal().info("damage: "+damage+" knockback: "+knockback);
         }
 
     }

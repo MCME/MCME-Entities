@@ -57,8 +57,11 @@ public class VirtualEntityAttributeInstance implements AttributeInstance {
         return modifiers;
     }
 
-    public void setModifiers(List<AttributeModifier> modifiers) {
-        this.modifiers = modifiers;
+    public void setModifiers(Collection<AttributeModifier> modifiers) {
+        this.modifiers = new ArrayList<>();
+        if(modifiers!=null) {
+            this.modifiers.addAll(modifiers);
+        }
         calculateValue();
     }
 
