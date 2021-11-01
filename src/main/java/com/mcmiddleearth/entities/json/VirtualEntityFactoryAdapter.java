@@ -21,6 +21,7 @@ import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactory> {
 
@@ -155,10 +156,14 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
         in.beginObject();
         while(in.hasNext()) {
             String key = in.nextName();
+//Logger.getGlobal().info("key: "+key);
             try {
                 switch (key) {
                     case TYPE:
-                        factory.withEntityType(McmeEntityType.valueOf(in.nextString().toUpperCase()));
+                        String type = in.nextString();
+//Logger.getGlobal().info("type: "+type);
+                        factory.withEntityType(McmeEntityType.valueOf(type.toUpperCase()));
+//Logger.getGlobal().info("factory type: "+factory.getType());
                         break;
                     case BLACKLIST:
                         factory.withBlackList(in.nextBoolean());
