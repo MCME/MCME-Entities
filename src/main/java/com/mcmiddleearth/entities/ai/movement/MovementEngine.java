@@ -57,10 +57,12 @@ public class MovementEngine {
                     velocity = direction.normalize().multiply(entity.getFlyingSpeed());
                 }
 //Logger.getGlobal().info("velocity: "+ velocity);
-                if(cannotMove(velocity)) {
+                //TODO better pathfinding for flying entities
+                /*if(cannotMove(velocity)) {
                     velocity = new Vector(0,0,0);
 //Logger.getGlobal().info("cant move");
-                }
+                }*/
+                //end TODO
 //Logger.getGlobal().info("speed: "+getFlyingSpeed()+" velocity: "+velocity);
                 entity.setVelocity(velocity);
                 break;

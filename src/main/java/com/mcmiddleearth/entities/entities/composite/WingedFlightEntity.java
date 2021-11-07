@@ -33,12 +33,12 @@ public class WingedFlightEntity extends BakedAnimationEntity {
             while (yawDiff > 180) yawDiff -= 360;
             float rollTarget;
             if(yawDiff>0) {
-                rollTarget = Math.min(60, yawDiff * 0.66f);
+                rollTarget = Math.min(60, yawDiff * 1.2f);
             } else {
-                rollTarget = Math.max(-60, yawDiff * 0.66f);
+                rollTarget = Math.max(-60, yawDiff * 1.2f);
             }
             currentRoll = turn(currentRoll, rollTarget, maxRotationStepFlight);
-            currentYaw = turn(currentYaw, getLocation().getYaw(), Math.abs(maxRotationStepFlight / 60 * currentRoll));
+            currentYaw = turn(currentYaw, getLocation().getYaw(), Math.max(Math.abs(maxRotationStepFlight / 60 * currentRoll),maxRotationStepFlight/5f));
 //Logger.getGlobal().info("Rotation: "+((int)currentYaw)+" "+((int)currentPitch)+" "+(int)currentRoll);
             getBones().stream().filter(bone -> !bone.isHeadBone()).forEach(bone -> {
                 ((BoneThreeAxis) bone).setRotation(currentYaw, currentPitch, -currentRoll);

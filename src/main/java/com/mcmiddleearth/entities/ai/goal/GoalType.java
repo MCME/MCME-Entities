@@ -3,6 +3,7 @@ package com.mcmiddleearth.entities.ai.goal;
 public enum GoalType {
     HOLD_POSITION,
     ATTACK_ENTITY,
+    ATTACK_ENTITY_FLYING,
     DEFEND_ENTITY,
     WATCH_ENTITY,
     RANGED_ATTACK_ENTITY,

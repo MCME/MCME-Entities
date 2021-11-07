@@ -2,12 +2,14 @@ package com.mcmiddleearth.entities.api;
 
 import com.mcmiddleearth.entities.ai.goal.*;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoal;
+import com.mcmiddleearth.entities.ai.pathfinding.FlyingPathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.SimplePathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Placeholder;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.Constrain;
@@ -16,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -165,15 +168,20 @@ public class VirtualEntityGoalFactory {
 //Logger.getGlobal().info("target: "+targetEntity);
         Pathfinder pathfinder;
         GoalVirtualEntity goal;
-        switch(movementType) {
-            case UPRIGHT:
-            case SNEAKING:
-                pathfinder = new WalkingPathfinder(entity);
-//Logger.getGlobal().info("walking pathfinding!");
-                break;
-            default:
-//Logger.getGlobal().info("Simple pathfinding!");
-                pathfinder = new SimplePathfinder();
+        if((entity instanceof WingedFlightEntity) && movementType.equals(MovementType.FLYING)) {
+Logger.getGlobal().info("pathfinder: flying");
+            pathfinder = new FlyingPathfinder((WingedFlightEntity)entity);
+        } else {
+            switch (movementType) {
+                case UPRIGHT:
+                case SNEAKING:
+                    pathfinder = new WalkingPathfinder(entity);
+                    //Logger.getGlobal().info("walking pathfinding!");
+                    break;
+                default:
+                    //Logger.getGlobal().info("Simple pathfinding!");
+                    pathfinder = new SimplePathfinder();
+            }
         }
         switch(goalType) {
             case WATCH_ENTITY:
@@ -199,6 +207,12 @@ public class VirtualEntityGoalFactory {
                 if(!(targetEntity instanceof Placeholder))
                     Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetAttack(entity,this, pathfinder);
+                break;
+            case ATTACK_ENTITY_FLYING:
+                Constrain.checkEntity(targetEntity);
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalEntityTargetAttackFlying(entity,this, pathfinder);
                 break;
             case ATTACK_CLOSE:
                 Constrain.checkEntity(targetEntity);

@@ -409,6 +409,6 @@ public class SyncEntityServer implements EntityServer {
     }
 
     public long getCurrentTick() {
-        return Bukkit.getCurrentTick();
+        return System.currentTimeMillis()/50;// Bukkit.getCurrentTick();
     }
 }

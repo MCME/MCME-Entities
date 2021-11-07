@@ -269,6 +269,10 @@ Logger.getGlobal().info("Sending animation: "+viewer.getName());
         this.maxRotationStep = maxRotationStep;
     }
 
+    public float getCurrentYaw() {
+        return currentYaw;
+    }
+
     public enum RotationMode {
         YAW, YAW_PITCH, YAW_PITCH_ROLL;
     }
