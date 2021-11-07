@@ -12,6 +12,8 @@ import com.mcmiddleearth.entities.events.events.goal.GoalLocationTargetChangedEv
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import java.util.logging.Logger;
+
 public abstract class GoalLocationTarget extends GoalPath {
 
     private Location target;
@@ -60,7 +62,7 @@ public abstract class GoalLocationTarget extends GoalPath {
     }
 
     public void setTarget(Location target) {
-        if(!this.target.equals(target)) {
+        if(target!=null && (this.target == null || !this.target.equals(target))) {
             GoalLocationTargetChangedEvent event = new GoalLocationTargetChangedEvent(getEntity(),this,target);
             EntitiesPlugin.getEntityServer().handleEvent(event);
             if(!event.isCancelled()) {
@@ -70,6 +72,7 @@ public abstract class GoalLocationTarget extends GoalPath {
     }
 
     public boolean isCloseToTarget(double distanceSquared) {
+//Logger.getGlobal().info("Entity: "+getEntity()+" Target: "+getTarget());
         double distance = getEntity().getLocation().toVector().distanceSquared(getTarget().toVector());
         if((getEntity() instanceof WingedFlightEntity)
                 && (getEntity().getMovementType().equals(MovementType.FLYING)

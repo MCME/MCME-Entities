@@ -8,6 +8,9 @@ import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalCheckpointReachedEvent;
 import org.bukkit.Location;
 
+import java.util.Arrays;
+import java.util.logging.Logger;
+
 public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
 
     private final Location[] checkpoints;
@@ -19,6 +22,7 @@ public class GoalLocationTargetFollowCheckpoints extends GoalLocationTarget {
     public GoalLocationTargetFollowCheckpoints(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
         super(entity, factory, pathfinder);
         this.checkpoints = factory.getCheckpoints();
+//Arrays.stream(checkpoints).forEach(check-> Logger.getGlobal().info("* "+check));
         this.loop = factory.isLoop();
         currentCheckpoint = factory.getStartCheckpoint();
         setTarget(checkpoints[currentCheckpoint]);
