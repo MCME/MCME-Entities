@@ -81,9 +81,11 @@ public class VirtualEntityFactory {
 
     private Vector attackPoint = new Vector(0,1,0);
 
-    private Vector saddle = new Vector(0,1.8,0);
+    private Vector saddlePoint = new Vector(0,1.8,0);
 
     private Vector sitPoint = new Vector (0,1,0);
+
+    private boolean saddle = false;
 
     private boolean writeDefaultValuesToFile = false;
 
@@ -110,7 +112,7 @@ public class VirtualEntityFactory {
                 "location","movementType","goalType","targetLocation","targetEntity","headPitchCenter",
                 "speechballoonlayout","mouth","manualanimation","headposedelay","viewdistance",
                 "maxrotationstep", "maxRotationStepFlight", "updateInterval", "jumpheight", "knockbackbase",
-                "knockbackperdamage","relative_position","saddle","sitpoint","attackpoint").map(String::toLowerCase)
+                "knockbackperdamage","relative_position","saddlepoint","sitpoint","attackpoint").map(String::toLowerCase)
                 .sorted().collect(Collectors.toList());
     }
 
@@ -442,12 +444,12 @@ public class VirtualEntityFactory {
         return this;
     }
 
-    public Vector getSaddle() {
-        return saddle;
+    public Vector getSaddlePoint() {
+        return saddlePoint;
     }
 
-    public VirtualEntityFactory withSaddle(Vector saddle) {
-        this.saddle = saddle;
+    public VirtualEntityFactory withSaddlePoint(Vector saddlePoint) {
+        this.saddlePoint = saddlePoint;
         return this;
     }
 
@@ -457,6 +459,15 @@ public class VirtualEntityFactory {
 
     public VirtualEntityFactory withSitPoint(Vector sitPoint) {
         this.sitPoint = sitPoint;
+        return this;
+    }
+
+    public boolean getSaddle() {
+        return saddle;
+    }
+
+    public VirtualEntityFactory withSaddle(boolean saddle) {
+        this.saddle = saddle;
         return this;
     }
 

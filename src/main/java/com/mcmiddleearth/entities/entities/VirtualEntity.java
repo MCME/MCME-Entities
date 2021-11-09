@@ -152,7 +152,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.knockBackPerDamage = factory.getKnockBackPerDamage();
         this.enemies = (factory.getEnemies()!=null?factory.getEnemies():new HashSet<>());
         this.sitPoint = factory.getSitPoint();
-        this.saddle = factory.getSaddle();
+        this.saddle = factory.getSaddlePoint();
     }
 
     protected VirtualEntity(McmeEntityType type, Location location) {

@@ -253,9 +253,9 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse float for knockBackPerDamage!").color(ChatColor.RED).create());
                 }
                 break;
-            case "saddle":
+            case "saddlepoint":
                 try {
-                    factory.withSaddle(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
+                    factory.withSaddlePoint(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
                 } catch (IllegalArgumentException ex) {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse saddle position!").color(ChatColor.RED).create());
                 }

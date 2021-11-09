@@ -60,6 +60,7 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
     KNOCK_BACK_PER_DAMAGE       = "knock_back_per_damage",
     ENEMIES                     = "enemies",
     SADDLE                      = "saddle",
+    SADDLE_POINT                = "saddle_point",
     ATTACK_POINT                = "attack_point",
     SIT_POINT                   = "sit_point";
 
@@ -149,7 +150,9 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
             }
             out.endArray();
         }
-        JsonUtil.writeNonDefaultVector(out, SADDLE, factory.getSaddle(), defaults.getSaddle(), gson, writeDefaults);
+        JsonUtil.writeNonDefaultBoolean(out, SADDLE, factory.getSaddle(),
+                defaults.getSaddle(),writeDefaults);
+        JsonUtil.writeNonDefaultVector(out, SADDLE_POINT, factory.getSaddlePoint(), defaults.getSaddlePoint(), gson, writeDefaults);
         JsonUtil.writeNonDefaultVector(out, SIT_POINT, factory.getSitPoint(), defaults.getSitPoint(), gson, writeDefaults);
         JsonUtil.writeNonDefaultVector(out, ATTACK_POINT, factory.getAttackPoint(), defaults.getAttackPoint(), gson, writeDefaults);
         out.endObject();
@@ -293,7 +296,10 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                         factory.withEnemies(enemies);
                         break;
                     case SADDLE:
-                        factory.withSaddle(gson.fromJson(in, Vector.class));
+                        factory.withSaddle(in.nextBoolean());
+                        break;
+                    case SADDLE_POINT:
+                        factory.withSaddlePoint(gson.fromJson(in, Vector.class));
                         break;
                     case SIT_POINT:
                         factory.withSitPoint(gson.fromJson(in, Vector.class));
@@ -306,6 +312,7 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                 }
             } catch (IllegalArgumentException | IllegalStateException | JsonSyntaxException ex) {
                 //Logger.getLogger(VirtualEntityFactoryAdapter.class.getSimpleName()).warning("Error reading key: "+key+" -> "+ex.getMessage());
+                ex.printStackTrace();
                 throw new IllegalArgumentException("Error reading key: "+key+" at "+in.getPath() + " -> "+ex.getMessage());
             }
         }
