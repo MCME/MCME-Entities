@@ -13,16 +13,22 @@ import java.util.logging.Logger;
 
 public class GoalJockey extends GoalVirtualEntity {
 
-    private McmeEntity steed;
+    private final McmeEntity steed;
 
-    private Vector relativePosition;
+    private final Vector relativePosition;
 
     private Vector velocity;
 
     public GoalJockey(VirtualEntity entity, VirtualEntityGoalFactory factory) {
         super(entity, factory);
         this.steed = factory.getTargetEntity();
-        this.relativePosition = factory.getRelativePosition();
+        Vector shift;
+        if(steed instanceof VirtualEntity) {
+            shift = ((VirtualEntity)steed).getSaddle().clone();
+        } else {
+            shift = new Vector(0,1.8,0);
+        }
+        this.relativePosition = shift.subtract(entity.getSitPoint()).add(factory.getRelativePosition());
 Logger.getGlobal().info("relative: "+relativePosition);
     }
 

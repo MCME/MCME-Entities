@@ -58,7 +58,10 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
     JUMP_HEIGHT                 = "jump_height",
     KNOCK_BACK_BASE             = "knock_back_base",
     KNOCK_BACK_PER_DAMAGE       = "knock_back_per_damage",
-    ENEMIES                     = "enemies";
+    ENEMIES                     = "enemies",
+    SADDLE                      = "saddle",
+    ATTACK_POINT                = "attack_point",
+    SIT_POINT                   = "sit_point";
 
     @Override
     public void write(JsonWriter out, VirtualEntityFactory factory) throws IOException {
@@ -146,6 +149,9 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
             }
             out.endArray();
         }
+        JsonUtil.writeNonDefaultVector(out, SADDLE, factory.getSaddle(), defaults.getSaddle(), gson, writeDefaults);
+        JsonUtil.writeNonDefaultVector(out, SIT_POINT, factory.getSitPoint(), defaults.getSitPoint(), gson, writeDefaults);
+        JsonUtil.writeNonDefaultVector(out, ATTACK_POINT, factory.getAttackPoint(), defaults.getAttackPoint(), gson, writeDefaults);
         out.endObject();
     }
 
@@ -285,6 +291,15 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                         //} finally {
                         in.endArray(); //}
                         factory.withEnemies(enemies);
+                        break;
+                    case SADDLE:
+                        factory.withSaddle(gson.fromJson(in, Vector.class));
+                        break;
+                    case SIT_POINT:
+                        factory.withSitPoint(gson.fromJson(in, Vector.class));
+                        break;
+                    case ATTACK_POINT:
+                        factory.withAttackPoint(gson.fromJson(in, Vector.class));
                         break;
                     default:
                         in.skipValue();

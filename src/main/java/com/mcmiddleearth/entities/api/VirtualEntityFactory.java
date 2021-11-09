@@ -79,6 +79,12 @@ public class VirtualEntityFactory {
 
     private Set<McmeEntity> enemies = null;
 
+    private Vector attackPoint = new Vector(0,1,0);
+
+    private Vector saddle = new Vector(0,1.8,0);
+
+    private Vector sitPoint = new Vector (0,1,0);
+
     private boolean writeDefaultValuesToFile = false;
 
     public VirtualEntityFactory(McmeEntityType type, Location location) {
@@ -104,7 +110,7 @@ public class VirtualEntityFactory {
                 "location","movementType","goalType","targetLocation","targetEntity","headPitchCenter",
                 "speechballoonlayout","mouth","manualanimation","headposedelay","viewdistance",
                 "maxrotationstep", "maxRotationStepFlight", "updateInterval", "jumpheight", "knockbackbase",
-                "knockbackperdamage","relative_position").map(String::toLowerCase)
+                "knockbackperdamage","relative_position","saddle","sitpoint","attackpoint").map(String::toLowerCase)
                 .sorted().collect(Collectors.toList());
     }
 
@@ -424,6 +430,33 @@ public class VirtualEntityFactory {
 
     public VirtualEntityFactory withProjectileVelocity(float velocity) {
         this.projectileVelocity = velocity;
+        return this;
+    }
+
+    public Vector getAttackPoint() {
+        return attackPoint;
+    }
+
+    public VirtualEntityFactory withAttackPoint(Vector attackPoint) {
+        this.attackPoint = attackPoint;
+        return this;
+    }
+
+    public Vector getSaddle() {
+        return saddle;
+    }
+
+    public VirtualEntityFactory withSaddle(Vector saddle) {
+        this.saddle = saddle;
+        return this;
+    }
+
+    public Vector getSitPoint() {
+        return sitPoint;
+    }
+
+    public VirtualEntityFactory withSitPoint(Vector sitPoint) {
+        this.sitPoint = sitPoint;
         return this;
     }
 

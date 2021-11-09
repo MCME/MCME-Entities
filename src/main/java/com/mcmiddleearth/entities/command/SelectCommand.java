@@ -3,13 +3,17 @@ package com.mcmiddleearth.entities.command;
 import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
+import com.mojang.brigadier.context.CommandContext;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
+import static com.mojang.brigadier.arguments.StringArgumentType.word;
 
 public class SelectCommand extends McmeEntitiesCommandHandler {
 
@@ -31,7 +35,9 @@ public class SelectCommand extends McmeEntitiesCommandHandler {
                                 ((BukkitCommandSender)context.getSource()).setSelectedTargetEntity((RealPlayer)context.getSource());
                                 context.getSource().sendMessage(new ComponentBuilder("Saved you as target entity!").create());
                                 return 0;
-                            })))
+                            }))
+                        .then(HelpfulRequiredArgumentBuilder.argument("name",word())
+                            .executes(context -> selectTargetEntityByName(context.getSource(),context.getArgument("name",String.class)))))
                     .then(HelpfulLiteralBuilder.literal("clear")
                         .executes(context -> clearSelection(context.getSource()))))
                 .then(HelpfulLiteralBuilder.literal("location")
@@ -43,6 +49,17 @@ public class SelectCommand extends McmeEntitiesCommandHandler {
                     .then(HelpfulLiteralBuilder.literal("clear")
                         .executes(context -> clearSelectedLocations(context.getSource()))));
         return commandNodeBuilder;
+    }
+
+    private int selectTargetEntityByName(McmeCommandSender sender, String name) {
+        McmeEntity entity = EntitiesPlugin.getEntityServer().getEntity(name);
+        if(entity != null) {
+            ((BukkitCommandSender)sender).setSelectedTargetEntity(entity);
+            sender.sendMessage(new ComponentBuilder("Target entity set: "+name).create());
+        } else {
+            sender.sendMessage(new ComponentBuilder("No entity found by name: "+name).color(ChatColor.RED).create());
+        }
+        return 0;
     }
 
     private int showSelection(McmeCommandSender sender) {

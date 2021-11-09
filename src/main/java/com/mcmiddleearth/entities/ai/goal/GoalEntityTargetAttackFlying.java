@@ -71,10 +71,14 @@ public class GoalEntityTargetAttackFlying extends GoalPath {
         }
         if(target!=null && !targetIncomplete) {
             Vector tempTarget = getTarget().getLocation().toVector();
+            Vector loc = new Vector(0,0,0);
+            if(getEntity() instanceof WingedFlightEntity) {
+                loc.subtract(((WingedFlightEntity)getEntity()).getAttackPoint());
+            }
             if(!isInAttackPosition()) {
-                tempTarget.add(new Vector(0,15,0));
+                tempTarget.add(new Vector(0,15,0).add(loc));
             } else {
-                tempTarget.add(new Vector(0,target.getLocation().getY()-getEntity().getLocation().getY()+3,0));
+                tempTarget.add(new Vector(0,target.getLocation().getY()-(getEntity().getLocation().getY()+loc.getY())+3,0));
             }
             setPathTarget(tempTarget);
         } else {

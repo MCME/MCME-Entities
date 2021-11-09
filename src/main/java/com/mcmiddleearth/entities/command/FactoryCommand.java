@@ -253,6 +253,27 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse float for knockBackPerDamage!").color(ChatColor.RED).create());
                 }
                 break;
+            case "saddle":
+                try {
+                    factory.withSaddle(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
+                } catch (IllegalArgumentException ex) {
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse saddle position!").color(ChatColor.RED).create());
+                }
+                break;
+            case "sitpoint":
+                try {
+                    factory.withSitPoint(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
+                } catch (IllegalArgumentException ex) {
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse sit point!").color(ChatColor.RED).create());
+                }
+                break;
+            case "attackpoint":
+                try {
+                    factory.withAttackPoint(parseVector(((RealPlayer)player).getBukkitPlayer(), value));
+                } catch (IllegalArgumentException ex) {
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse attack point!").color(ChatColor.RED).create());
+                }
+                break;
             default:
                 sender.sendMessage(new ComponentBuilder("Property " + property +" could not be changed.").color(ChatColor.RED).create());
                 return 0;

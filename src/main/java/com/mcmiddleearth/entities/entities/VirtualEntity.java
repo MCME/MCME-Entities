@@ -108,7 +108,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private SpeechBalloonLayout defaultSpeechBalloonLayout, currentSpeechBalloonLayout;
 
-    private Vector mouth;
+    private Vector mouth, sitPoint, saddle;
 
     public VirtualEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         this.updateInterval = factory.getUpdateInterval();
@@ -151,6 +151,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.knockBackBase = factory.getKnockBackBase();
         this.knockBackPerDamage = factory.getKnockBackPerDamage();
         this.enemies = (factory.getEnemies()!=null?factory.getEnemies():new HashSet<>());
+        this.sitPoint = factory.getSitPoint();
+        this.saddle = factory.getSaddle();
     }
 
     protected VirtualEntity(McmeEntityType type, Location location) {
@@ -718,6 +720,14 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     @Override
     public Vector getMouth() {
         return mouth;
+    }
+
+    public Vector getSitPoint() {
+        return sitPoint;
+    }
+
+    public Vector getSaddle() {
+        return saddle;
     }
 
     public Set<UUID> getWhiteList() {
