@@ -106,7 +106,9 @@ public class WingedFlightEntity extends BakedAnimationEntity {
     @Override
     public VirtualEntityFactory getFactory() {
         VirtualEntityFactory factory = super.getFactory()
-                .withRoll(currentRoll);
+                .withRoll(currentRoll)
+                .withMaxRotationStepFlight(maxRotationStepFlight)
+                .withAttackPoint(attackPoint);
         return factory;
     }
 

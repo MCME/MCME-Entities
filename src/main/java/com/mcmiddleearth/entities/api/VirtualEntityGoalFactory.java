@@ -44,6 +44,10 @@ public class VirtualEntityGoalFactory {
 
     private Vector relativePosition = new Vector(0d,1d,0d);
 
+    private double flightLevel = 20;
+    private float attackPitch = 45;
+    private double dive = 1.15;
+
     private boolean writeDefaultsToFile = false;
 
     public VirtualEntityGoalFactory(GoalType goalType) {
@@ -146,6 +150,33 @@ public class VirtualEntityGoalFactory {
         return this;
     }
 
+    public double getFlightLevel() {
+        return flightLevel;
+    }
+
+    public VirtualEntityGoalFactory withFlightLevel(double flightLevel) {
+        this.flightLevel = flightLevel;
+        return this;
+    }
+
+    public float getAttackPitch() {
+        return attackPitch;
+    }
+
+    public VirtualEntityGoalFactory withAttackPitch(float attackPitch) {
+        this.attackPitch = attackPitch;
+        return this;
+    }
+
+    public double getDive() {
+        return dive;
+    }
+
+    public VirtualEntityGoalFactory withDive(double dive) {
+        this.dive = dive;
+        return this;
+    }
+
     public boolean isWriteDefaultsToFile() {
         return writeDefaultsToFile;
     }
@@ -208,11 +239,12 @@ Logger.getGlobal().info("pathfinder: flying");
                     Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetAttack(entity,this, pathfinder);
                 break;
-            case ATTACK_ENTITY_FLYING:
+            case ATTACK_ENTITY_WINGED:
                 Constrain.checkEntity(targetEntity);
                 if(!(targetEntity instanceof Placeholder))
                     Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
-                goal = new GoalEntityTargetAttackFlying(entity,this, pathfinder);
+                Constrain.checkClass(entity, WingedFlightEntity.class);
+                goal = new GoalEntityTargetAttackWinged((WingedFlightEntity)entity,this, pathfinder);
                 break;
             case ATTACK_CLOSE:
                 Constrain.checkEntity(targetEntity);

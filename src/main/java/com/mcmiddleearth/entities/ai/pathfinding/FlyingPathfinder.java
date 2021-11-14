@@ -9,6 +9,8 @@ public class FlyingPathfinder implements Pathfinder {
 
     private final WingedFlightEntity entity;
 
+    boolean homing = false;
+
     public FlyingPathfinder(WingedFlightEntity entity) {
         this.entity = entity;
     }
@@ -23,15 +25,20 @@ public class FlyingPathfinder implements Pathfinder {
         double minRadius = speed / (rotation*Math.PI/180);
 //Logger.getGlobal().info("Rotation: "+rotation+" speed: "+speed);
         double requiredRadius = calculateRequiredRadius();
-        if(Math.abs(requiredRadius)<minRadius*2) {
+        if(homing && Math.abs(requiredRadius)<minRadius*1.4) {
+            homing = false;
+        } else if(!homing && Math.abs(requiredRadius)>minRadius*2) {
+            homing = true;
+        }
+        if(homing) {
+//Logger.getGlobal().info("Radius: "+requiredRadius+" "+minRadius+" -----Target: "+target);
+            result.addPoint(target);
+        } else {
             Vector point = start.clone().add(new Vector(entity.getVelocity().getZ(),0,entity.getVelocity().getX())
-                                            .normalize().multiply(Math.signum(requiredRadius)*minRadius));
+                    .normalize().multiply(Math.signum(requiredRadius)*minRadius));
             point.setY(target.getY());
             result.addPoint(point);
 //Logger.getGlobal().info("Radius: "+requiredRadius+" "+minRadius+" -----Point: "+point);
-        } else {
-//Logger.getGlobal().info("Radius: "+requiredRadius+" "+minRadius+" -----Target: "+target);
-           result.addPoint(target);
         }
         return result;
     }

@@ -33,6 +33,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
@@ -584,6 +585,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void attack(McmeEntity target) {
+Logger.getGlobal().info("Att cool: "+attackCoolDown);
         if(attackCoolDown==0 && hurtCoolDown == 0) {
             VirtualEntityAttackEvent event = new VirtualEntityAttackEvent(this, target);
             EntitiesPlugin.getEntityServer().handleEvent(event);
@@ -600,7 +602,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 target.receiveAttack(this, damage, knockback+1);
                 attackCoolDown = 40;
                 attribute = getAttribute(Attribute.GENERIC_ATTACK_SPEED);
-                if(attribute!=null) attackCoolDown = (int) (20 / attribute.getValue());
+                if(attribute!=null) attackCoolDown = (int) (160 / attribute.getValue());
             }
         }
     }
@@ -791,6 +793,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 .withKnockBackBase(knockBackBase)
                 .withKnockBackPerDamage(knockBackPerDamage)
                 .withJumpHeight(jumpHeight)
+                .withAttributes(attributes)
                 .withEnemies(enemies)
                 .withSpeechBalloonLayout(defaultSpeechBalloonLayout);
         if(goal!=null) {

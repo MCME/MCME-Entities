@@ -133,19 +133,21 @@ public class BakedAnimationEntity extends CompositeEntity {
                 if(!manualOverride && instantAnimationSwitching
                                    && callAnimationChangeEvent(currentAnimation,expected)) {
                     currentAnimation = expected;
+Logger.getGlobal().info("Animation switch instant: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                     if (currentAnimation != null)
                         currentAnimation.reset();
-                } else {
+                } else { //if(!manualOverride){
                     nextAnimation = expected;
                 }
             }
         }
         if(currentAnimation!=null) {
-            if (currentAnimation.isFinished()) {
+            if (currentAnimation.isFinished() || currentAnimation.isAtLastFrame()) {
                 if (currentAnimation.getType().equals(BakedAnimationType.CHAIN)) {
                     BakedAnimation nextAnim = animationTree.getAnimation(currentAnimation.getNext());
                     if(callAnimationChangeEvent(currentAnimation,nextAnim)) {
                         currentAnimation = nextAnim;
+Logger.getGlobal().info("Animation switch due to Chain: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                         currentAnimation.reset();
                     }
                 } else {
@@ -156,6 +158,7 @@ public class BakedAnimationEntity extends CompositeEntity {
                     && (currentAnimation.isAtLastFrame() || currentAnimation.isFinished())
                     && nextAnimation != null && callAnimationChangeEvent(currentAnimation,nextAnimation)) {
                 currentAnimation = nextAnimation;
+Logger.getGlobal().info("Animation switch regular: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                 currentAnimation.reset();
                 nextAnimation = null;
             }
@@ -166,6 +169,7 @@ public class BakedAnimationEntity extends CompositeEntity {
             if(nextAnimation != null
                                && callAnimationChangeEvent(null,nextAnimation)) {
                 currentAnimation = nextAnimation;
+Logger.getGlobal().info("Animation switch cause of null: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                 currentAnimation.reset();
                 nextAnimation = null;
                 currentAnimation.doTick();
@@ -180,11 +184,12 @@ public class BakedAnimationEntity extends CompositeEntity {
         if(!event.isCancelled()) {
             this.manualOverride = manualOverride;
             BakedAnimation newAnim = animationTree.getAnimation(event.getNextAnimationKey());
-    //Logger.getGlobal().info("New Anim: "+name+" -> "+newAnim);
-            if(instantAnimationSwitching) {
+Logger.getGlobal().info("New Anim: "+name+" -> "+newAnim);
+            if(instantAnimationSwitching || manualOverride) {
                 if(callAnimationChangeEvent(currentAnimation, newAnim)) {
                     if (newAnim != null) {
                         currentAnimation = newAnim;
+Logger.getGlobal().info("Animation switch cause of manual: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                         currentAnimation.reset();
                     } else {
                         currentAnimation = null;

@@ -18,6 +18,8 @@ import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.util.Vector;
 
 import java.util.UUID;
 
@@ -273,6 +275,41 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
                 } catch (IllegalArgumentException ex) {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse attack point!").color(ChatColor.RED).create());
                 }
+                break;
+            case "flightlevel":
+                goalFactory = getOrCreateGoalFactory(factory);
+                try {
+                    goalFactory.withFlightLevel(Double.parseDouble(value));
+                } catch (NumberFormatException ex) {
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse double for flight level!").color(ChatColor.RED).create());
+                }
+                break;
+            case "attackpitch":
+                goalFactory = getOrCreateGoalFactory(factory);
+                try {
+                    goalFactory.withAttackPitch(Float.parseFloat(value));
+                } catch (NumberFormatException ex) {
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse double for attack pitch!").color(ChatColor.RED).create());
+                }
+                break;
+            case "dive":
+                goalFactory = getOrCreateGoalFactory(factory);
+                try {
+                    goalFactory.withDive(Double.parseDouble(value));
+                } catch (NumberFormatException ex) {
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse double for dive!").color(ChatColor.RED).create());
+                }
+                break;
+            case "dev":
+                factory.withViewDistance(300);
+                factory.withAttackPoint(new Vector(0,-8,0));
+                factory.withMovementType(MovementType.FLYING);
+                factory.withMaxRotationStepFlight(1);
+                factory.withAttackPoint(new Vector(0,-6,20));
+                getOrCreateGoalFactory(factory).withDive(1.5);
+                getOrCreateGoalFactory(factory).withFlightLevel(30);
+                getOrCreateGoalFactory(factory).withAttackPitch(40);
+                factory.withAttribute(Attribute.GENERIC_ATTACK_SPEED,0.4);
                 break;
             default:
                 sender.sendMessage(new ComponentBuilder("Property " + property +" could not be changed.").color(ChatColor.RED).create());

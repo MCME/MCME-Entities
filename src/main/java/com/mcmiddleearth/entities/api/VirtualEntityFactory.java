@@ -112,7 +112,8 @@ public class VirtualEntityFactory {
                 "location","movementType","goalType","targetLocation","targetEntity","headPitchCenter",
                 "speechballoonlayout","mouth","manualanimation","headposedelay","viewdistance",
                 "maxrotationstep", "maxRotationStepFlight", "updateInterval", "jumpheight", "knockbackbase",
-                "knockbackperdamage","relative_position","saddlepoint","sitpoint","attackpoint").map(String::toLowerCase)
+                "knockbackperdamage","relative_position","saddlepoint","sitpoint","attackpoint",
+                "flightlevel","dive","attackpitch").map(String::toLowerCase)
                 .sorted().collect(Collectors.toList());
     }
 

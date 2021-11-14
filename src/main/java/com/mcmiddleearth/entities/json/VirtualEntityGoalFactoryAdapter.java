@@ -36,7 +36,10 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
     TYPE                    = "type",
     YAW                     = "yaw",
     PITCH                   = "pitch",
-    RELATIVE_POSITION       = "relative_position";
+    RELATIVE_POSITION       = "relative_position",
+    FLIGHT_LEVEL            = "flight_level",
+    ATTACK_PITCH            = "attack_pitch",
+    DIVE                    = "dive";
 
     @Override
     public void write(JsonWriter out, VirtualEntityGoalFactory factory) throws IOException {
@@ -100,6 +103,9 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                }
                JsonUtil.writeNonDefaultVector(out,RELATIVE_POSITION,factory.getRelativePosition(),
                                               defaults.getRelativePosition(),gson,writeDefaults);
+               JsonUtil.writeNonDefaultDouble(out,FLIGHT_LEVEL,factory.getFlightLevel(),20,writeDefaults);
+               JsonUtil.writeNonDefaultFloat(out,ATTACK_PITCH,factory.getAttackPitch(),45,writeDefaults);
+               JsonUtil.writeNonDefaultDouble(out,DIVE,factory.getDive(),1.15,writeDefaults);
                out.endArray();
             }
         out.endObject();
@@ -147,6 +153,15 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                         break;
                     case RELATIVE_POSITION:
                         factory.withRelativePosition(gson.fromJson(in, Vector.class));
+                        break;
+                    case FLIGHT_LEVEL:
+                        factory.withFlightLevel(in.nextDouble());
+                        break;
+                    case ATTACK_PITCH:
+                        factory.withAttackPitch((float)in.nextDouble());
+                        break;
+                    case DIVE:
+                        factory.withDive(in.nextDouble());
                         break;
                     case HEAD_GOALS:
                         Set<HeadGoal>headGoals = new HashSet<>();

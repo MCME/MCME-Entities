@@ -11,6 +11,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 public class MovementEngine {
 
@@ -51,7 +52,7 @@ public class MovementEngine {
         switch(entity.getMovementType()) {
             case FLYING:
 //Logger.getGlobal().info("location: "+ entity.getLocation());
-//Logger.getGlobal().info("speed: "+ getFlyingSpeed());
+//Logger.getGlobal().info("speed: "+ entity.getFlyingSpeed());
                 Vector velocity = zero.clone();
                 if(!direction.equals(zero)) {
                     velocity = direction.normalize().multiply(entity.getFlyingSpeed());

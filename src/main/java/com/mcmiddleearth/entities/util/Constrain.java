@@ -1,6 +1,8 @@
 package com.mcmiddleearth.entities.util;
 
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import org.bukkit.Location;
@@ -39,6 +41,12 @@ public class Constrain {
     public static void checkCheckpoints(Location[] checkpoints) throws InvalidDataException {
         if(checkpoints == null || checkpoints.length == 0) {
             throw new InvalidDataException("At least one checkpoint is required!");
+        }
+    }
+
+    public static void checkClass(VirtualEntity entity, Class<WingedFlightEntity> wingedFlightEntityClass) throws InvalidDataException {
+        if(!wingedFlightEntityClass.isInstance(entity)) {
+            throw new InvalidDataException("Winged flight entity required!");
         }
     }
 }

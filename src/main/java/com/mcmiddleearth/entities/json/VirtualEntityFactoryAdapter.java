@@ -12,6 +12,7 @@ import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import org.bukkit.Location;
@@ -317,6 +318,19 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
             }
         }
         in.endObject();
+        // restore default values which are not stored in file
+        Map<Attribute,AttributeInstance> factoryAttributes = factory.getAttributes();
+        VirtualAttributeFactory.getAttributesFor(factory.getType())
+                .forEach((attribute, attributeInstance) -> {
+//Logger.getGlobal().info("Attrib: "+attribute.name()+" attribs size: "+factory.getAttributes().size());
+                    if (!factoryAttributes.containsKey(attribute)) {
+//Logger.getGlobal().info("not found, restoring default: "+attributeInstance.getBaseValue());
+                        factoryAttributes.put(attribute,
+                                new VirtualEntityAttributeInstance(attribute, attributeInstance.getBaseValue(),
+                                                                              attributeInstance.getDefaultValue()));
+                    }
+                });
+        factory.withAttributes(factoryAttributes);
         return factory;
     }
 }

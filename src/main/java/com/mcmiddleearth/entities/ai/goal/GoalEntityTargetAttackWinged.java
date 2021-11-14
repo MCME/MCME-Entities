@@ -3,29 +3,41 @@ package com.mcmiddleearth.entities.ai.goal;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
-import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Placeholder;
-import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
 import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalEntityTargetChangedEvent;
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
+import com.mcmiddleearth.entities.util.RotationMatrix;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class GoalEntityTargetAttackFlying extends GoalPath {
+import java.util.logging.Logger;
+
+public class GoalEntityTargetAttackWinged extends GoalPath {
 
     protected McmeEntity target;
     protected boolean targetIncomplete = false;
+    protected WingedFlightEntity entity;
 
-    public GoalEntityTargetAttackFlying(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
+    private Vector attackPointShift = new Vector(0,0,0);
+
+    private final double flightLevel;
+    private final float attackPitch;
+    private final double dive;
+
+    public GoalEntityTargetAttackWinged(WingedFlightEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
         super(entity, factory, pathfinder);
+        this.entity = entity;
         this.target = factory.getTargetEntity();
         if(this.target instanceof Placeholder) {
             targetIncomplete = true;
         }
+        this.flightLevel = factory.getFlightLevel();
+        this.attackPitch = factory.getAttackPitch();
+        this.dive = factory.getDive();
         setDefaultHeadGoal();
     }
 
@@ -34,7 +46,7 @@ public class GoalEntityTargetAttackFlying extends GoalPath {
         super.doTick();
         if (!targetIncomplete) {
             //if(getPath()!=null) Logger.getGlobal().info("Path: \n"+getPath().getStart()+" \n"+getPath().getEnd()+" \n"+getPath().getTarget());
-            if (isCloseToTarget(GoalDistance.ATTACK/200)) {
+            if (isCloseToTarget(GoalDistance.ATTACK)) {
                 //Logger.getGlobal().info("delete path as entity is close.");
                 EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(), this));
                 /*setIsMoving(false);//deletePath();
@@ -44,6 +56,7 @@ public class GoalEntityTargetAttackFlying extends GoalPath {
                 setYaw(orientation.getYaw());
                 setPitch(orientation.getPitch());*/
                 if (!isFinished()) {
+Logger.getGlobal().info("Attack Position: "+ getAttackLocation().toVector()+" Entity: "+getEntity().getLocation().toVector());
                     getEntity().attack(target);
 //Logger.getGlobal().info("ATTACK! "+target.getName());
                 }
@@ -70,15 +83,19 @@ public class GoalEntityTargetAttackFlying extends GoalPath {
             }
         }
         if(target!=null && !targetIncomplete) {
-            Vector tempTarget = getTarget().getLocation().toVector();
-            Vector loc = new Vector(0,0,0);
-            if(getEntity() instanceof WingedFlightEntity) {
-                loc.subtract(((WingedFlightEntity)getEntity()).getAttackPoint());
-            }
+ Logger.getGlobal().info("Is close: "+isCloseToTarget(GoalDistance.ATTACK)+" "
+     +getAttackLocation().toVector().distanceSquared(getTarget().getLocation().toVector())
+     +" "+GoalDistance.ATTACK*(1+entity.getAttackPoint().length()));
+            updateAttackPointShift();
+            Vector tempTarget = getTarget().getLocation().toVector().subtract(attackPointShift);
+            //double attackY = getAttackY();
             if(!isInAttackPosition()) {
-                tempTarget.add(new Vector(0,15,0).add(loc));
+                tempTarget.add(new Vector(0,flightLevel,0));
+Logger.getGlobal().warning("         Raise! "+tempTarget);
             } else {
-                tempTarget.add(new Vector(0,target.getLocation().getY()-(getEntity().getLocation().getY()+loc.getY())+3,0));
+                tempTarget.add(new Vector(0,(target.getLocation().getY()-getAttackLocation().getY())*dive,//1.15,
+                                          0));
+Logger.getGlobal().severe("        Attack! "+tempTarget);
             }
             setPathTarget(tempTarget);
         } else {
@@ -88,17 +105,34 @@ public class GoalEntityTargetAttackFlying extends GoalPath {
         super.update();
     }
 
+    /*private double getFlightLevel() {
+        return 20*(1-entity.getAttackPoint().getY()/5);
+    }*/
+
+    /*private double getAttackY() {
+        Vector loc = new Vector(0,0,0);
+        if(getEntity() instanceof WingedFlightEntity) {
+            loc.subtract(((WingedFlightEntity)getEntity()).getAttackPoint());
+        }
+        return loc.getY();
+    }*/
+
     private boolean isInAttackPosition() {
-        Vector vec = target.getLocation().toVector().subtract(getEntity().getLocation().toVector());
+        Vector vec = target.getLocation().toVector().subtract(getAttackLocation().toVector());
         Location loc = getEntity().getLocation().clone().setDirection(vec);
-        float currentYaw = (getEntity() instanceof CompositeEntity?((CompositeEntity)getEntity()).getCurrentYaw():getEntity().getYaw());
+        float currentYaw = entity.getCurrentYaw();
 //Logger.getGlobal().info("entity: "+currentYaw+" target: "+loc.getYaw()+ " vec: "+vec);
         float diff = currentYaw-loc.getYaw();
         while(diff>180) diff -= 360;
         while(diff<-180) diff += 360;
 //Logger.getGlobal().info("Diff: "+diff+ " dist: "+vec.lengthSquared()+" result: "+(Math.abs(diff) < 40 && vec.lengthSquared() < 1000));
-        double dist = vec.lengthSquared();
-        return Math.abs(diff) < 40 && dist < 1000 && dist > 1;
+        double dist = vec.length();
+        double pitch = Math.asin(-vec.getY()/dist);
+        double pitchPivot = attackPitch/180d*Math.PI;
+Logger.getGlobal().info("Yaw: current: "+currentYaw+" aim: "+loc.getYaw()+" => "+diff+" < "+40);
+Logger.getGlobal().info("Pitch: "+dist+" "+pitch+" > "+pitchPivot);
+//Logger.getGlobal().info("Height: "+(-vec.getY())+" > "+(flightLevel*0.6));
+        return Math.abs(diff) < 40 && pitch > pitchPivot && /*-vec.getY() > flightLevel*0.6 &&*/ dist > 1;
     }
 
     public McmeEntity getTarget() {
@@ -120,17 +154,25 @@ public class GoalEntityTargetAttackFlying extends GoalPath {
 
     public boolean isCloseToTarget(double distanceSquared) {
         if(target!=null) {
-            double distance = getEntity().getLocation().toVector().distanceSquared(getTarget().getLocation().toVector());
-            if((getEntity() instanceof WingedFlightEntity)
-                    && (getEntity().getMovementType().equals(MovementType.FLYING)
-                    || getEntity().getMovementType().equals(MovementType.GLIDING))) {
-                return distance < (distanceSquared*400);
-            } else {
-                return distance < distanceSquared;
-            }
+            double distance = getAttackLocation().toVector().distanceSquared(getTarget().getLocation().toVector());
+            double distancePivot = distanceSquared*(1+entity.getAttackPoint().length());
+            return distance < distancePivot;
         } else {
             return false;
         }
+    }
+
+    private Location getAttackLocation() {
+        Location loc = getEntity().getLocation().clone();
+        loc.add(attackPointShift);
+        return loc;
+    }
+
+    private void updateAttackPointShift() {
+        Vector vector = (entity).getAttackPoint();
+        //Vector rotatedZ = RotationMatrix.fastRotateZ(vector,-getEntity().getRoll());
+        //Vector rotatedZX = RotationMatrix.fastRotateX(rotatedZ, getEntity().getPitch());
+        attackPointShift = RotationMatrix.fastRotateY(vector,-entity.getCurrentYaw());
     }
 
     public void setDefaultHeadGoal() {
