@@ -1,7 +1,10 @@
 package com.mcmiddleearth.entities.ai.pathfinding;
 
 import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
+import org.bukkit.Location;
 import org.bukkit.util.Vector;
+
+import java.util.logging.Logger;
 
 public class FlyingPathfinder implements Pathfinder {
 
@@ -31,14 +34,27 @@ public class FlyingPathfinder implements Pathfinder {
             homing = true;
         }
         if(homing) {
-//Logger.getGlobal().info("Radius: "+requiredRadius+" "+minRadius+" -----Target: "+target);
+//Logger.getGlobal().info("Homing! R: "+requiredRadius+" "+minRadius+" -----Target: "+target);
             result.addPoint(target);
         } else {
-            Vector point = start.clone().add(new Vector(entity.getVelocity().getZ(),0,entity.getVelocity().getX())
-                    .normalize().multiply(Math.signum(requiredRadius)*minRadius));
+            Vector vec = target.clone().subtract(entity.getLocation().toVector());
+            Location loc = entity.getLocation().clone().setDirection(vec);
+            float currentYaw = entity.getCurrentYaw();
+            float diff = currentYaw-loc.getYaw();
+            while(diff>180) diff -= 360;
+            while(diff<-180) diff += 360;
+//Logger.getGlobal().info("entity: "+currentYaw+" target: "+loc.getYaw()+ " vec: "+vec+" diff: "+diff);
+            Vector point;
+            if(Math.abs(diff) < 135 && vec.lengthSquared()>525) {
+                point = start.clone().add(new Vector(entity.getVelocity().getZ(), 0, entity.getVelocity().getX())
+                        .normalize().multiply(Math.signum(requiredRadius) * minRadius));
+//Logger.getGlobal().info("Evading! R: "+requiredRadius+" "+minRadius+" Pt: "+point);
+            } else {
+                point = start.clone().add(entity.getVelocity().clone().multiply(minRadius));
+//Logger.getGlobal().info("Straight! R: "+requiredRadius+" "+minRadius+" Pt: "+point);
+            }
             point.setY(target.getY());
             result.addPoint(point);
-//Logger.getGlobal().info("Radius: "+requiredRadius+" "+minRadius+" -----Point: "+point);
         }
         return result;
     }

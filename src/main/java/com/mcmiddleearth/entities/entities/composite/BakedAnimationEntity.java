@@ -16,6 +16,7 @@ import com.mcmiddleearth.entities.events.events.virtual.composite.BakedAnimation
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import org.bukkit.Material;
+import sun.rmi.runtime.Log;
 
 import java.io.*;
 import java.util.Arrays;
@@ -128,16 +129,17 @@ public class BakedAnimationEntity extends CompositeEntity {
         if(!manualAnimationControl) {
             BakedAnimation expected = animationTree.getAnimation(this);
 //Logger.getGlobal().info("Expected: "+(expected == null?"none":expected.getName()));
-            if(currentAnimation!=expected) {
+            if(expected != null && currentAnimation!=expected) {
 //Logger.getGlobal().info("Switch from: "+(currentAnimation == null?"none":currentAnimation.getName()));
                 if(!manualOverride && instantAnimationSwitching
                                    && callAnimationChangeEvent(currentAnimation,expected)) {
                     currentAnimation = expected;
-Logger.getGlobal().info("Animation switch instant: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
+//Logger.getGlobal().info("Animation switch instant: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                     if (currentAnimation != null)
                         currentAnimation.reset();
                 } else { //if(!manualOverride){
                     nextAnimation = expected;
+//Logger.getGlobal().info("Next Animation switch non-instant: "+(nextAnimation!=null?nextAnimation.getName():"nulll"));
                 }
             }
         }
@@ -147,7 +149,7 @@ Logger.getGlobal().info("Animation switch instant: "+(currentAnimation!=null?cur
                     BakedAnimation nextAnim = animationTree.getAnimation(currentAnimation.getNext());
                     if(callAnimationChangeEvent(currentAnimation,nextAnim)) {
                         currentAnimation = nextAnim;
-Logger.getGlobal().info("Animation switch due to Chain: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
+//Logger.getGlobal().info("Animation switch due to Chain: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                         currentAnimation.reset();
                     }
                 } else {
@@ -158,22 +160,27 @@ Logger.getGlobal().info("Animation switch due to Chain: "+(currentAnimation!=nul
                     && (currentAnimation.isAtLastFrame() || currentAnimation.isFinished())
                     && nextAnimation != null && callAnimationChangeEvent(currentAnimation,nextAnimation)) {
                 currentAnimation = nextAnimation;
-Logger.getGlobal().info("Animation switch regular: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
+//Logger.getGlobal().info("Animation switch regular: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                 currentAnimation.reset();
                 nextAnimation = null;
+//Logger.getGlobal().info("Next Animation switch regular: null");
             }
 //Logger.getGlobal().info("Cur: "+currentAnimation.getName()+" OR: "+manualOverride+" MC: "+manualAnimationControl);
-            currentAnimation.doTick();
         } else {
             manualOverride = false;
             if(nextAnimation != null
                                && callAnimationChangeEvent(null,nextAnimation)) {
                 currentAnimation = nextAnimation;
-Logger.getGlobal().info("Animation switch cause of null: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
+//Logger.getGlobal().info("Animation switch cause of null: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                 currentAnimation.reset();
                 nextAnimation = null;
-                currentAnimation.doTick();
-            }
+//Logger.getGlobal().info("Next Animation switch cause of null: null");
+           }
+        }
+        if(currentAnimation!=null) {
+//Logger.getGlobal().info("Current anim: "+currentAnimation.getName()+" "+currentAnimation.getCurrentFrame()
+//                        +" next: "+(nextAnimation!=null?nextAnimation.getName():"nullnext"));
+            currentAnimation.doTick();
         }
         super.doTick();
     }
@@ -184,12 +191,12 @@ Logger.getGlobal().info("Animation switch cause of null: "+(currentAnimation!=nu
         if(!event.isCancelled()) {
             this.manualOverride = manualOverride;
             BakedAnimation newAnim = animationTree.getAnimation(event.getNextAnimationKey());
-Logger.getGlobal().info("New Anim: "+name+" -> "+newAnim);
+//Logger.getGlobal().info("New Anim: "+name+" -> "+newAnim);
             if(instantAnimationSwitching || manualOverride) {
                 if(callAnimationChangeEvent(currentAnimation, newAnim)) {
                     if (newAnim != null) {
                         currentAnimation = newAnim;
-Logger.getGlobal().info("Animation switch cause of manual: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
+//Logger.getGlobal().info("Animation switch cause of manual: "+(currentAnimation!=null?currentAnimation.getName():"nulll"));
                         currentAnimation.reset();
                     } else {
                         currentAnimation = null;

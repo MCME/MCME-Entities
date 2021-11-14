@@ -6,7 +6,6 @@ import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Placeholder;
-import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
 import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.events.events.goal.GoalEntityTargetChangedEvent;
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
@@ -56,7 +55,7 @@ public class GoalEntityTargetAttackWinged extends GoalPath {
                 setYaw(orientation.getYaw());
                 setPitch(orientation.getPitch());*/
                 if (!isFinished()) {
-Logger.getGlobal().info("Attack Position: "+ getAttackLocation().toVector()+" Entity: "+getEntity().getLocation().toVector());
+//Logger.getGlobal().info("Attack Position: "+ getAttackLocation().toVector()+" Entity: "+getEntity().getLocation().toVector());
                     getEntity().attack(target);
 //Logger.getGlobal().info("ATTACK! "+target.getName());
                 }
@@ -83,19 +82,22 @@ Logger.getGlobal().info("Attack Position: "+ getAttackLocation().toVector()+" En
             }
         }
         if(target!=null && !targetIncomplete) {
- Logger.getGlobal().info("Is close: "+isCloseToTarget(GoalDistance.ATTACK)+" "
+/*double distance = horizontalDistanceSquared();
+double distancePivot = GoalDistance.ATTACK*(1+entity.getAttackPoint().length());
+Logger.getGlobal().info("IsClose: "+isCloseToTarget(GoalDistance.ATTACK)+" <- "+distance+ " pivot: "+distancePivot);
+ /*Logger.getGlobal().info("Is close: "+isCloseToTarget(GoalDistance.ATTACK)+" "
      +getAttackLocation().toVector().distanceSquared(getTarget().getLocation().toVector())
-     +" "+GoalDistance.ATTACK*(1+entity.getAttackPoint().length()));
+     +" "+GoalDistance.ATTACK*(1+entity.getAttackPoint().length()));*/
             updateAttackPointShift();
-            Vector tempTarget = getTarget().getLocation().toVector().subtract(attackPointShift);
+            Vector tempTarget = getTarget().getLocation().toVector();//.subtract(attackPointShift);
             //double attackY = getAttackY();
             if(!isInAttackPosition()) {
                 tempTarget.add(new Vector(0,flightLevel,0));
-Logger.getGlobal().warning("         Raise! "+tempTarget);
+//Logger.getGlobal().warning("         Raise! "+tempTarget);//getAttackLocation());
             } else {
-                tempTarget.add(new Vector(0,(target.getLocation().getY()-getAttackLocation().getY())*dive,//1.15,
+                tempTarget.add(new Vector(0,(target.getLocation().getY()-entity.getLocation().getY())*dive,//1.15,
                                           0));
-Logger.getGlobal().severe("        Attack! "+tempTarget);
+//Logger.getGlobal().severe("        Attack! "+tempTarget);//getAttackLocation());
             }
             setPathTarget(tempTarget);
         } else {
@@ -118,7 +120,7 @@ Logger.getGlobal().severe("        Attack! "+tempTarget);
     }*/
 
     private boolean isInAttackPosition() {
-        Vector vec = target.getLocation().toVector().subtract(getAttackLocation().toVector());
+        Vector vec = target.getLocation().toVector().subtract(entity.getLocation().toVector());
         Location loc = getEntity().getLocation().clone().setDirection(vec);
         float currentYaw = entity.getCurrentYaw();
 //Logger.getGlobal().info("entity: "+currentYaw+" target: "+loc.getYaw()+ " vec: "+vec);
@@ -129,10 +131,10 @@ Logger.getGlobal().severe("        Attack! "+tempTarget);
         double dist = vec.length();
         double pitch = Math.asin(-vec.getY()/dist);
         double pitchPivot = attackPitch/180d*Math.PI;
-Logger.getGlobal().info("Yaw: current: "+currentYaw+" aim: "+loc.getYaw()+" => "+diff+" < "+40);
-Logger.getGlobal().info("Pitch: "+dist+" "+pitch+" > "+pitchPivot);
+//Logger.getGlobal().info("Yaw: current: "+currentYaw+" aim: "+loc.getYaw()+" => "+diff+" < "+40);
+//Logger.getGlobal().info("Pitch: "+dist+" "+pitch+" > "+pitchPivot);
 //Logger.getGlobal().info("Height: "+(-vec.getY())+" > "+(flightLevel*0.6));
-        return Math.abs(diff) < 40 && pitch > pitchPivot && /*-vec.getY() > flightLevel*0.6 &&*/ dist > 1;
+        return Math.abs(diff) < 40 && pitch > pitchPivot && vec.getY() < entity.getAttackPoint().getY() && dist > 5;
     }
 
     public McmeEntity getTarget() {
@@ -160,6 +162,12 @@ Logger.getGlobal().info("Pitch: "+dist+" "+pitch+" > "+pitchPivot);
         } else {
             return false;
         }
+    }
+
+    public double horizontalDistanceSquared() {
+        Vector attack = getAttackLocation().toVector();
+        Vector target = getTarget().getLocation().toVector();
+        return (attack.getX()-target.getX())*(attack.getX()-target.getX())+(attack.getZ()-target.getZ())*(attack.getZ()-target.getZ());
     }
 
     private Location getAttackLocation() {

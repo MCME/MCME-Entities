@@ -125,4 +125,8 @@ public class BakedAnimation {
         }
         return reverse;
     }
+
+    public int getCurrentFrame() {
+        return currentFrame;
+    }
 }

@@ -12,6 +12,8 @@ import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -21,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class McmeEntitiesCommandHandler extends AbstractCommandHandler implements TabExecutor {
 
@@ -31,6 +34,8 @@ public abstract class McmeEntitiesCommandHandler extends AbstractCommandHandler 
     protected VirtualEntityFactory getFactory(McmeCommandSender sender, String type, String name, String goal, String dataFile) {
         RealPlayer player = (RealPlayer) sender;
         VirtualEntityFactory factory = player.getEntityFactory();
+//AttributeInstance attackSpeed = factory.getAttributes().get(Attribute.GENERIC_ATTACK_SPEED);
+//if(attackSpeed!=null) Logger.getGlobal().info("getFactory: Attack speed: "+attackSpeed.getBaseValue()+" -> "+attackSpeed.getValue());
 //Logger.getGlobal().info("Factory: "+factory);
 //Logger.getGlobal().info("Factory movement type: "+factory.getMovementType().name());
         McmeEntityType entityType = McmeEntityType.valueOf(type);

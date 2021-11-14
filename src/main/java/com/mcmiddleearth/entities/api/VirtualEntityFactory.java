@@ -322,8 +322,8 @@ public class VirtualEntityFactory {
         if(attributes!=null) {
             attributes.forEach((attribute, instance)
                     -> result.put(attribute, new VirtualEntityAttributeInstance(attribute,
-                    instance.getDefaultValue(),
-                    instance.getBaseValue())));
+                    instance.getBaseValue(),
+                    instance.getDefaultValue())));
         }
         return result;
     }

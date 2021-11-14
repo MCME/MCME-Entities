@@ -8,6 +8,8 @@ import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import org.bukkit.util.Vector;
 
+import java.util.logging.Logger;
+
 public class WingedFlightEntity extends BakedAnimationEntity {
 
     //private float pitch;
@@ -36,12 +38,13 @@ public class WingedFlightEntity extends BakedAnimationEntity {
             while (yawDiff > 180) yawDiff -= 360;
             float rollTarget;
             if(yawDiff>0) {
-                rollTarget = Math.min(60, yawDiff * 1.2f);
+                rollTarget = Math.min(70, yawDiff * 1.6f);
             } else {
-                rollTarget = Math.max(-60, yawDiff * 1.2f);
+                rollTarget = Math.max(-70, yawDiff * 1.6f);
             }
+//Logger.getGlobal().info("Yaw diff: "+yawDiff);
             currentRoll = turn(currentRoll, rollTarget, maxRotationStepFlight);
-            currentYaw = turn(currentYaw, getLocation().getYaw(), Math.max(Math.abs(maxRotationStepFlight / 60 * currentRoll),maxRotationStepFlight/5f));
+            currentYaw = turn(currentYaw, getLocation().getYaw(), Math.max(Math.abs(maxRotationStepFlight / 60 * currentRoll),maxRotationStepFlight/4f));
 //Logger.getGlobal().info("Rotation: "+((int)currentYaw)+" "+((int)currentPitch)+" "+(int)currentRoll);
             getBones().stream().filter(bone -> !bone.isHeadBone()).forEach(bone -> {
                 ((BoneThreeAxis) bone).setRotation(currentYaw, currentPitch, -currentRoll);

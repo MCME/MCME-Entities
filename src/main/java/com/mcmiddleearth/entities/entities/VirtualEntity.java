@@ -124,6 +124,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         }
         this.name = (factory.getName()!=null?factory.getName():"unnamed");
         this.attributes = factory.getAttributes();
+//AttributeInstance attackSpeed = getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+//if(attackSpeed!=null) Logger.getGlobal().info("Attack speed: "+attackSpeed.getBaseValue()+" -> "+attackSpeed.getValue());
         this.displayName = factory.getDisplayName();
         this.useWhitelistAsBlacklist = factory.hasBlackList();
         this.whiteList = (factory.getWhitelist()!=null?factory.getWhitelist():new HashSet<>());
@@ -585,7 +587,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void attack(McmeEntity target) {
-Logger.getGlobal().info("Att cool: "+attackCoolDown);
+//Logger.getGlobal().info("Att cool: "+attackCoolDown);
         if(attackCoolDown==0 && hurtCoolDown == 0) {
             VirtualEntityAttackEvent event = new VirtualEntityAttackEvent(this, target);
             EntitiesPlugin.getEntityServer().handleEvent(event);

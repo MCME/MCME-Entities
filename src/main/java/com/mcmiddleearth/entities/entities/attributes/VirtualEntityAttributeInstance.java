@@ -25,11 +25,12 @@ public class VirtualEntityAttributeInstance implements AttributeInstance {
         this(attribute, defaultValue, defaultValue);
     }
 
-    public VirtualEntityAttributeInstance(Attribute attribute, double defaultValue, double baseValue) {
+    public VirtualEntityAttributeInstance(Attribute attribute, double baseValue, double defaultValue) {
         this.attribute = attribute;
         this.defaultValue = defaultValue;
         this.baseValue = baseValue;
         calculateValue();
+//Logger.getGlobal().info("Attribute: "+attribute.name()+" base: "+baseValue+" default: "+defaultValue+" value: "+value);
     }
 
     @Override

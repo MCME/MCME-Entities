@@ -19,9 +19,11 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 
@@ -301,15 +303,33 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
                 }
                 break;
             case "dev":
-                factory.withViewDistance(300);
-                factory.withAttackPoint(new Vector(0,-8,0));
-                factory.withMovementType(MovementType.FLYING);
-                factory.withMaxRotationStepFlight(1);
-                factory.withAttackPoint(new Vector(0,-6,20));
-                getOrCreateGoalFactory(factory).withDive(1.5);
-                getOrCreateGoalFactory(factory).withFlightLevel(30);
-                getOrCreateGoalFactory(factory).withAttackPitch(40);
-                factory.withAttribute(Attribute.GENERIC_ATTACK_SPEED,0.4);
+                switch(value) {
+                    case "1":
+                        factory.withViewDistance(300);
+                        factory.withMovementType(MovementType.FLYING);
+                        factory.withMaxRotationStepFlight(1);
+                        factory.withAttackPoint(new Vector(0,-6,20));
+                        getOrCreateGoalFactory(factory).withDive(0.4f);
+                        getOrCreateGoalFactory(factory).withFlightLevel(40);
+                        getOrCreateGoalFactory(factory).withAttackPitch(32.5f);
+                        factory.withAttribute(Attribute.GENERIC_ATTACK_SPEED,0.4);
+                        factory.withAttribute(Attribute.GENERIC_FLYING_SPEED,0.6);
+        //AttributeInstance attackSpeed = factory.getAttributes().get(Attribute.GENERIC_ATTACK_SPEED);
+        //if(attackSpeed!=null) Logger.getGlobal().info("Vfactory command: Attack speed: "+attackSpeed.getBaseValue()+" -> "+attackSpeed.getValue());
+                        break;
+                    case "2":
+                        factory.withViewDistance(300);
+                        factory.withMovementType(MovementType.FLYING);
+                        factory.withMaxRotationStepFlight(0.7f);
+                        factory.withAttackPoint(new Vector(0,-15,40));
+                        getOrCreateGoalFactory(factory).withDive(1);
+                        getOrCreateGoalFactory(factory).withFlightLevel(70);
+                        getOrCreateGoalFactory(factory).withAttackPitch(30);
+                        factory.withAttribute(Attribute.GENERIC_ATTACK_SPEED,0.4);
+                        factory.withAttribute(Attribute.GENERIC_FLYING_SPEED,0.7);
+                        break;
+                    default:
+                }
                 break;
             default:
                 sender.sendMessage(new ComponentBuilder("Property " + property +" could not be changed.").color(ChatColor.RED).create());
