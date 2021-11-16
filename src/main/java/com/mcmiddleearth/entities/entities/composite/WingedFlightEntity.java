@@ -24,6 +24,7 @@ public class WingedFlightEntity extends BakedAnimationEntity {
         maxRotationStepFlight = factory.getMaxRotationStepFlight();
         //pitch = factory.getgetPitch();
         currentRoll = factory.getRoll();
+        currentPitch = getPitch();
         instantAnimationSwitching = false;
         attackPoint = factory.getAttackPoint();
 //Logger.getGlobal().info("RotationStepFlight: "+maxRotationStepFlight + " roll: "+currentRoll);

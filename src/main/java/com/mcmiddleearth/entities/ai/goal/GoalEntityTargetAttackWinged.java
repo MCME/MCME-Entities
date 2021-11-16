@@ -3,6 +3,7 @@ package com.mcmiddleearth.entities.ai.goal;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.head.HeadGoalWaypointTarget;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
+import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Placeholder;
@@ -11,6 +12,9 @@ import com.mcmiddleearth.entities.events.events.goal.GoalEntityTargetChangedEven
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
 import com.mcmiddleearth.entities.util.RotationMatrix;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.logging.Logger;
@@ -25,7 +29,10 @@ public class GoalEntityTargetAttackWinged extends GoalPath {
 
     private final double flightLevel;
     private final float attackPitch;
-    private final double dive;
+    private final double diveFactor;
+
+    private boolean dive = false;
+
 
     public GoalEntityTargetAttackWinged(WingedFlightEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
         super(entity, factory, pathfinder);
@@ -36,7 +43,7 @@ public class GoalEntityTargetAttackWinged extends GoalPath {
         }
         this.flightLevel = factory.getFlightLevel();
         this.attackPitch = factory.getAttackPitch();
-        this.dive = factory.getDive();
+        this.diveFactor = factory.getDive();
         setDefaultHeadGoal();
     }
 
@@ -56,7 +63,18 @@ public class GoalEntityTargetAttackWinged extends GoalPath {
                 setPitch(orientation.getPitch());*/
                 if (!isFinished()) {
 //Logger.getGlobal().info("Attack Position: "+ getAttackLocation().toVector()+" Entity: "+getEntity().getLocation().toVector());
-                    getEntity().attack(target);
+                    double speed = 0.4;
+                    AttributeInstance speedAttrib = entity.getAttribute(Attribute.GENERIC_FLYING_SPEED);
+                    if(speedAttrib!=null) {
+                        speed = speedAttrib.getValue();
+                    }
+                    entity.playAnimation(ActionType.ATTACK);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            getEntity().attack(target,false);
+                        }
+                    }.runTaskLater(EntitiesPlugin.getInstance(),(long)(entity.getAttackPoint().length()/speed));
 //Logger.getGlobal().info("ATTACK! "+target.getName());
                 }
                 //}
@@ -91,13 +109,19 @@ Logger.getGlobal().info("IsClose: "+isCloseToTarget(GoalDistance.ATTACK)+" <- "+
             updateAttackPointShift();
             Vector tempTarget = getTarget().getLocation().toVector();//.subtract(attackPointShift);
             //double attackY = getAttackY();
-            if(!isInAttackPosition()) {
+            if(isInAttackPosition() && entity.getLocation().getY()-tempTarget.getY()>flightLevel*0.9) {
+                dive = true;
+            }
+            if(entity.getLocation().getY()-tempTarget.getY()<flightLevel*diveFactor) {
+                dive = false;
+            }
+            if(!dive) {
                 tempTarget.add(new Vector(0,flightLevel,0));
-//Logger.getGlobal().warning("         Raise! "+tempTarget);//getAttackLocation());
+Logger.getGlobal().warning("         Raise! "+tempTarget);//getAttackLocation());
             } else {
-                tempTarget.add(new Vector(0,(target.getLocation().getY()-entity.getLocation().getY())*dive,//1.15,
+                tempTarget.add(new Vector(0,(target.getLocation().getY()-entity.getLocation().getY())* 0.5,//1.15,
                                           0));
-//Logger.getGlobal().severe("        Attack! "+tempTarget);//getAttackLocation());
+Logger.getGlobal().severe("        Attack! "+tempTarget);//getAttackLocation());
             }
             setPathTarget(tempTarget);
         } else {

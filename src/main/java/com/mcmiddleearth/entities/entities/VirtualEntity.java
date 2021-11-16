@@ -587,6 +587,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     @Override
     public void attack(McmeEntity target) {
+        attack(target,true);
+    }
+
+    public void attack(McmeEntity target, boolean animate) {
 //Logger.getGlobal().info("Att cool: "+attackCoolDown);
         if(attackCoolDown==0 && hurtCoolDown == 0) {
             VirtualEntityAttackEvent event = new VirtualEntityAttackEvent(this, target);
@@ -594,7 +598,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             if (!event.isCancelled()) {
                 //actionType = ActionType.ATTACK;
 //Logger.getGlobal().info("Attack");
-                playAnimation(ActionType.ATTACK);
+                if(animate) playAnimation(ActionType.ATTACK);
                 AttributeInstance attribute = getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
                 double damage = 2;
                 if(attribute!= null) damage = attribute.getValue();

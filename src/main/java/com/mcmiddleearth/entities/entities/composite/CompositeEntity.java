@@ -51,6 +51,9 @@ public abstract class CompositeEntity extends VirtualEntity {
         headPoseDelay = factory.getHeadPoseDelay();
         this.rotationMode = rotationMode;
         maxRotationStep = factory.getMaxRotationStep();
+        currentYaw = getYaw();
+        currentHeadYaw = getHeadYaw();
+        currentHeadPitch = getHeadPitch();
         displayNamePosition = factory.getDisplayNamePosition().clone();
         if(getDisplayName()!=null) {
             createDisplayBone();
