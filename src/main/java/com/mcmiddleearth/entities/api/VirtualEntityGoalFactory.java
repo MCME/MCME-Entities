@@ -42,7 +42,7 @@ public class VirtualEntityGoalFactory {
 
     private int updateInterval = 10;
 
-    private Vector relativePosition = new Vector(0d,1d,0d);
+    private Vector relativePosition = new Vector(0d,0d,0d);
 
     private double flightLevel = 20;
     private float attackPitch = 45;

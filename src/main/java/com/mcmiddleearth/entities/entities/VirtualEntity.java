@@ -133,14 +133,6 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.boundingBox = factory.getBoundingBox();
         this.boundingBox.setLocation(location);
         this.movementEngine = new MovementEngine(this);
-//Logger.getGlobal().info("This location: "+this.getLocation());
-        if(factory.getGoalFactory()!=null) {
-            this.goal = factory.getGoalFactory().build(this);
-            if(this.goal!=null) {
-                this.goal.activate();
-            }
-        }
-//Logger.getGlobal().info("this goal: "+getGoal());
         this.health = factory.getHealth();
         if(health<0) {
             AttributeInstance maxHealth = getAttribute(Attribute.GENERIC_MAX_HEALTH);
@@ -155,7 +147,16 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.knockBackPerDamage = factory.getKnockBackPerDamage();
         this.enemies = (factory.getEnemies()!=null?factory.getEnemies():new HashSet<>());
         this.sitPoint = factory.getSitPoint();
+//Logger.getGlobal().info("SitPoint: "+sitPoint);
         this.saddle = factory.getSaddlePoint();
+//Logger.getGlobal().info("This location: "+this.getLocation());
+        if(factory.getGoalFactory()!=null) {
+            this.goal = factory.getGoalFactory().build(this);
+            if(this.goal!=null) {
+                this.goal.activate();
+            }
+        }
+//Logger.getGlobal().info("this goal: "+getGoal());
     }
 
     protected VirtualEntity(McmeEntityType type, Location location) {

@@ -81,7 +81,7 @@ public class VirtualEntityFactory {
 
     private Vector attackPoint = new Vector(0,1,0);
 
-    private Vector saddlePoint = new Vector(0,1.8,0);
+    private Vector saddlePoint = new Vector(0,1.4,0);
 
     private Vector sitPoint = new Vector (0,1,0);
 

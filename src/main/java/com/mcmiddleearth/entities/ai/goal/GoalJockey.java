@@ -22,14 +22,25 @@ public class GoalJockey extends GoalVirtualEntity {
     public GoalJockey(VirtualEntity entity, VirtualEntityGoalFactory factory) {
         super(entity, factory);
         this.steed = factory.getTargetEntity();
+        Vector  saddle;
         Vector shift;
-        if(steed instanceof VirtualEntity) {
-            shift = ((VirtualEntity)steed).getSaddle().clone();
+        if(steed instanceof VirtualEntity && ((VirtualEntity)steed).getSaddle() != null) {
+            saddle = ((VirtualEntity)steed).getSaddle().clone();
         } else {
-            shift = new Vector(0,1.8,0);
+            saddle = new Vector(0,1.8,0);
         }
-        this.relativePosition = shift.subtract(entity.getSitPoint()).add(factory.getRelativePosition());
-Logger.getGlobal().info("relative: "+relativePosition);
+        shift = saddle.clone();
+        if(entity.getSitPoint()!=null) {
+            shift.subtract(entity.getSitPoint());
+        }
+        if(factory.getRelativePosition()!=null) {
+            shift.add(factory.getRelativePosition());
+        }
+        this.relativePosition = shift;
+Logger.getGlobal().info("\nrelative factory: "+(factory.getRelativePosition()==null?"null":factory.getRelativePosition())
+                           + "\nsaddle: "+saddle
+                           +"\nsit point: "+(entity.getSitPoint()==null?"null":entity.getSitPoint())
+                            + "\nrelative position: "+relativePosition);
     }
 
     @Override
