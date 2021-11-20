@@ -214,6 +214,11 @@ public class Placeholder implements McmeEntity {
     }*/
 
     @Override
+    public boolean isOnline() {
+        return true;
+    }
+
+    @Override
     public boolean hasId(int entityId) {
         return false;
     }

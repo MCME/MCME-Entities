@@ -101,12 +101,12 @@ public class VirtualEntityGoalFactoryAdapter extends TypeAdapter<VirtualEntityGo
                        out.endObject();
                    }
                }
+               out.endArray();
                JsonUtil.writeNonDefaultVector(out,RELATIVE_POSITION,factory.getRelativePosition(),
                                               defaults.getRelativePosition(),gson,writeDefaults);
                JsonUtil.writeNonDefaultDouble(out,FLIGHT_LEVEL,factory.getFlightLevel(),20,writeDefaults);
                JsonUtil.writeNonDefaultFloat(out,ATTACK_PITCH,factory.getAttackPitch(),45,writeDefaults);
                JsonUtil.writeNonDefaultDouble(out,DIVE,factory.getDive(),1.15,writeDefaults);
-               out.endArray();
             }
         out.endObject();
     }

@@ -90,6 +90,13 @@ public class GoalEntityTargetAttackWinged extends GoalPath {
 
     @Override
     public void update() {
+        if(!targetIncomplete) {
+            if (!target.isOnline()) {
+                targetIncomplete = true;
+            } else {
+                if(target.isDead()) setFinished();
+            }
+        }
         if(targetIncomplete) {
 //Logger.getGlobal().info("Incomplete, searching for: "+target.getUniqueId());
             McmeEntity search = EntitiesPlugin.getEntityServer().getEntity(target.getUniqueId());
@@ -99,7 +106,7 @@ public class GoalEntityTargetAttackWinged extends GoalPath {
                 targetIncomplete = false;
             }
         }
-        if(target!=null && !targetIncomplete) {
+        if(target!=null && !(target instanceof Placeholder)) {
 /*double distance = horizontalDistanceSquared();
 double distancePivot = GoalDistance.ATTACK*(1+entity.getAttackPoint().length());
 Logger.getGlobal().info("IsClose: "+isCloseToTarget(GoalDistance.ATTACK)+" <- "+distance+ " pivot: "+distancePivot);
@@ -109,19 +116,22 @@ Logger.getGlobal().info("IsClose: "+isCloseToTarget(GoalDistance.ATTACK)+" <- "+
             updateAttackPointShift();
             Vector tempTarget = getTarget().getLocation().toVector();//.subtract(attackPointShift);
             //double attackY = getAttackY();
+//Logger.getGlobal().info("In attackPosition: "+isInAttackPosition()+" entity Y: "+entity.getLocation().getY()+" temp Y: "+tempTarget.getY()+" flightL: "+flightLevel+" dive: "+diveFactor);
             if(isInAttackPosition() && entity.getLocation().getY()-tempTarget.getY()>flightLevel*0.9) {
+//Logger.getGlobal().info("start dive!");
                 dive = true;
             }
             if(entity.getLocation().getY()-tempTarget.getY()<flightLevel*diveFactor) {
+//Logger.getGlobal().info("stop dive!");
                 dive = false;
             }
             if(!dive) {
                 tempTarget.add(new Vector(0,flightLevel,0));
-Logger.getGlobal().warning("         Raise! "+tempTarget);//getAttackLocation());
+//Logger.getGlobal().warning("         Raise! "+tempTarget);//getAttackLocation());
             } else {
                 tempTarget.add(new Vector(0,(target.getLocation().getY()-entity.getLocation().getY())* 0.5,//1.15,
                                           0));
-Logger.getGlobal().severe("        Attack! "+tempTarget);//getAttackLocation());
+//Logger.getGlobal().severe("        Attack! "+tempTarget);//getAttackLocation());
             }
             setPathTarget(tempTarget);
         } else {
@@ -220,6 +230,9 @@ Logger.getGlobal().severe("        Attack! "+tempTarget);//getAttackLocation());
 
     @Override
     public VirtualEntityGoalFactory getFactory() {
-        return super.getFactory().withTargetEntity(target);
+        return super.getFactory().withTargetEntity(target)
+                                 .withFlightLevel(flightLevel)
+                                 .withDive(diveFactor)
+                                 .withAttackPitch(attackPitch);
     }
 }

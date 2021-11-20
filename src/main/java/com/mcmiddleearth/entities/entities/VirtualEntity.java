@@ -762,6 +762,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     @Override
+    public boolean isOnline() {
+        return !isTerminated();
+    }
+
+    @Override
     public void addPotionEffect(PotionEffect effect) {
         //TODO
     }

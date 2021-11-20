@@ -427,6 +427,11 @@ public class Bone implements McmeEntity {
     }*/
 
     @Override
+    public boolean isOnline() {
+        return true;
+    }
+
+    @Override
     public void addPotionEffect(PotionEffect effect) {
         //do nothing
     }

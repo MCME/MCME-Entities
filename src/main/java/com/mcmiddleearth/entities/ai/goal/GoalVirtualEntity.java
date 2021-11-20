@@ -205,6 +205,7 @@ public abstract class GoalVirtualEntity implements Goal {
             GoalFinishedEvent event = new GoalFinishedEvent(getEntity(), this);
             EntitiesPlugin.getEntityServer().handleEvent(event);
             isFinished = true;
+Logger.getGlobal().info("Set finished!");
         }
     }
 

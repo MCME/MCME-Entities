@@ -89,4 +89,6 @@ public interface McmeEntity extends Entity {
     void setInvisible(boolean visible);
 
     void setEquipment(EquipmentSlot slot, ItemStack item);
+
+    boolean isOnline();
 }

@@ -189,6 +189,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public boolean isDead() {
+        if(!getBukkitPlayer().isOnline()) return false;
         return getBukkitPlayer().isDead();
     }
 
@@ -372,5 +373,10 @@ Logger.getGlobal().info("damage: "+damage+" knockback: "+knockback);
     @Override
     public void setEquipment(EquipmentSlot slot, ItemStack item) {
         getBukkitPlayer().getInventory().setItem(slot, item);
+    }
+
+    @Override
+    public boolean isOnline() {
+        return getBukkitPlayer().isOnline();
     }
 }
