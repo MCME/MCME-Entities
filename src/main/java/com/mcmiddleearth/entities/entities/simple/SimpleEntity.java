@@ -1,13 +1,19 @@
-package com.mcmiddleearth.entities.entities;
+package com.mcmiddleearth.entities.entities.simple;
 
 import com.mcmiddleearth.entities.Permission;
+import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
+import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.*;
+import com.mcmiddleearth.entities.protocol.packets.simple.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.graalvm.compiler.lir.aarch64.AArch64Move;
+
+import java.util.logging.Logger;
 
 public abstract class SimpleEntity extends VirtualEntity {
 
@@ -17,6 +23,7 @@ public abstract class SimpleEntity extends VirtualEntity {
     protected AbstractPacket equipmentPacket;
     protected AbstractPacket metadataPacket;
 
+    private MovementSpeed lastMovementSpeed;
 
     public SimpleEntity(int entityId, VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         super(factory);
@@ -66,9 +73,16 @@ public abstract class SimpleEntity extends VirtualEntity {
         getViewers().forEach(viewer -> equipmentPacket.send(viewer));
     }
 
-    public void setSaddled(boolean isSaddled) {
-        ((SimpleEntityMetadataPacket)metadataPacket).setSaddled(isSaddled);
-        metadataPacket.update();
-        getViewers().forEach(viewer->metadataPacket.send(viewer));
+    @Override
+    public void setMovementSpeed(MovementSpeed movementSpeed) {
+        super.setMovementSpeed(movementSpeed);
+        if (!movementSpeed.equals(lastMovementSpeed)) {
+            ((SimpleEntityMetadataPacket) metadataPacket).setSprinting(movementSpeed.equals(MovementSpeed.SPRINT));
+Logger.getGlobal().info("Sprint: " + movementSpeed.equals(MovementSpeed.SPRINT));
+            metadataPacket.update();
+            metadataPacket.send(getViewers());
+            lastMovementSpeed = movementSpeed;
+        }
     }
+
 }

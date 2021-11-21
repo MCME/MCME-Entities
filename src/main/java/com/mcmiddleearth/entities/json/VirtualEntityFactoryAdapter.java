@@ -18,6 +18,7 @@ import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Horse;
 import org.bukkit.util.Vector;
 
 import java.io.IOException;
@@ -61,6 +62,8 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
     KNOCK_BACK_PER_DAMAGE       = "knock_back_per_damage",
     ENEMIES                     = "enemies",
     SADDLE                      = "saddle",
+    HORSE_COLOR                 = "horse_color",
+    HORSE_STYLE                 = "horse_style",
     SADDLE_POINT                = "saddle_point",
     ATTACK_POINT                = "attack_point",
     SIT_POINT                   = "sit_point";
@@ -151,11 +154,15 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
             }
             out.endArray();
         }
-        JsonUtil.writeNonDefaultBoolean(out, SADDLE, factory.getSaddle(),
-                defaults.getSaddle(),writeDefaults);
+        JsonUtil.writeNonDefaultBoolean(out, SADDLE, factory.isSaddled(), defaults.isSaddled(),writeDefaults);
+        JsonUtil.writeNonDefaultString(out, HORSE_COLOR, factory.getHorseColor().name().toLowerCase(),
+                                                         defaults.getHorseColor().name(),writeDefaults);
+        JsonUtil.writeNonDefaultString(out, HORSE_STYLE, factory.getHorseStyle().name().toLowerCase(),
+                                                         defaults.getHorseStyle().name(),writeDefaults);
         JsonUtil.writeNonDefaultVector(out, SADDLE_POINT, factory.getSaddlePoint(), defaults.getSaddlePoint(), gson, writeDefaults);
         JsonUtil.writeNonDefaultVector(out, SIT_POINT, factory.getSitPoint(), defaults.getSitPoint(), gson, writeDefaults);
         JsonUtil.writeNonDefaultVector(out, ATTACK_POINT, factory.getAttackPoint(), defaults.getAttackPoint(), gson, writeDefaults);
+
         out.endObject();
     }
 
@@ -297,7 +304,13 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                         factory.withEnemies(enemies);
                         break;
                     case SADDLE:
-                        factory.withSaddle(in.nextBoolean());
+                        factory.withSaddled(in.nextBoolean());
+                        break;
+                    case HORSE_COLOR:
+                        factory.withHorseColor(Horse.Color.valueOf(in.nextString().toUpperCase()));
+                        break;
+                    case HORSE_STYLE:
+                        factory.withHorseStyle(Horse.Style.valueOf(in.nextString().toUpperCase()));
                         break;
                     case SADDLE_POINT:
                         factory.withSaddlePoint(gson.fromJson(in, Vector.class));

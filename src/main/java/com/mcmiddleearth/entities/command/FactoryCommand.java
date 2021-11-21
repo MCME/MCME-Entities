@@ -20,6 +20,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Horse;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
@@ -301,6 +302,23 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
                 } catch (NumberFormatException ex) {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse double for dive!").color(ChatColor.RED).create());
                 }
+                break;
+            case "color":
+                try {
+                    factory.withHorseColor(Horse.Color.valueOf(value.toUpperCase()));
+                } catch (IllegalArgumentException ex) {
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse horse color!").color(ChatColor.RED).create());
+                }
+                break;
+            case "style":
+                try {
+                    factory.withHorseStyle(Horse.Style.valueOf(value.toUpperCase()));
+                } catch (IllegalArgumentException ex) {
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse horse style!").color(ChatColor.RED).create());
+                }
+                break;
+            case "saddle":
+                factory.withSaddled(value.equalsIgnoreCase("true"));
                 break;
             case "dev":
                 switch(value) {

@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.protocol.packets;
+package com.mcmiddleearth.entities.protocol.packets.composite;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mcmiddleearth.entities.entities.composite.bones.Bone;

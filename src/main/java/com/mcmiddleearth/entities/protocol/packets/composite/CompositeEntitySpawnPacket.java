@@ -1,6 +1,7 @@
-package com.mcmiddleearth.entities.protocol.packets;
+package com.mcmiddleearth.entities.protocol.packets.composite;
 
 import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
+import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.entity.Player;
 
 public class CompositeEntitySpawnPacket extends AbstractPacket {

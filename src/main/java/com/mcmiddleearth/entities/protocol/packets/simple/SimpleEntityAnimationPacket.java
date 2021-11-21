@@ -1,7 +1,8 @@
-package com.mcmiddleearth.entities.protocol.packets;
+package com.mcmiddleearth.entities.protocol.packets.simple;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.entity.Player;
 
 public class SimpleEntityAnimationPacket extends AbstractPacket {

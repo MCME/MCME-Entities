@@ -192,7 +192,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                     case WALKING:
                         goal.doTick();
                 }*/
-                movementSpeed = goal.getMovementSpeed();
+                setMovementSpeed(goal.getMovementSpeed());
                 if(goal.isDirectMovementControl()) {
                     velocity = goal.getVelocity();
                 } else {
@@ -386,9 +386,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         return movementSpeed;
     }
 
-    /*public void setMovementSpeed(MovementSpeed movementSpeed) {
+    protected void setMovementSpeed(MovementSpeed movementSpeed) {
         this.movementSpeed = movementSpeed;
-    }*/
+    }
 
     public MovementType getMovementType() {
         return movementType;
@@ -807,7 +807,9 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 .withJumpHeight(jumpHeight)
                 .withAttributes(attributes)
                 .withEnemies(enemies)
-                .withSpeechBalloonLayout(defaultSpeechBalloonLayout);
+                .withSpeechBalloonLayout(defaultSpeechBalloonLayout)
+                .withSitPoint(sitPoint)
+                .withSaddlePoint(saddle);
         if(goal!=null) {
             factory.withGoalFactory(goal.getFactory());
         }

@@ -1,8 +1,9 @@
-package com.mcmiddleearth.entities.protocol.packets;
+package com.mcmiddleearth.entities.protocol.packets.simple;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;

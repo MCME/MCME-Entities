@@ -1,37 +1,23 @@
 package com.mcmiddleearth.entities.command;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
-import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.Permission;
-import com.mcmiddleearth.entities.ai.goal.GoalPath;
 import com.mcmiddleearth.entities.ai.goal.GoalType;
-import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
-import com.mcmiddleearth.entities.ai.pathfinding.Path;
 import com.mcmiddleearth.entities.api.Entity;
-import com.mcmiddleearth.entities.api.EntityAPI;
-import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
-import com.mcmiddleearth.entities.command.argument.AnimationIdArgument;
 import com.mcmiddleearth.entities.command.argument.AttributeTypeArgument;
 import com.mcmiddleearth.entities.command.argument.GoalTypeArgument;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
-import com.mcmiddleearth.entities.entities.SimpleEntity;
+import com.mcmiddleearth.entities.entities.simple.SimpleEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
-import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
-import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
-import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
-import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.entities.simple.SimpleHorse;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -39,12 +25,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.*;
-import java.util.*;
-import java.util.logging.Logger;
-
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
-import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 
 public class SetCommand extends McmeEntitiesCommandHandler {
@@ -83,12 +64,12 @@ public class SetCommand extends McmeEntitiesCommandHandler {
         Entity entity = ((BukkitCommandSender)sender).getSelectedEntities().stream().findFirst().orElse(null);
         if(entity instanceof VirtualEntity) {
             if(slotName.equalsIgnoreCase("saddle")) {
-                if(entity instanceof SimpleEntity) {
+                if(entity instanceof SimpleHorse) {
                     if(itemMaterial.equalsIgnoreCase("saddle")) {
-                        ((SimpleEntity)entity).setSaddled(true);
+                        ((SimpleHorse)entity).setSaddled(true);
                         sender.sendMessage(new ComponentBuilder("Entity saddled.").color(ChatColor.GREEN).create());
                     } else {
-                        ((SimpleEntity)entity).setSaddled(false);
+                        ((SimpleHorse)entity).setSaddled(false);
                         sender.sendMessage(new ComponentBuilder("Entity unsaddled.").color(ChatColor.GREEN).create());
                     }
                 } else {

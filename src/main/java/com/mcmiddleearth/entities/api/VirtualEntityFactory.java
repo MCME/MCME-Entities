@@ -7,12 +7,17 @@ import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInst
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
+import com.mcmiddleearth.entities.entities.simple.SimpleHorse;
+import com.mcmiddleearth.entities.entities.simple.SimpleLivingEntity;
+import com.mcmiddleearth.entities.entities.simple.SimpleNonLivingEntity;
+import com.mcmiddleearth.entities.entities.simple.SimplePlayer;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -85,9 +90,11 @@ public class VirtualEntityFactory {
 
     private Vector sitPoint = new Vector (0,1,0);
 
-    private boolean saddle = false;
-
     private boolean writeDefaultValuesToFile = false;
+
+    private boolean saddled = false;
+    private Horse.Color horseColor = Horse.Color.WHITE;
+    private Horse.Style horseStyle = Horse.Style.NONE;
 
     public VirtualEntityFactory(McmeEntityType type, Location location) {
         //uniqueId = UuidGenerator.fast_random();//getRandomV2();
@@ -113,7 +120,7 @@ public class VirtualEntityFactory {
                 "speechballoonlayout","mouth","manualanimation","headposedelay","viewdistance",
                 "maxrotationstep", "maxRotationStepFlight", "updateInterval", "jumpheight", "knockbackbase",
                 "knockbackperdamage","relative_position","saddlepoint","sitpoint","attackpoint",
-                "flightlevel","dive","attackpitch").map(String::toLowerCase)
+                "flightlevel","dive","attackpitch","saddle","color","style").map(String::toLowerCase)
                 .sorted().collect(Collectors.toList());
     }
 
@@ -463,12 +470,30 @@ public class VirtualEntityFactory {
         return this;
     }
 
-    public boolean getSaddle() {
-        return saddle;
+    public boolean isSaddled() {
+        return saddled;
     }
 
-    public VirtualEntityFactory withSaddle(boolean saddle) {
-        this.saddle = saddle;
+    public VirtualEntityFactory withSaddled(boolean saddled) {
+        this.saddled = saddled;
+        return this;
+    }
+
+    public Horse.Color getHorseColor() {
+        return horseColor;
+    }
+
+    public VirtualEntityFactory withHorseColor(Horse.Color horseColor) {
+        this.horseColor = horseColor;
+        return this;
+    }
+
+    public Horse.Style getHorseStyle() {
+        return horseStyle;
+    }
+
+    public VirtualEntityFactory withHorseStyle(Horse.Style horseStyle) {
+        this.horseStyle = horseStyle;
         return this;
     }
 
@@ -546,6 +571,8 @@ public class VirtualEntityFactory {
                 case WITHER_SKULL:
                 case FISHING_HOOK:
                     return new SimpleNonLivingEntity(entityId, this);
+                case HORSE:
+                    return new SimpleHorse(entityId, this);
                 default:
                     return new SimpleLivingEntity(entityId, this);
             }

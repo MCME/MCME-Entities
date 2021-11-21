@@ -3,10 +3,11 @@ package com.mcmiddleearth.entities.entities;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
+import com.mcmiddleearth.entities.entities.simple.SimpleNonLivingEntity;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.ArrowMovePacket;
-import com.mcmiddleearth.entities.protocol.packets.ProjectileSpawnPacket;
+import com.mcmiddleearth.entities.protocol.packets.simple.ProjectileSpawnPacket;
 import org.apache.commons.math3.util.FastMath;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -16,7 +17,6 @@ import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class Projectile extends SimpleNonLivingEntity {
 

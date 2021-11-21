@@ -1,8 +1,9 @@
-package com.mcmiddleearth.entities.protocol.packets;
+package com.mcmiddleearth.entities.protocol.packets.simple;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.entity.Player;
 
 import java.util.logging.Logger;
@@ -18,11 +19,15 @@ public class SimpleEntityMetadataPacket extends AbstractPacket {
         this.meta.getIntegers().write(0,entityId);
     }
 
-    public void setSaddled(boolean isSaddled) {
-        setByte(16, Byte.decode("0x04"));
+    public void setSprinting(boolean sprint) {
+        if(sprint) {
+            setByte(0, Byte.decode("0x08"));
+        } else {
+            setByte(0,Byte.decode("0x00"));
+        }
     }
 
-    private void setByte(int index, Byte metadata) {
+    protected void setByte(int index, Byte metadata) {
         WrappedDataWatcher.WrappedDataWatcherObject wrappedWatcher = new WrappedDataWatcher
                 .WrappedDataWatcherObject(index, WrappedDataWatcher.Registry.get(Byte.class));
         watcher.setObject(wrappedWatcher, metadata, false);

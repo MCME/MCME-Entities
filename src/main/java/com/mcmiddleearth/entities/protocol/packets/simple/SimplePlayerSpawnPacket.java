@@ -1,4 +1,4 @@
-package com.mcmiddleearth.entities.protocol.packets;
+package com.mcmiddleearth.entities.protocol.packets.simple;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
@@ -6,7 +6,8 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.mcmiddleearth.entities.entities.SimplePlayer;
+import com.mcmiddleearth.entities.entities.simple.SimplePlayer;
+import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
