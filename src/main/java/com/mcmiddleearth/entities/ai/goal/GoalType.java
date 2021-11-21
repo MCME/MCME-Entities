@@ -18,5 +18,6 @@ public enum GoalType {
     GOTO_LOCATION,
     MIMIC,
     JOCKEY,
+    RIDING_PLAYER,
     NONE;
 }

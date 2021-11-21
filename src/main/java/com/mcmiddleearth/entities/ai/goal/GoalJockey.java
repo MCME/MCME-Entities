@@ -13,34 +13,17 @@ import java.util.logging.Logger;
 
 public class GoalJockey extends GoalVirtualEntity {
 
-    private final McmeEntity steed;
+    private McmeEntity steed;
 
-    private final Vector relativePosition;
+    private final Vector factoryRelativePosition;
+    private Vector relativePosition;
 
     private Vector velocity;
 
     public GoalJockey(VirtualEntity entity, VirtualEntityGoalFactory factory) {
         super(entity, factory);
-        this.steed = factory.getTargetEntity();
-        Vector  saddle;
-        Vector shift;
-        if(steed instanceof VirtualEntity && ((VirtualEntity)steed).getSaddle() != null) {
-            saddle = ((VirtualEntity)steed).getSaddle().clone();
-        } else {
-            saddle = new Vector(0,1.8,0);
-        }
-        shift = saddle.clone();
-        if(entity.getSitPoint()!=null) {
-            shift.subtract(entity.getSitPoint());
-        }
-        if(factory.getRelativePosition()!=null) {
-            shift.add(factory.getRelativePosition());
-        }
-        this.relativePosition = shift;
-Logger.getGlobal().info("\nrelative factory: "+(factory.getRelativePosition()==null?"null":factory.getRelativePosition())
-                           + "\nsaddle: "+saddle
-                           +"\nsit point: "+(entity.getSitPoint()==null?"null":entity.getSitPoint())
-                            + "\nrelative position: "+relativePosition);
+        this.factoryRelativePosition = factory.getRelativePosition();
+        setSteed(factory.getTargetEntity());
     }
 
     @Override
@@ -65,8 +48,8 @@ Logger.getGlobal().info("\nrelative factory: "+(factory.getRelativePosition()==n
 
     @Override
     public void setDefaultHeadGoal() {
-        clearHeadGoals();
-        addHeadGoal(new HeadGoalStare(0,0));
+        //clearHeadGoals();
+        //addHeadGoal(new HeadGoalStare(0,0));
     }
 
     @Override
@@ -94,4 +77,37 @@ Logger.getGlobal().info("\nrelative factory: "+(factory.getRelativePosition()==n
     public McmeEntity getSteed() {
         return steed;
     }
+
+    public void setSteed(McmeEntity steed) {
+        this.steed = steed;
+        calculateRelativePosition();
+        clearHeadGoals();
+        Goal steedGoal = steed.getGoal();
+        if(steedGoal instanceof GoalVirtualEntity) {
+            ((GoalVirtualEntity)steedGoal).getHeadGoals().forEach(this::addHeadGoal);
+        }
+    }
+
+    private void calculateRelativePosition() {
+        Vector  saddle;
+        Vector shift;
+        if(steed instanceof VirtualEntity && ((VirtualEntity)steed).getSaddle() != null) {
+            saddle = ((VirtualEntity)steed).getSaddle().clone();
+        } else {
+            saddle = new Vector(0,1.8,0);
+        }
+        shift = saddle.clone();
+        if(getEntity().getSitPoint()!=null) {
+            shift.subtract(getEntity().getSitPoint());
+        }
+        if(factoryRelativePosition!=null) {
+            shift.add(factoryRelativePosition);
+        }
+        this.relativePosition = shift;
+        Logger.getGlobal().info("\nrelative factory: "+(factoryRelativePosition==null?"null":factoryRelativePosition)
+                + "\nsaddle: "+saddle
+                +"\nsit point: "+(getEntity().getSitPoint()==null?"null":getEntity().getSitPoint())
+                + "\nrelative position: "+relativePosition);
+    }
+
 }

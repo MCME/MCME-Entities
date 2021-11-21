@@ -8,12 +8,14 @@ import com.mcmiddleearth.entities.ai.pathfinding.SimplePathfinder;
 import com.mcmiddleearth.entities.ai.pathfinding.WalkingPathfinder;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Placeholder;
+import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.util.Constrain;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
@@ -294,6 +296,17 @@ Logger.getGlobal().info("pathfinder: flying");
                 if(!(targetEntity instanceof Placeholder))
                     Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalJockey(entity,this);
+                break;
+            case RIDING_PLAYER:
+Logger.getGlobal().info("Target: "+targetEntity);
+Logger.getGlobal().info("entity: "+entity);
+                if((targetEntity instanceof RealPlayer) && entity instanceof WingedFlightEntity) {
+                    Constrain.checkSameWorld(targetEntity.getLocation(), entity.getLocation().getWorld());
+Logger.getGlobal().info("Create goal!");
+                    goal = new GoalRidingPlayer((WingedFlightEntity) entity, this);
+                } else {
+                    goal = null;
+                }
                 break;
             default:
                 goal = null;
