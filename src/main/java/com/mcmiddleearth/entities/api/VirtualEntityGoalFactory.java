@@ -255,9 +255,9 @@ Logger.getGlobal().info("pathfinder: flying");
                 goal = new GoalEntityTargetAttackWinged((WingedFlightEntity)entity,this, pathfinder);
                 break;
             case ATTACK_CLOSE:
-                Constrain.checkEntity(targetEntity);
-                if(!(targetEntity instanceof Placeholder))
-                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                if(targetEntity != null && !(targetEntity instanceof Placeholder)) {
+                    Constrain.checkSameWorld(targetEntity.getLocation(), entity.getLocation().getWorld());
+                }
                 goal = new GoalEntityTargetAttackClose(entity, this, pathfinder);
                 break;
             case DEFEND_ENTITY:

@@ -209,6 +209,10 @@ Logger.getGlobal().info("Set finished!");
         }
     }
 
+    public void unsetFinished() {
+        isFinished = false;
+    }
+
     @Override
     public boolean isFinished() {
         return isFinished;

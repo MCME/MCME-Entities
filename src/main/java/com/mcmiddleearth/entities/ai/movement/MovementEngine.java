@@ -145,6 +145,7 @@ public class MovementEngine {
     public boolean cannotMove(Vector velocity) {
         BoundingBox entityBB = entity.getBoundingBox().getBoundingBox().clone();
 //Logger.getGlobal().info("bb x1 "+entityBB.getMinX()+ " x2 "+entityBB.getMaxX()+" vec x: "+velocity.getX());
+//Logger.getGlobal().info("velo: "+velocity);
         entityBB.shift(velocity);
         for (int i = getBlock(entityBB.getMinX()); i <= getBlock(entityBB.getMaxX()); i++) {
             for (int j = getBlock(entityBB.getMinY()); j <= getBlock(entityBB.getMaxY()); j++) {
@@ -197,7 +198,11 @@ Logger.getGlobal().info("type: "+search.getClass().getSimpleName()+" "+search.ge
             }
 //Logger.getGlobal().info("next");
         }
-        return velocity;
+        if(Double.isFinite(velocity.getX()) && Double.isFinite(velocity.getY()) && Double.isFinite(velocity.getZ())) {
+            return velocity;
+        } else {
+            return new Vector(0,0,0);
+        }
     }
 
     public double distanceToGround() {

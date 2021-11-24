@@ -1,7 +1,8 @@
 package com.mcmiddleearth.entities.api;
 
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
-import com.mcmiddleearth.entities.entities.*;
+import com.mcmiddleearth.entities.entities.McmeEntity;
+import com.mcmiddleearth.entities.entities.Projectile;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
@@ -95,6 +96,8 @@ public class VirtualEntityFactory {
     private boolean saddled = false;
     private Horse.Color horseColor = Horse.Color.WHITE;
     private Horse.Style horseStyle = Horse.Style.NONE;
+
+    private org.bukkit.entity.Entity dependingEntity;
 
     public VirtualEntityFactory(McmeEntityType type, Location location) {
         //uniqueId = UuidGenerator.fast_random();//getRandomV2();
@@ -494,6 +497,15 @@ public class VirtualEntityFactory {
 
     public VirtualEntityFactory withHorseStyle(Horse.Style horseStyle) {
         this.horseStyle = horseStyle;
+        return this;
+    }
+
+    public org.bukkit.entity.Entity getDependingEntity() {
+        return dependingEntity;
+    }
+
+    public VirtualEntityFactory withDependingEntity(org.bukkit.entity.Entity dependingEntity) {
+        this.dependingEntity = dependingEntity;
         return this;
     }
 

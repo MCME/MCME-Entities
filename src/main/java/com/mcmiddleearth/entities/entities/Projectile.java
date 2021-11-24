@@ -68,6 +68,9 @@ public class Projectile extends SimpleNonLivingEntity {
                             2, null, true);
                     collision.receiveAttack(shooter, damage, knockBack);
                     terminate();
+                    if(getDependingEntity() != null) {
+                        getDependingEntity().remove();
+                    }
                     break;
                 }
                 if (movementEngine.cannotMove(stepVelocity)) {

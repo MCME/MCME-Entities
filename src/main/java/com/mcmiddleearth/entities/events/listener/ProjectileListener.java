@@ -15,6 +15,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.UUID;
+
 public class ProjectileListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -38,12 +42,14 @@ public class ProjectileListener implements Listener {
                 .withProjectileVelocity((float)projectile.getVelocity().length())
                 .withProjectileDamage((float)damage)
                 .withKnockBackBase((float)knockback)
-                .withKnockBackPerDamage(0);
+                .withKnockBackPerDamage(0)
+                .withWhitelist(Collections.singleton(UUID.randomUUID()))
+                .withDependingEntity(projectile);
         try {
             EntitiesPlugin.getEntityServer().spawnEntity(factory);
         } catch (InvalidLocationException | InvalidDataException e) {
             e.printStackTrace();
         }
-        event.setCancelled(true);
+        //event.setCancelled(true);
     }
 }

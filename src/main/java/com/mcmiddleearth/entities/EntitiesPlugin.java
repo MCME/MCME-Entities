@@ -12,6 +12,7 @@ import com.mcmiddleearth.entities.command.*;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.listener.PlayerListener;
+import com.mcmiddleearth.entities.events.listener.ProjectileListener;
 import com.mcmiddleearth.entities.json.*;
 import com.mcmiddleearth.entities.protocol.listener.VirtualEntityUseListener;
 import com.mcmiddleearth.entities.server.EntityServer;
@@ -47,6 +48,7 @@ public final class EntitiesPlugin extends JavaPlugin {
         EntityAPI.init();
 
         PlayerListener playerListener = new PlayerListener();
+        ProjectileListener projectileListener = new ProjectileListener();
         //server.registerEvents(this, new EntitySelectionListener());
         //server.registerEventHandler(this, new PlayerListener());
 
@@ -71,6 +73,7 @@ public final class EntitiesPlugin extends JavaPlugin {
         setExecutor("vtest", new TestCommand("vtest"));
 
         Bukkit.getPluginManager().registerEvents(playerListener,this);
+        Bukkit.getPluginManager().registerEvents(projectileListener,this);
 
         manager.addPacketListener(new VirtualEntityUseListener(this, server));
 

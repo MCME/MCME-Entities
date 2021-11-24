@@ -25,6 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -111,6 +112,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private Vector mouth, sitPoint, saddle;
 
+    private org.bukkit.entity.Entity dependingEntity;
+
     public VirtualEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         this.updateInterval = factory.getUpdateInterval();
         this.updateRandom = new Random().nextInt(updateInterval);
@@ -132,6 +135,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.movementType = factory.getMovementType();
         this.boundingBox = factory.getBoundingBox();
         this.boundingBox.setLocation(location);
+//Logger.getGlobal().info("BB: "+boundingBox.getBoundingBox());
         this.movementEngine = new MovementEngine(this);
         this.health = factory.getHealth();
         if(health<0) {
@@ -156,6 +160,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 this.goal.activate();
             }
         }
+        dependingEntity = factory.getDependingEntity();
 //Logger.getGlobal().info("this goal: "+getGoal());
     }
 
@@ -650,6 +655,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         return enemies;
     }
 
+    public void setEnemies(Set<McmeEntity> enemies) {
+        this.enemies = enemies;
+    }
+
     @Override
     public boolean isTerminated() {
         return isTerminated;
@@ -663,6 +672,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     public  void finalise() {
         removeSpeechBalloons();
         if(goal!=null) goal.deactivate();
+        if(dependingEntity != null) dependingEntity.remove();
+    }
+
+    public Entity getDependingEntity() {
+        return dependingEntity;
     }
 
     @Override
