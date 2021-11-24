@@ -241,6 +241,12 @@ Logger.getGlobal().info("pathfinder: flying");
                     Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetAttack(entity,this, pathfinder);
                 break;
+            case ATTACK_ENTITY_SPRINT:
+                Constrain.checkEntity(targetEntity);
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalEntityTargetAttackSprint(entity,this, pathfinder);
+                break;
             case ATTACK_ENTITY_WINGED:
                 Constrain.checkEntity(targetEntity);
                 if(!(targetEntity instanceof Placeholder))
