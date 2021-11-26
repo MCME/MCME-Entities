@@ -8,7 +8,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.logging.Logger;
 
 public class MimicListener implements Listener {
 
@@ -23,6 +26,7 @@ public class MimicListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (mimic instanceof RealPlayer && ((RealPlayer) mimic).getBukkitPlayer().equals(event.getPlayer())) {
+Logger.getGlobal().info("Mimic Interact! "+ event.getAction().name());
             if(event.getAction().equals(Action.LEFT_CLICK_AIR)
                     || event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
                 entity.playAnimation(ActionType.ATTACK);
@@ -30,6 +34,14 @@ public class MimicListener implements Listener {
                     || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                 entity.playAnimation(ActionType.INTERACT);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractAt(PlayerInteractAtEntityEvent event) {
+        if (mimic instanceof RealPlayer && ((RealPlayer) mimic).getBukkitPlayer().equals(event.getPlayer())) {
+            entity.playAnimation(ActionType.INTERACT);
+Logger.getGlobal().info("Mimic Interact At!");
         }
     }
 

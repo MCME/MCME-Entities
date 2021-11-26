@@ -62,7 +62,7 @@ public class AnimateCommand extends McmeEntitiesCommandHandler {
                         ((BakedAnimationEntity)entity).setManualAnimationControl(true);
                 } else {
                     //((BakedAnimationEntity) entity).setManualAnimationControl(true);
-                    ((BakedAnimationEntity) entity).setAnimation(animationId, true);
+                    ((BakedAnimationEntity) entity).setAnimation(animationId, true, null,0);
                 }
             }
         });

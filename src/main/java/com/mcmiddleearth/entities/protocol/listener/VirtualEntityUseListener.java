@@ -6,18 +6,23 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.GoalMimic;
+import com.mcmiddleearth.entities.api.ActionType;
+import com.mcmiddleearth.entities.command.AnimateCommand;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.events.events.player.VirtualPlayerAttackEvent;
 import com.mcmiddleearth.entities.events.events.player.VirtualPlayerInteractAtEvent;
 import com.mcmiddleearth.entities.events.events.player.VirtualPlayerInteractEvent;
+import com.mcmiddleearth.entities.protocol.packets.simple.SimpleEntityAnimationPacket;
 import com.mcmiddleearth.entities.server.EntityServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
+
+import java.util.logging.Logger;
 
 public class VirtualEntityUseListener extends EntityListener {
 
@@ -32,9 +37,21 @@ public class VirtualEntityUseListener extends EntityListener {
         int entityId = packet.getIntegers().read(0);
         McmeEntity entity = entityServer.getEntity(entityId);
         if(entity instanceof VirtualEntity) {
-            if(entity.getGoal() instanceof GoalMimic && ((GoalMimic)entity.getGoal()).getMimic().equals(player)) return;
-            event.setCancelled(true);
             EnumWrappers.EntityUseAction action = packet.getEntityUseActions().read(0);
+            event.setCancelled(true);
+            if(entity.getGoal() instanceof GoalMimic && ((GoalMimic)entity.getGoal()).getMimic().equals(player)) {
+Logger.getGlobal().info("Mimic Packet recieved! "+action.name());
+                switch(action) {
+                    case INTERACT:
+                    case INTERACT_AT:
+                        entity.playAnimation(ActionType.INTERACT);
+                        break;
+                    case ATTACK:
+                        entity.playAnimation(ActionType.ATTACK);
+                        break;
+                }
+                return;
+            }
             EquipmentSlot hand;
             if(!action.equals(EnumWrappers.EntityUseAction.ATTACK)
                     && packet.getHands().read(0).equals(EnumWrappers.Hand.MAIN_HAND)) {

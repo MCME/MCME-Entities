@@ -104,10 +104,10 @@ public class GoalJockey extends GoalVirtualEntity {
             shift.add(factoryRelativePosition);
         }
         this.relativePosition = shift;
-        Logger.getGlobal().info("\nrelative factory: "+(factoryRelativePosition==null?"null":factoryRelativePosition)
-                + "\nsaddle: "+saddle
-                +"\nsit point: "+(getEntity().getSitPoint()==null?"null":getEntity().getSitPoint())
-                + "\nrelative position: "+relativePosition);
+/*Logger.getGlobal().info("\nrelative factory: "+(factoryRelativePosition==null?"null":factoryRelativePosition)
+        + "\nsaddle: "+saddle
+        +"\nsit point: "+(getEntity().getSitPoint()==null?"null":getEntity().getSitPoint())
+        + "\nrelative position: "+relativePosition);*/
     }
 
 }

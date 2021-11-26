@@ -69,7 +69,7 @@ public class VirtualEntityFactory {
 
     private int headPoseDelay = 2;
 
-    private int viewDistance = 32;
+    private int viewDistance = 320;
 
     private float maxRotationStep = 40f;
     private float maxRotationStepFlight = 2f;
@@ -77,8 +77,9 @@ public class VirtualEntityFactory {
     private int updateInterval = 10;
 
     private int jumpHeight = 1;
-    private float knockBackBase = 0.2f, knockBackPerDamage = 0.01f;
+    private float knockBackBase = 0.1f, knockBackPerDamage = 0.005f;
     private float projectileDamage = 2;
+    private int attackDelay = 0;
 
     private McmeEntity shooter = null;
     private float projectileVelocity = 1.6f;
@@ -123,7 +124,7 @@ public class VirtualEntityFactory {
                 "speechballoonlayout","mouth","manualanimation","headposedelay","viewdistance",
                 "maxrotationstep", "maxRotationStepFlight", "updateInterval", "jumpheight", "knockbackbase",
                 "knockbackperdamage","relative_position","saddlepoint","sitpoint","attackpoint",
-                "flightlevel","dive","attackpitch","saddle","color","style").map(String::toLowerCase)
+                "flightlevel","dive","attackpitch","saddle","color","style","attackdelay").map(String::toLowerCase)
                 .sorted().collect(Collectors.toList());
     }
 
@@ -506,6 +507,15 @@ public class VirtualEntityFactory {
 
     public VirtualEntityFactory withDependingEntity(org.bukkit.entity.Entity dependingEntity) {
         this.dependingEntity = dependingEntity;
+        return this;
+    }
+
+    public int getAttackDelay() {
+        return attackDelay;
+    }
+
+    public VirtualEntityFactory withAttackDelay(int attackDelay) {
+        this.attackDelay = attackDelay;
         return this;
     }
 

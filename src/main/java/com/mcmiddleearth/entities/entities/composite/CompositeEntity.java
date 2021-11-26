@@ -287,10 +287,11 @@ Logger.getGlobal().info("Sending animation: "+viewer.getName());
         VirtualEntityFactory factory = super.getFactory()
             .withHeadPoseDelay(headPoseDelay)
             .withHeadPitchCenter(headPitchCenter)
-            .withMaxRotationStep(maxRotationStep);
-        if(getDisplayName() != null && displayNameBone != null) {
+            .withMaxRotationStep(maxRotationStep)
+            .withDisplayNamePosition(displayNamePosition);
+        /*if(getDisplayName() != null && displayNameBone != null) {
             factory.withDisplayNamePosition(displayNameBone.getRelativePosition());
-        }
+        }*/
         return factory;
     }
 

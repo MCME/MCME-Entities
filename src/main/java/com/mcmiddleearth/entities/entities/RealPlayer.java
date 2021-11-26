@@ -16,6 +16,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -179,6 +180,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     @Override
     public void damage(double damage) {
+//Logger.getGlobal().info("Player damage: "+damage);
         getBukkitPlayer().damage(damage);
     }
 
@@ -216,7 +218,20 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
         double toughness = 0;
         attribute = getBukkitPlayer().getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
         if(attribute!=null) toughness = attribute.getValue();
-        damage(damage*(1-Math.min(20,Math.max(defense/5,defense - 4*damage/(toughness+8)))/25));
+//Logger.getGlobal().info("Damage dealt: "+damage+" toughness: "+toughness+" defense: "+defense);
+        double playerDamage = damage*(1-Math.min(20,Math.max(defense/5,defense - 4*damage/(toughness+8)))/25);
+        double armor=0;
+        for(ItemStack item : getBukkitPlayer().getInventory().getArmorContents()) {
+            if(item != null && item.hasItemMeta()) {
+                ItemMeta meta = item.getItemMeta();
+                if (meta.hasEnchant(Enchantment.PROTECTION_ENVIRONMENTAL)) {
+                    armor += meta.getEnchantLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+                }
+            }
+        }
+        armor = Math.min(20,armor)/25;
+        playerDamage = armor * playerDamage;
+        damage(playerDamage);
         //        damage(damage);
     }
 
@@ -231,10 +246,19 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
             double knockback = 0;
             ItemStack weapon = getBukkitPlayer().getInventory().getItemInMainHand();
             ItemMeta meta = weapon.getItemMeta();
-            try {
-                knockBackAttribute.setModifiers(meta.getAttributeModifiers(Attribute.GENERIC_ATTACK_KNOCKBACK));
-                knockback = knockBackAttribute.getValue();
-            } catch(NullPointerException ignore) {}
+            if(meta !=null) {
+                try {
+                    knockBackAttribute.setModifiers(meta.getAttributeModifiers(Attribute.GENERIC_ATTACK_KNOCKBACK));
+                    knockback = knockBackAttribute.getValue();
+                } catch (NullPointerException ignore) {
+                }
+                if(meta.hasEnchant(Enchantment.KNOCKBACK)) {
+                    knockback += meta.getEnchantLevel(Enchantment.KNOCKBACK)*0.1;
+                }
+                if(meta.hasEnchant(Enchantment.DAMAGE_ALL)) {
+                    damage += (0.5 + meta.getEnchantLevel(Enchantment.DAMAGE_ALL)*0.5);
+                }
+            }
            //if(attribute!=null) knockback = attribute.getValue();
             target.receiveAttack(this, damage, knockback+1);
 Logger.getGlobal().info("damage: "+damage+" knockback: "+knockback);

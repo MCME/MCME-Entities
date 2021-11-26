@@ -9,6 +9,7 @@ public enum GoalType {
     WATCH_ENTITY,
     RANGED_ATTACK_ENTITY,
     FOLLOW_ENTITY,
+    FOLLOW_ENTITY_STALKING,
     ATTACK_CLOSE,
 //    DIG,
 //    WALK,

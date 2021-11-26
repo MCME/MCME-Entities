@@ -1,5 +1,6 @@
 package com.mcmiddleearth.entities.entities.simple;
 
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
@@ -7,6 +8,7 @@ import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.protocol.packets.simple.SimpleEntityAnimationPacket;
 import com.mcmiddleearth.entities.protocol.packets.simple.SimpleEntityStatusPacket;
 import com.mcmiddleearth.entities.protocol.packets.simple.SimpleLivingEntitySpawnPacket;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class SimpleLivingEntity extends SimpleEntity {
 
@@ -43,8 +45,14 @@ public class SimpleLivingEntity extends SimpleEntity {
     }
 
     @Override
-    public void playAnimation(ActionType type) {
+    public void playAnimation(ActionType type, Payload payload, int delay) {
         this.animation = type;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                payload.execute();
+            }
+        }.runTaskLater(EntitiesPlugin.getInstance(),delay);
     }
 
 }

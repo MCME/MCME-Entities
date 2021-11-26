@@ -279,6 +279,13 @@ public class FactoryCommand extends McmeEntitiesCommandHandler {
                     sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse attack point!").color(ChatColor.RED).create());
                 }
                 break;
+            case "attackdelay":
+                try {
+                    factory.withAttackDelay(Integer.parseInt(value));
+                } catch (NumberFormatException ex) {
+                    sender.sendMessage(new ComponentBuilder("Invalid input! Could not parse attack delay!").color(ChatColor.RED).create());
+                }
+                break;
             case "flightlevel":
                 goalFactory = getOrCreateGoalFactory(factory);
                 try {

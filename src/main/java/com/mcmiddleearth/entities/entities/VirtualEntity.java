@@ -3,12 +3,14 @@ package com.mcmiddleearth.entities.entities;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.ai.goal.Goal;
+import com.mcmiddleearth.entities.ai.goal.GoalDistance;
 import com.mcmiddleearth.entities.ai.goal.GoalVirtualEntity;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.ai.movement.MovementEngine;
 import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonEntity;
+import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.events.McmeEntityDamagedEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityDeathEvent;
@@ -30,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +41,7 @@ import java.util.logging.Logger;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
-    private int viewDistance = 20;
+    private int viewDistance = 320;
 
     private UUID uniqueId;
 
@@ -90,7 +93,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private final int updateRandom;
 
     private int jumpHeight = 1, fallDepth = 1; //if both values differ from each other pathfinding can easily get stuck.
-    private float knockBackBase = 0.2f, knockBackPerDamage = 0.01f;
+    private float knockBackBase = 0.04f, knockBackPerDamage = 0.002f;
 
     private double health;
     private boolean dead = false;
@@ -99,6 +102,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     private boolean isTerminated = false;
 
     private int attackCoolDown = 40;
+    private int attackDelay = 0;
     private int hurtCoolDown = 0;
 
     private Set<McmeEntity> enemies = new HashSet<>();
@@ -142,6 +146,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             AttributeInstance maxHealth = getAttribute(Attribute.GENERIC_MAX_HEALTH);
             if(maxHealth!=null) health = maxHealth.getValue();
         }
+        this.attackDelay = factory.getAttackDelay();
         this.defaultSpeechBalloonLayout = factory.getSpeechBalloonLayout();
         this.mouth = factory.getMouth();
         this.viewDistance = factory.getViewDistance();
@@ -572,6 +577,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         double resistance = 0;
         if(attribute!=null) resistance = attribute.getValue();
         double length = knockBackFactor * (knockBackBase+Math.max(0,damage-resistance)*knockBackPerDamage);
+//Logger.getGlobal().info("Kb base: "+knockBackBase+" per Damage: "+knockBackPerDamage+" resistance: "+resistance+" factor: "+knockBackFactor+" length: "+length);
         Vector normal;
         if(damager!=null) {
             normal = damager.getLocation().clone().subtract(location.toVector()).toVector().normalize();
@@ -604,18 +610,38 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
             if (!event.isCancelled()) {
                 //actionType = ActionType.ATTACK;
 //Logger.getGlobal().info("Attack");
-                if(animate) playAnimation(ActionType.ATTACK);
-                AttributeInstance attribute = getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
-                double damage = 2;
-                if(attribute!= null) damage = attribute.getValue();
-                double knockback = 0;
-                attribute = getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
-                if(attribute!=null) knockback = attribute.getValue();
-                target.receiveAttack(this, damage, knockback+1);
-                attackCoolDown = 40;
-                attribute = getAttribute(Attribute.GENERIC_ATTACK_SPEED);
-                if(attribute!=null) attackCoolDown = (int) (160 / attribute.getValue());
+                VirtualEntity damager = this;
+                Payload attack = new Payload() {
+                    public void execute() {
+                        if(isCloseToTarget(target, GoalDistance.ATTACK*3)) {
+                            AttributeInstance attribute = getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+                            double damage = 2;
+                            if (attribute != null) damage = attribute.getValue();
+                            double knockback = 0;
+                            attribute = getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
+                            if (attribute != null) knockback = attribute.getValue();
+                            target.receiveAttack(damager, damage, knockback + 1);
+                        }
+                    }
+                };
+                if(animate) {
+                    playAnimation(ActionType.ATTACK, attack, attackDelay);
+                } else {
+                    attack.execute();
+                }
             }
+            attackCoolDown = 40;
+            AttributeInstance attribute = getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+            if(attribute!=null) attackCoolDown = (int) (160 / attribute.getValue());
+        }
+    }
+
+    private boolean isCloseToTarget(McmeEntity target, double distanceSquared) {
+        if(target!=null) {
+            double distance = getLocation().toVector().distanceSquared(target.getLocation().toVector());
+            return distance < distanceSquared;
+        } else {
+            return false;
         }
     }
 
@@ -680,7 +706,16 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     }
 
     @Override
-    public void playAnimation(ActionType type) { }
+    public void playAnimation(ActionType type) {
+        this.playAnimation(type, new Payload() {
+            @Override
+            public void execute() {
+
+            }
+        },0);
+    }
+
+    public void playAnimation(ActionType type, Payload payload, int delay) { }
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
@@ -823,10 +858,15 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 .withEnemies(enemies)
                 .withSpeechBalloonLayout(defaultSpeechBalloonLayout)
                 .withSitPoint(sitPoint)
-                .withSaddlePoint(saddle);
+                .withSaddlePoint(saddle)
+                .withAttackDelay(attackDelay);
         if(goal!=null) {
             factory.withGoalFactory(goal.getFactory());
         }
         return factory;
+    }
+
+    public interface Payload {
+        void execute();
     }
 }

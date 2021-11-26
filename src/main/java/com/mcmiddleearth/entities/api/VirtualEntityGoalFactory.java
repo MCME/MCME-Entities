@@ -235,6 +235,12 @@ Logger.getGlobal().info("pathfinder: flying");
                     Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
                 goal = new GoalEntityTargetFollow(entity,this, pathfinder);
                 break;
+            case FOLLOW_ENTITY_STALKING:
+                Constrain.checkEntity(targetEntity);
+                if(!(targetEntity instanceof Placeholder))
+                    Constrain.checkSameWorld(targetEntity.getLocation(),entity.getLocation().getWorld());
+                goal = new GoalEntityTargetFollowStalking(entity,this, pathfinder);
+                break;
             case ATTACK_ENTITY:
                 Constrain.checkEntity(targetEntity);
                 if(!(targetEntity instanceof Placeholder))

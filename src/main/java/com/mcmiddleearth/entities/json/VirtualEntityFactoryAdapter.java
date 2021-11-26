@@ -66,7 +66,8 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
     HORSE_STYLE                 = "horse_style",
     SADDLE_POINT                = "saddle_point",
     ATTACK_POINT                = "attack_point",
-    SIT_POINT                   = "sit_point";
+    SIT_POINT                   = "sit_point",
+    ATTACK_DELAY                = "attack_delay";
 
     @Override
     public void write(JsonWriter out, VirtualEntityFactory factory) throws IOException {
@@ -162,6 +163,7 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
         JsonUtil.writeNonDefaultVector(out, SADDLE_POINT, factory.getSaddlePoint(), defaults.getSaddlePoint(), gson, writeDefaults);
         JsonUtil.writeNonDefaultVector(out, SIT_POINT, factory.getSitPoint(), defaults.getSitPoint(), gson, writeDefaults);
         JsonUtil.writeNonDefaultVector(out, ATTACK_POINT, factory.getAttackPoint(), defaults.getAttackPoint(), gson, writeDefaults);
+        JsonUtil.writeNonDefaultInt(out, ATTACK_DELAY, factory.getAttackDelay(), defaults.getAttackDelay(), writeDefaults);
 
         out.endObject();
     }
@@ -320,6 +322,9 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                         break;
                     case ATTACK_POINT:
                         factory.withAttackPoint(gson.fromJson(in, Vector.class));
+                        break;
+                    case ATTACK_DELAY:
+                        factory.withAttackDelay(in.nextInt());
                         break;
                     default:
                         in.skipValue();

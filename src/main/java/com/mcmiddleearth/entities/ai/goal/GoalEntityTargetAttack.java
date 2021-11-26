@@ -5,6 +5,8 @@ import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.ai.pathfinding.Pathfinder;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
+import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
+import com.mcmiddleearth.entities.entities.composite.animation.BakedAnimation;
 import com.mcmiddleearth.entities.events.events.goal.GoalVirtualEntityIsClose;
 import org.bukkit.Location;
 
@@ -13,6 +15,8 @@ public class GoalEntityTargetAttack extends GoalEntityTarget {
     public GoalEntityTargetAttack(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
         super(entity, factory, pathfinder);
     }
+
+    int isCloseTicks;
 
     @Override
     public void doTick() {
@@ -28,13 +32,15 @@ public class GoalEntityTargetAttack extends GoalEntityTarget {
                         .subtract(getEntity().getLocation().toVector()));
                 setYaw(orientation.getYaw());
                 setPitch(orientation.getPitch());
-                if (!isFinished()) {
+                if (isCloseTicks > 0 && !isFinished()) {
                     getEntity().attack(target);
                 }
+                isCloseTicks++;
                 //}
             } else {
                 setIsMoving(true);
                 movementSpeed = MovementSpeed.WALK;
+                isCloseTicks = 0;
             }
             if (target.isDead()) {
                 setFinished();

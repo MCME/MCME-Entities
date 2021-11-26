@@ -78,7 +78,7 @@ public abstract class SimpleEntity extends VirtualEntity {
         super.setMovementSpeed(movementSpeed);
         if (!movementSpeed.equals(lastMovementSpeed)) {
             ((SimpleEntityMetadataPacket) metadataPacket).setSprinting(movementSpeed.equals(MovementSpeed.SPRINT));
-Logger.getGlobal().info("Sprint: " + movementSpeed.equals(MovementSpeed.SPRINT));
+//Logger.getGlobal().info("Sprint: " + movementSpeed.equals(MovementSpeed.SPRINT));
             metadataPacket.update();
             metadataPacket.send(getViewers());
             lastMovementSpeed = movementSpeed;
