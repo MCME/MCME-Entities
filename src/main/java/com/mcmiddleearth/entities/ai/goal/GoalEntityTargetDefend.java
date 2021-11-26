@@ -20,6 +20,8 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
     private McmeEntity protege;
     private boolean protegeIncomplete = false;
 
+    private int isCloseTicks = 0;
+
     public GoalEntityTargetDefend(VirtualEntity entity, VirtualEntityGoalFactory factory, Pathfinder pathfinder) {
         super(entity, factory, pathfinder);
         this.protege = factory.getTargetEntity();
@@ -41,12 +43,16 @@ public class GoalEntityTargetDefend extends GoalEntityTarget {
                         .subtract(getEntity().getLocation().toVector()));
                 setYaw(orientation.getYaw());
                 setPitch(orientation.getPitch());
+                isCloseTicks = 0;
             } else if (target != protege && isCloseToTarget(GoalDistance.ATTACK)) {
                 EntitiesPlugin.getEntityServer().handleEvent(new GoalVirtualEntityIsClose(getEntity(), this));
-                if (getEntity().getAttackCoolDown() == 0) {
+                movementSpeed = MovementSpeed.STAND;
+                if (isCloseTicks > 0) {// && getEntity().getAttackCoolDown() == 0) {
                     getEntity().attack(target);
                 }
+                isCloseTicks++;
             } else {
+                isCloseTicks = 0;
                 setIsMoving(true);
                 movementSpeed = MovementSpeed.WALK;
             }

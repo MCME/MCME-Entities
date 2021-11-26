@@ -220,17 +220,21 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
         if(attribute!=null) toughness = attribute.getValue();
 //Logger.getGlobal().info("Damage dealt: "+damage+" toughness: "+toughness+" defense: "+defense);
         double playerDamage = damage*(1-Math.min(20,Math.max(defense/5,defense - 4*damage/(toughness+8)))/25);
+//Logger.getGlobal().info("playerDamage: "+damage);
         double armor=0;
         for(ItemStack item : getBukkitPlayer().getInventory().getArmorContents()) {
+//Logger.getGlobal().info("item: "+item);
             if(item != null && item.hasItemMeta()) {
                 ItemMeta meta = item.getItemMeta();
                 if (meta.hasEnchant(Enchantment.PROTECTION_ENVIRONMENTAL)) {
                     armor += meta.getEnchantLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+//Logger.getGlobal().info("armor: "+armor);
                 }
             }
         }
         armor = Math.min(20,armor)/25;
-        playerDamage = armor * playerDamage;
+//Logger.getGlobal().info("final armor: "+armor);
+        playerDamage = (1-armor) * playerDamage;
         damage(playerDamage);
         //        damage(damage);
     }
