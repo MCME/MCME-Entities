@@ -43,14 +43,14 @@ public class Explosion {
     }
 
     public void explode() {
-        settled = new HashSet<>();
+        settled = new HashSet<>(unaffected);
         new BukkitRunnable() {
 
             private double currentRadius = velocity;
             private double currentKnockback = knockback;
             private double currentDamage = damage;
 
-            private Set<McmeEntity> affected = new HashSet<>();
+            //private Set<McmeEntity> affected = new HashSet<>();
 
             @Override
             public void run() {

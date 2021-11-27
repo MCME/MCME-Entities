@@ -38,9 +38,8 @@ public class VirtualEntityUseListener extends EntityListener {
         McmeEntity entity = entityServer.getEntity(entityId);
         if(entity instanceof VirtualEntity) {
             EnumWrappers.EntityUseAction action = packet.getEntityUseActions().read(0);
-            event.setCancelled(true);
             if(entity.getGoal() instanceof GoalMimic && ((GoalMimic)entity.getGoal()).getMimic().equals(player)) {
-Logger.getGlobal().info("Mimic Packet recieved! "+action.name());
+//Logger.getGlobal().info("Mimic Packet recieved! "+action.name());
                 switch(action) {
                     case INTERACT:
                     case INTERACT_AT:
@@ -52,6 +51,7 @@ Logger.getGlobal().info("Mimic Packet recieved! "+action.name());
                 }
                 return;
             }
+            event.setCancelled(true);
             EquipmentSlot hand;
             if(!action.equals(EnumWrappers.EntityUseAction.ATTACK)
                     && packet.getHands().read(0).equals(EnumWrappers.Hand.MAIN_HAND)) {
