@@ -5,13 +5,11 @@ import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
 import com.mcmiddleearth.entities.Permission;
 import com.mcmiddleearth.entities.ai.goal.GoalType;
-import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.api.VirtualEntityGoalFactory;
 import com.mcmiddleearth.entities.command.argument.AttributeTypeArgument;
 import com.mcmiddleearth.entities.command.argument.GoalTypeArgument;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
-import com.mcmiddleearth.entities.entities.simple.SimpleEntity;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import com.mcmiddleearth.entities.entities.simple.SimpleHorse;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
@@ -25,7 +23,6 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 
 public class SetCommand extends McmeEntitiesCommandHandler {
@@ -61,7 +58,7 @@ public class SetCommand extends McmeEntitiesCommandHandler {
     }
 
     public int setItem(McmeCommandSender sender, String slotName, String itemMaterial) {
-        Entity entity = ((BukkitCommandSender)sender).getSelectedEntities().stream().findFirst().orElse(null);
+        McmeEntity entity = ((BukkitCommandSender)sender).getSelectedEntities().stream().findFirst().orElse(null);
         if(entity instanceof VirtualEntity) {
             if(slotName.equalsIgnoreCase("saddle")) {
                 if(entity instanceof SimpleHorse) {
@@ -101,7 +98,7 @@ public class SetCommand extends McmeEntitiesCommandHandler {
     private int setAttribute(McmeCommandSender sender, String type, String valueString) {
         try {
             double value = Double.parseDouble(valueString);
-            Entity entity = ((BukkitCommandSender)sender).getSelectedEntities().stream().findFirst().orElse(null);
+            McmeEntity entity = ((BukkitCommandSender)sender).getSelectedEntities().stream().findFirst().orElse(null);
             if(entity instanceof VirtualEntity) {
                 Attribute attributeType = Attribute.valueOf(type.toUpperCase());
                 AttributeInstance attribute = ((VirtualEntity)entity).getAttribute(attributeType);
@@ -128,7 +125,7 @@ public class SetCommand extends McmeEntitiesCommandHandler {
     }
 
     private int setDisplayName(McmeCommandSender source, String displayname) {
-        Entity entity = ((BukkitCommandSender)source).getSelectedEntities().stream().findFirst().orElse(null);
+        McmeEntity entity = ((BukkitCommandSender)source).getSelectedEntities().stream().findFirst().orElse(null);
         if(entity instanceof VirtualEntity) {
             ((VirtualEntity)entity).setDisplayName(displayname);
             source.sendMessage(new ComponentBuilder("Set display name to: "+displayname).create());

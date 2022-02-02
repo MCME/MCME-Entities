@@ -4,12 +4,9 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-
-import java.util.logging.Logger;
 
 public class ProjectileSpawnPacket extends AbstractPacket {
 
@@ -28,7 +25,7 @@ public class ProjectileSpawnPacket extends AbstractPacket {
 ///Logger.getGlobal().info("Spawn eid: "+entity.getEntityId());
 //Logger.getGlobal().info("id "+shooter.getEntityId()+" Velo: "+velo.getX()+" "+velo.getY()+" "+velo.getZ());
 //Logger.getGlobal().info("Type "+entity.getType().getBukkitEntityType());
-            spawn.getEntityTypeModifier().write(0,entity.getType().getBukkitEntityType());
+            spawn.getEntityTypeModifier().write(0,entity.getMcmeEntityType().getBukkitEntityType());
             spawn.getUUIDs().write(0, entity.getUniqueId());
 
             velocity = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);

@@ -8,6 +8,7 @@ import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
+import com.mcmiddleearth.entities.inventory.McmeInventory;
 import com.mcmiddleearth.entities.protocol.packets.*;
 import com.mcmiddleearth.entities.protocol.packets.composite.BoneInitPacket;
 import com.mcmiddleearth.entities.protocol.packets.composite.BoneMetaPacket;
@@ -215,7 +216,7 @@ public class Bone implements McmeEntity {
     }
 
     @Override
-    public McmeEntityType getType() {
+    public McmeEntityType getMcmeEntityType() {
         return new McmeEntityType(McmeEntityType.CustomEntityType.BONE);
     }
 
@@ -316,7 +317,7 @@ public class Bone implements McmeEntity {
     }*/
 
     @Override
-    public EntityBoundingBox getBoundingBox() {
+    public EntityBoundingBox getEntityBoundingBox() {
         return null;
     }
 
@@ -466,4 +467,16 @@ public class Bone implements McmeEntity {
     public void removeItem(ItemStack item) {
         //do nothing
     }
+
+    @Override
+    public boolean isOnGround() {
+        return false;
+    }
+
+    @Override
+    public McmeInventory getInventory() {
+        throw new UnsupportedOperationException();
+    }
+
+
 }

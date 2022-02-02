@@ -1,24 +1,16 @@
 package com.mcmiddleearth.entities.api;
 
-import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.events.listener.McmeEventListener;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.provider.PlayerProvider;
 import com.mcmiddleearth.entities.server.EntityServer;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Main Entity entry point. Provides access to entities and events.
@@ -78,7 +70,7 @@ public class EntityAPI {
      * Removes a collection of entity.
      * @param entities entities to be removed
      */
-    public static void removeEntity(Collection<? extends Entity> entities) {
+    public static void removeEntity(Collection<? extends McmeEntity> entities) {
         entityServer.removeEntity(entities);
     }
 
@@ -86,7 +78,7 @@ public class EntityAPI {
      * Removes an entiy.
      * @param entity Entity to be removed
      */
-    public static void removeEntity(Entity entity) {
+    public static void removeEntity(McmeEntity entity) {
         if(entity instanceof McmeEntity)
             entityServer.removeEntity((McmeEntity) entity);
     }
@@ -96,7 +88,7 @@ public class EntityAPI {
      * @param clazz requested entity class
      * @return collection of found entities
      */
-    public Collection<? extends McmeEntity> getEntities(Class<? extends Entity> clazz) {
+    public Collection<? extends McmeEntity> getEntities(Class<? extends McmeEntity> clazz) {
         return entityServer.getEntities(clazz);
     }
 
@@ -106,7 +98,7 @@ public class EntityAPI {
      * @param name name of the entity to get
      * @return First found entity with the provided name or null if no entity could be found.
      */
-    public static Entity getEntity(String name) {
+    public static McmeEntity getEntity(String name) {
         return entityServer.getEntity(name);
     }
 
@@ -116,7 +108,7 @@ public class EntityAPI {
      * @param entityId id of desired entity.
      * @return Found entity or null
      */
-    public static Entity getEntity(int entityId) {
+    public static McmeEntity getEntity(int entityId) {
         return entityServer.getEntity(entityId);
     }
 
@@ -128,7 +120,7 @@ public class EntityAPI {
      * @param rangeZ range along z-axis
      * @return Collection of entities in the cuboid.
      */
-    public static Collection<? extends Entity> getEntitiesAt(Location location, int rangeX, int rangeY, int rangeZ) {
+    public static Collection<? extends McmeEntity> getEntitiesAt(Location location, int rangeX, int rangeY, int rangeZ) {
         return entityServer.getEntitiesAt(location,rangeX,rangeY,rangeZ);
     }
 

@@ -4,8 +4,8 @@ import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
 import com.mcmiddleearth.entities.Permission;
-import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.command.argument.AnimationIdArgument;
+import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -39,7 +39,7 @@ public class AnimateCommand extends McmeEntitiesCommandHandler {
 //Logger.getGlobal().info("Apply Frame command");
         RealPlayer player = ((RealPlayer)sender);
         int counter = 0;
-        for(Entity entity :player.getSelectedEntities()) {
+        for(McmeEntity entity :player.getSelectedEntities()) {
 //Logger.getGlobal().info("entity: "+entity.getClass().getSimpleName());
             if (entity instanceof BakedAnimationEntity) {
                 ((BakedAnimationEntity) entity).setManualAnimationControl(true);

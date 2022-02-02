@@ -21,6 +21,7 @@ import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityStopTalkEve
 import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityTalkEvent;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
+import com.mcmiddleearth.entities.inventory.McmeInventory;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
@@ -441,12 +442,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         return true;
     }*/
 
-    public EntityBoundingBox getBoundingBox() {
+    public EntityBoundingBox getEntityBoundingBox() {
         return boundingBox;
     }
 
     @Override
-    public McmeEntityType getType() {
+    public McmeEntityType getMcmeEntityType() {
         return type;
     }
 
@@ -838,6 +839,12 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     @Override
     public void removeItem(ItemStack item) {
         //TODO
+    }
+
+    @Override
+    public McmeInventory getInventory() {
+        //Todo getInventory
+        throw new UnsupportedOperationException();
     }
 
     public VirtualEntityFactory getFactory() {

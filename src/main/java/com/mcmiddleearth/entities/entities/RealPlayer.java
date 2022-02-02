@@ -9,21 +9,22 @@ import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
+import com.mcmiddleearth.entities.inventory.McmeInventory;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -70,7 +71,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     }
 
     @Override
-    public McmeEntityType getType() {
+    public McmeEntityType getMcmeEntityType() {
         return McmeEntityType.valueOf("player");
     }
 
@@ -100,7 +101,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     }
 
     @Override
-    public EntityBoundingBox getBoundingBox() {
+    public EntityBoundingBox getEntityBoundingBox() {
         return bb;
     }
 
@@ -404,7 +405,17 @@ Logger.getGlobal().info("damage: "+damage+" knockback: "+knockback);
     }
 
     @Override
+    public boolean isOnGround() {
+        return getBukkitPlayer().isOnGround();
+    }
+
+    @Override
     public boolean isOnline() {
         return getBukkitPlayer().isOnline();
     }
+
+    @Override
+    public @NotNull Inventory getInventory() {
+        return getBukkitPlayer().getInventory();
+    };
 }

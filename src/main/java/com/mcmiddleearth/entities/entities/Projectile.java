@@ -92,8 +92,8 @@ public class Projectile extends SimpleNonLivingEntity {
     }
 
    private McmeEntity checkEntityCollisions() {
-        if(getBoundingBox().isZero()) return null;
-        BoundingBox entityBB = getBoundingBox().getBoundingBox().clone();
+        if(getEntityBoundingBox().isZero()) return null;
+        BoundingBox entityBB = getEntityBoundingBox().getBoundingBox().clone();
         Collection<McmeEntity> closeEntities = EntitiesPlugin.getEntityServer()
                 .getEntitiesAt(getLocation(), (int) (entityBB.getWidthX()*2+1),
                         (int)(entityBB.getHeight()*2+1),
@@ -106,8 +106,8 @@ Logger.getGlobal().info("player: "+search.getBoundingBox().isZero());
 Logger.getGlobal().info("bb: "+search.getBoundingBox().getBoundingBox());
             }*/
             if (!(search instanceof Projectile)
-                    && search.getBoundingBox() != null && !search.getBoundingBox().isZero()
-                    && entityBB.overlaps(search.getBoundingBox().getBoundingBox())) {
+                    && search.getEntityBoundingBox() != null && !search.getEntityBoundingBox().isZero()
+                    && entityBB.overlaps(search.getEntityBoundingBox().getBoundingBox())) {
                 return search;
             }
 //Logger.getGlobal().info("next");

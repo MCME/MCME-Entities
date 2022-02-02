@@ -34,7 +34,7 @@ public class SyncEntityProvider implements EntityProvider {
 
     @Override
     public Collection<McmeEntity> getEntityByType(McmeEntityType type) {
-        return entities.stream().filter(entity -> entity.getType().equals(type)).collect(Collectors.toList());
+        return entities.stream().filter(entity -> entity.getMcmeEntityType().equals(type)).collect(Collectors.toList());
     }
 
     @Override

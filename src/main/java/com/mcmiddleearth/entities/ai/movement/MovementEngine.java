@@ -11,7 +11,6 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
-import java.util.logging.Logger;
 
 public class MovementEngine {
 
@@ -77,7 +76,7 @@ public class MovementEngine {
                     if (groundDistance < -velocity.getY()) {
 //Logger.getGlobal().info("WALK");
                         velocity.setY(-groundDistance);
-                        double fallHeight = fallStart - (entity.getBoundingBox().getMin().getY()-groundDistance);
+                        double fallHeight = fallStart - (entity.getEntityBoundingBox().getMin().getY()-groundDistance);
 //Logger.getGlobal().info("Fall Damage?: "+fallStart +" entity y: "+entity.getBoundingBox().getMin().getY()+" ground Dist: "+ groundDistance+" fallHeight: "+fallHeight+" "+entity.getFallDepth());
                         if(fallHeight>entity.getFallDepth()+0.5) {
                             entity.damage((int) (fallHeight - entity.getFallDepth()));
@@ -143,7 +142,7 @@ public class MovementEngine {
     }
 
     public boolean cannotMove(Vector velocity) {
-        BoundingBox entityBB = entity.getBoundingBox().getBoundingBox().clone();
+        BoundingBox entityBB = entity.getEntityBoundingBox().getBoundingBox().clone();
 //Logger.getGlobal().info("bb x1 "+entityBB.getMinX()+ " x2 "+entityBB.getMaxX()+" vec x: "+velocity.getX());
 //Logger.getGlobal().info("velo: "+velocity);
         entityBB.shift(velocity);
@@ -162,8 +161,8 @@ public class MovementEngine {
     }
 
     private Vector handleCollisions(Vector velocity) {
-        if(entity.getBoundingBox().isZero()) return velocity;
-        BoundingBox entityBB = entity.getBoundingBox().getBoundingBox().clone();
+        if(entity.getEntityBoundingBox().isZero()) return velocity;
+        BoundingBox entityBB = entity.getEntityBoundingBox().getBoundingBox().clone();
         Collection<McmeEntity> closeEntities = EntitiesPlugin.getEntityServer()
                                         .getEntitiesAt(entity.getLocation(), (int) (entityBB.getWidthX()*2+1),
                                                                              (int)(entityBB.getHeight()*2+1),
@@ -179,8 +178,8 @@ public class MovementEngine {
 Logger.getGlobal().info("type: "+search.getClass().getSimpleName()+" "+search.getType().name());*/
             if(!((search.getGoal() instanceof GoalJockey) && ((GoalJockey)search.getGoal()).getSteed().equals(entity))
                     && !(search instanceof Projectile)
-                    && search != entity && search.getBoundingBox() != null && !search.getBoundingBox().isZero()
-                    && entityBB.overlaps(search.getBoundingBox().getBoundingBox())) {
+                    && search != entity && search.getEntityBoundingBox() != null && !search.getEntityBoundingBox().isZero()
+                    && entityBB.overlaps(search.getEntityBoundingBox().getBoundingBox())) {
                 double speed = velocity.length();
 //Logger.getGlobal().info("colision: "+search);
                 if(Double.isFinite(speed)) {
@@ -206,7 +205,7 @@ Logger.getGlobal().info("type: "+search.getClass().getSimpleName()+" "+search.ge
     }
 
     public double distanceToGround() {
-        BoundingBox entityBB = entity.getBoundingBox().getBoundingBox().clone();
+        BoundingBox entityBB = entity.getEntityBoundingBox().getBoundingBox().clone();
         return distanceToGround(entityBB, (int)entity.getJumpHeight()+1);
     }
 
@@ -230,7 +229,7 @@ Logger.getGlobal().info("type: "+search.getClass().getSimpleName()+" "+search.ge
 
 
     public double jumpHeight() {
-        BoundingBox entityBB = entity.getBoundingBox().getBoundingBox().clone();
+        BoundingBox entityBB = entity.getEntityBoundingBox().getBoundingBox().clone();
         entityBB.shift(new Vector(entity.getVelocity().getX(),0,entity.getVelocity().getZ()));
         return - distanceToGround(entityBB, (int)entity.getJumpHeight()+1);
     }

@@ -18,7 +18,7 @@ public class SimpleLivingEntitySpawnPacket extends AbstractPacket {
         this.entity = entity;
         spawn = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
         spawn.getIntegers().write(0, entity.getEntityId())
-                .write(1, getEntityType(entity.getType().getBukkitEntityType()));
+                .write(1, getEntityType(entity.getMcmeEntityType().getBukkitEntityType()));
         //spawn.getEntityTypeModifier().write(0,entity.getType().getBukkitEntityType());
         spawn.getUUIDs().write(0, entity.getUniqueId());
         update();

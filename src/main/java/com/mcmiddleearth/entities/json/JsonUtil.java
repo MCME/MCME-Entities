@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.mcmiddleearth.entities.EntitiesPlugin;
-import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.Placeholder;
@@ -23,7 +22,7 @@ public class JsonUtil {
     REQUIRED        = "required",
     UNIQUE_ID       = "unique_id";
 
-    public static void writeEntityLink(Entity entity, boolean required, JsonWriter out) throws IOException {
+    public static void writeEntityLink(McmeEntity entity, boolean required, JsonWriter out) throws IOException {
         out.beginObject()
                 .name(REQUIRED).value(required)
                 .name(UNIQUE_ID).value((entity!=null?entity.getUniqueId().toString():null));

@@ -5,6 +5,7 @@ import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import org.bukkit.Location;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
@@ -16,7 +17,7 @@ import java.util.UUID;
  * This interface should not to be implemented directly.
  * If you want to add new entity types you need to implement McmeEntity.
  */
-public interface Entity {
+public interface removed_Entity {
 
     /**
      * Get the name of an entity if it is set.
@@ -119,4 +120,6 @@ public interface Entity {
     public void addItem(ItemStack item, EquipmentSlot slot, int slotId);
 
     public void removeItem(ItemStack item);
+
+    public Inventory getInventory();
 }

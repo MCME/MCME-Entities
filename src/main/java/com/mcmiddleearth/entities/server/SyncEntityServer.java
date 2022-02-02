@@ -3,11 +3,10 @@ package com.mcmiddleearth.entities.server;
 import com.google.common.base.Joiner;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.PersistentDataKey;
-import com.mcmiddleearth.entities.api.Entity;
+import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
-import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.Cancelable;
@@ -151,7 +150,7 @@ public class SyncEntityServer implements EntityServer {
     }
 
     @Override
-    public void removeEntity(Entity entity) {
+    public void removeEntity(McmeEntity entity) {
 //Logger.getGlobal().info("Server: remove Entity");
         if(!(entity instanceof SpeechBalloonEntity)) {
             handleEvent(new McmeEntityRemoveEvent((McmeEntity) entity));
@@ -188,12 +187,12 @@ public class SyncEntityServer implements EntityServer {
     }
 
     @Override
-    public void removeEntity(Collection<? extends Entity> entities) {
+    public void removeEntity(Collection<? extends McmeEntity> entities) {
         entities.forEach(this::removeEntity);
     }
 
     @Override
-    public Collection<? extends McmeEntity> getEntities(Class<? extends Entity> clazz) {
+    public Collection<? extends McmeEntity> getEntities(Class<? extends McmeEntity> clazz) {
         if(clazz.isAssignableFrom(RealPlayer.class)) {
             return playerProvider.getMcmePlayers();
         } else {

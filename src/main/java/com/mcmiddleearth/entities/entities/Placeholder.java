@@ -6,6 +6,7 @@ import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
+import com.mcmiddleearth.entities.inventory.McmeInventory;
 import org.bukkit.Location;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -44,7 +45,7 @@ public class Placeholder implements McmeEntity {
     }
 
     @Override
-    public McmeEntityType getType() {
+    public McmeEntityType getMcmeEntityType() {
         return null;
     }
 
@@ -134,7 +135,7 @@ public class Placeholder implements McmeEntity {
     }
 
     @Override
-    public EntityBoundingBox getBoundingBox() {
+    public EntityBoundingBox getEntityBoundingBox() {
         return null;
     }
 
@@ -251,5 +252,15 @@ public class Placeholder implements McmeEntity {
     @Override
     public void removeItem(ItemStack item) {
         //do nothing
+    }
+
+    @Override
+    public boolean isOnGround() {
+        return false;
+    }
+
+    @Override
+    public McmeInventory getInventory() {
+        throw new UnsupportedOperationException();
     }
 }

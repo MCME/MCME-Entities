@@ -5,8 +5,8 @@ import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
 import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.Permission;
-import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.api.EntityAPI;
+import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -36,11 +36,11 @@ public class RemoveCommand extends McmeEntitiesCommandHandler {
 
 
     private int removeEntity(McmeCommandSender sender, String name) {
-        Collection<? extends Entity> entities = new HashSet<>();
+        Collection<? extends McmeEntity> entities = new HashSet<>();
         if(name !=null && name.equalsIgnoreCase("all")) {
             entities = EntitiesPlugin.getEntityServer().getEntities(VirtualEntity.class);
         } else if(name != null) {
-            Entity entity = (EntityAPI.getEntity(name));
+            McmeEntity entity = (EntityAPI.getEntity(name));
             if(entity != null) {
                 entities = Collections.singleton(entity);
             }

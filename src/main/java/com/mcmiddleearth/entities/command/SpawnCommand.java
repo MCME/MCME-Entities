@@ -4,7 +4,6 @@ import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.command.builder.HelpfulLiteralBuilder;
 import com.mcmiddleearth.command.builder.HelpfulRequiredArgumentBuilder;
 import com.mcmiddleearth.entities.Permission;
-import com.mcmiddleearth.entities.api.Entity;
 import com.mcmiddleearth.entities.api.EntityAPI;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.command.argument.AnimationFileArgument;
@@ -18,10 +17,6 @@ import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-
-import java.util.logging.Logger;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 
@@ -78,7 +73,7 @@ public class SpawnCommand extends McmeEntitiesCommandHandler {
 //AttributeInstance attackSpeed = factory.getAttributes().get(Attribute.GENERIC_ATTACK_SPEED);
 //if(attackSpeed!=null) Logger.getGlobal().info("vspawn command: Attack speed: "+attackSpeed.getBaseValue()+" -> "+attackSpeed.getValue());
         Location loc = factory.getLocation();
-        Entity spawnLocationEntity = factory.getSpawnLocationEntity();
+        McmeEntity spawnLocationEntity = factory.getSpawnLocationEntity();
         if(type.equalsIgnoreCase("arrow") && factory.getGoalFactory()!=null) {
             if(factory.getGoalFactory().getTargetEntity()!=null) {
                 Projectile.takeAim(factory, factory.getGoalFactory().getTargetEntity().getLocation());

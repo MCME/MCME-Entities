@@ -6,7 +6,7 @@
 
     <groupId>com.mcmiddleearth</groupId>
     <artifactId>MCME-Entities</artifactId>
-    <version>1.0-SNAPSHOT-200</version>
+    <version>1.0-SNAPSHOT-400</version>
     <packaging>jar</packaging>
 
     <name>MCME-Entities</name>
@@ -71,7 +71,7 @@
         </repository>
         <repository>
             <id>sk89q-snapshots</id>
-            <url>http://maven.sk89q.com/artifactory/repo</url>
+            <url>https://maven.sk89q.com/artifactory/repo</url>
             <releases>
                 <enabled>true</enabled> <!-- releases enabled: this specific repository also hosts release versions -->
             </releases>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>com.fasterxml.uuid</groupId>
             <artifactId>java-uuid-generator</artifactId>
-            <version>3.2.0</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>

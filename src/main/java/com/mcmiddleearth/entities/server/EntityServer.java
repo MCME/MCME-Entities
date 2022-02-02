@@ -1,10 +1,9 @@
 package com.mcmiddleearth.entities.server;
 
-import com.mcmiddleearth.entities.api.Entity;
+import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.RealPlayer;
 import com.mcmiddleearth.entities.entities.VirtualEntity;
-import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.events.McmeEntityEvent;
@@ -30,11 +29,11 @@ public interface EntityServer {
 
     McmeEntity spawnEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException;
 
-    void removeEntity(Entity entity);
+    void removeEntity(McmeEntity entity);
 
-    void removeEntity(Collection<? extends Entity> entities);
+    void removeEntity(Collection<? extends McmeEntity> entities);
 
-    Collection<? extends McmeEntity> getEntities(Class<? extends Entity> clazz);
+    Collection<? extends McmeEntity> getEntities(Class<? extends McmeEntity> clazz);
 
     McmeEntity getEntity(UUID uniqueId);
 

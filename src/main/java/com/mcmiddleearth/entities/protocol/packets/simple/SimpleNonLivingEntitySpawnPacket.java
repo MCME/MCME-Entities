@@ -23,7 +23,7 @@ public class SimpleNonLivingEntitySpawnPacket extends AbstractPacket {
                         .write(6,0); // object data
 //Logger.getGlobal().info("id "+entity.getEntityId());
 //Logger.getGlobal().info("Type "+entity.getType().getBukkitEntityType());
-        spawn.getEntityTypeModifier().write(0,entity.getType().getBukkitEntityType());
+        spawn.getEntityTypeModifier().write(0,entity.getMcmeEntityType().getBukkitEntityType());
         spawn.getUUIDs().write(0, entity.getUniqueId());
 //Logger.getGlobal().info("uuid "+entity.getUniqueId());
         update();

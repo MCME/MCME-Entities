@@ -47,7 +47,7 @@ public class VirtualEntityFactory {
 
     private float headYaw = 0, headPitch = 0;
 
-    private Entity spawnLocationEntity = null;
+    private McmeEntity spawnLocationEntity = null;
 
     private double health = -1;
 
@@ -228,12 +228,12 @@ public class VirtualEntityFactory {
         return this;
     }
 
-    public VirtualEntityFactory withEntityForSpawnLocation(Entity entity) {
+    public VirtualEntityFactory withEntityForSpawnLocation(McmeEntity entity) {
         this.spawnLocationEntity = entity;
         return this;
     }
 
-    public Entity getSpawnLocationEntity() {
+    public McmeEntity getSpawnLocationEntity() {
         return spawnLocationEntity;
     }
 

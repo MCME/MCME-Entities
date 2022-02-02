@@ -336,7 +336,7 @@ Logger.getGlobal().info("step: "+(step < maxPathLength) + "not complete: "+ !pat
         RayTracer<Double> tracer = new RayTracer<>(entity.getLocation().toVector(),targetDirection,
                 (x,y,z) -> EntitiesPlugin.getEntityServer().getBlockProvider(entity.getLocation().getWorld().getUID())
                         .blockTopY(x,y,z,(int)entity.getJumpHeight()+1));
-        BoundingBox boundingBox = entity.getBoundingBox().getBoundingBox();
+        BoundingBox boundingBox = entity.getEntityBoundingBox().getBoundingBox();
 //Logger.getGlobal().info("BB: min: "+boundingBox.getMin()+" max: "+boundingBox.getMax());
         int jumpHeight = (int)entity.getJumpHeight();
         tracer.addRay(new Vector(boundingBox.getMinX(),boundingBox.getMinY(),boundingBox.getMinZ()));
