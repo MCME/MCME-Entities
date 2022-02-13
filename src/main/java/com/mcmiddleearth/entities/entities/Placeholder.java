@@ -259,6 +259,8 @@ public class Placeholder implements McmeEntity {
         return false;
     }
 
+
+
     @Override
     public McmeInventory getInventory() {
         throw new UnsupportedOperationException();
