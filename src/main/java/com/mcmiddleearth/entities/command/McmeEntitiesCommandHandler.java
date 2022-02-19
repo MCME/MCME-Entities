@@ -111,7 +111,7 @@ public abstract class McmeEntitiesCommandHandler extends AbstractCommandHandler 
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
 //Logger.getGlobal().info("tabComplete 1");
         TabCompleteRequest request = new SimpleTabCompleteRequest(EntitiesPlugin.wrapCommandSender(sender),
-                                                                  String.format("/%s %s", alias, Joiner.on(' ').join(args)).trim());
+                                                                  String.format("/%s %s", alias, Joiner.on(' ').join(args)));
         onTabComplete(request);
 //Logger.getGlobal().info("tabComplete 1");
         return request.getSuggestions();
