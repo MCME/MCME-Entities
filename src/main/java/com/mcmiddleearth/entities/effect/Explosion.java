@@ -131,6 +131,38 @@ public class Explosion {
         return this;
     }
 
+    public double getRadius() {
+        return radius;
+    }
+
+    public double getDamage() {
+        return damage;
+    }
+
+    public double getKnockback() {
+        return knockback;
+    }
+
+    public double getVelocity() {
+        return velocity;
+    }
+
+    public Particle getParticle() {
+        return particle;
+    }
+
+    public Set<McmeEntity> getUnaffected() {
+        return unaffected;
+    }
+
+    public Set<McmeEntity> getSettled() {
+        return settled;
+    }
+
+    public McmeEntity getDamager() {
+        return damager;
+    }
+
     public void clearUnaffected() {
         unaffected.clear();
     }
