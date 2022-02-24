@@ -3,6 +3,7 @@ package com.mcmiddleearth.entities.protocol.packets.simple;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.mcmiddleearth.entities.protocol.EntityMeta;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.entity.Player;
 
@@ -21,9 +22,9 @@ public class SimpleEntityMetadataPacket extends AbstractPacket {
 
     public void setSprinting(boolean sprint) {
         if(sprint) {
-            setByte(0, Byte.decode("0x08"));
+            setByte(EntityMeta.ENTITY_STATUS, Byte.decode("0x08"));
         } else {
-            setByte(0,Byte.decode("0x00"));
+            setByte(EntityMeta.ENTITY_STATUS,Byte.decode("0x00"));
         }
     }
 

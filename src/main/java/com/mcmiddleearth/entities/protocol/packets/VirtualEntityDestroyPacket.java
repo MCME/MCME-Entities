@@ -4,7 +4,9 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class VirtualEntityDestroyPacket extends AbstractPacket {
@@ -13,7 +15,10 @@ public class VirtualEntityDestroyPacket extends AbstractPacket {
 
     public VirtualEntityDestroyPacket(int... entityId) {
         destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        destroy.getIntegerArrays().write(0, entityId);
+        List<Integer> idList = new ArrayList<>();
+        Arrays.stream(entityId).forEach(idList::add);
+        destroy.getIntLists().write(0, idList);
+        //destroy.getIntegerArrays().write(0, entityId);
 //Logger.getGlobal().info("create destroy to : ");
 //Arrays.stream(entityId).forEach(eid -> Logger.getGlobal().info("eid: "+eid));
     }

@@ -2,6 +2,7 @@ package com.mcmiddleearth.entities.protocol.packets.composite;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mcmiddleearth.entities.entities.composite.bones.Bone;
+import com.mcmiddleearth.entities.protocol.EntityMeta;
 import org.bukkit.entity.Player;
 
 public class BoneInitPacket extends BoneMetaPacket {
@@ -39,16 +40,16 @@ public class BoneInitPacket extends BoneMetaPacket {
 
     protected void writeInit(WrappedDataWatcher watcher) {
         WrappedDataWatcher.WrappedDataWatcherObject invisibility = new WrappedDataWatcher
-                .WrappedDataWatcherObject(0,WrappedDataWatcher.Registry.get(Byte.class));
+                .WrappedDataWatcherObject(EntityMeta.ENTITY_STATUS,WrappedDataWatcher.Registry.get(Byte.class));
         watcher.setObject(invisibility, Byte.decode("0x20"),false);
         WrappedDataWatcher.WrappedDataWatcherObject silent = new WrappedDataWatcher
-                .WrappedDataWatcherObject(4,WrappedDataWatcher.Registry.get(Boolean.class));
+                .WrappedDataWatcherObject(EntityMeta.ENTITY_SILENT,WrappedDataWatcher.Registry.get(Boolean.class));
         watcher.setObject(silent, true,false);
         WrappedDataWatcher.WrappedDataWatcherObject gravity = new WrappedDataWatcher
-                .WrappedDataWatcherObject(5,WrappedDataWatcher.Registry.get(Boolean.class));
+                .WrappedDataWatcherObject(EntityMeta.ENTITY_NO_GRAVITY,WrappedDataWatcher.Registry.get(Boolean.class));
         watcher.setObject(gravity, false,false);
         WrappedDataWatcher.WrappedDataWatcherObject base = new WrappedDataWatcher
-                .WrappedDataWatcherObject(14,WrappedDataWatcher.Registry.get(Byte.class));
+                .WrappedDataWatcherObject(EntityMeta.ARMOR_STAND_STATUS,WrappedDataWatcher.Registry.get(Byte.class));
         watcher.setObject(base, Byte.decode("0x08"),false);
     }
 

@@ -7,6 +7,8 @@ import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.logging.Logger;
+
 public class SimpleNonLivingEntitySpawnPacket extends AbstractPacket {
 
     private final PacketContainer spawn;
@@ -44,7 +46,7 @@ public class SimpleNonLivingEntitySpawnPacket extends AbstractPacket {
 
     @Override
     public void send(Player recipient) {
-//Logger.getGlobal().info("send non living spawn to : "+recipient.getName()+" with id: "+entity.getEntityId());
+//Logger.getGlobal().info("send non living spawn to : "+recipient.getName()+" with id: "+entity.getEntityId()+" and uuid: "+entity.getUniqueId());
         send(spawn, recipient);
     }
 

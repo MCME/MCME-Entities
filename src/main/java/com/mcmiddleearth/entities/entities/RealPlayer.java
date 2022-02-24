@@ -266,7 +266,7 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
             }
            //if(attribute!=null) knockback = attribute.getValue();
             target.receiveAttack(this, damage, knockback+1);
-Logger.getGlobal().info("damage: "+damage+" knockback: "+knockback);
+//Logger.getGlobal().info("damage: "+damage+" knockback: "+knockback);
         }
 
     }

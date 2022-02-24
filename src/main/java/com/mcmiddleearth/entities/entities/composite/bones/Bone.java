@@ -66,7 +66,7 @@ public class Bone implements McmeEntity {
 //long start = System.currentTimeMillis();
         this.name = name;
         this.isHeadBone = isHeadBone;
-        uniqueId = UuidGenerator.fast_nullUUID();//UuidGenerator.getRandomV2();
+        uniqueId = UuidGenerator.fast_random();//fast_nullUUID();//UuidGenerator.getRandomV2();
 //Logger.getGlobal().info("UUID: "+(System.currentTimeMillis()-start));
         entityId = parent.getEntityId() + parent.getBones().size();
         this.parent = parent;

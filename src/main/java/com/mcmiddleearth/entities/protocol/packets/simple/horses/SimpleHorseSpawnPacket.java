@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mcmiddleearth.entities.entities.simple.SimpleHorse;
+import com.mcmiddleearth.entities.protocol.EntityMeta;
 import com.mcmiddleearth.entities.protocol.packets.simple.SimpleLivingEntitySpawnPacket;
 import org.bukkit.entity.Player;
 
@@ -31,10 +32,10 @@ public class SimpleHorseSpawnPacket extends SimpleLivingEntitySpawnPacket {
         }
         WrappedDataWatcher watcher = new WrappedDataWatcher();
         WrappedDataWatcher.WrappedDataWatcherObject wrappedWatcher = new WrappedDataWatcher
-                .WrappedDataWatcherObject(16, WrappedDataWatcher.Registry.get(Byte.class));
+                .WrappedDataWatcherObject(EntityMeta.HORSE_STATUS, WrappedDataWatcher.Registry.get(Byte.class));
         watcher.setObject(wrappedWatcher, saddled, false);
         wrappedWatcher = new WrappedDataWatcher
-                .WrappedDataWatcherObject(18, WrappedDataWatcher.Registry.get(Integer.class));
+                .WrappedDataWatcherObject(EntityMeta.HORSE_VARIANT, WrappedDataWatcher.Registry.get(Integer.class));
         watcher.setObject(wrappedWatcher, getStyleAndColorInt(), false);
         meta.getWatchableCollectionModifier().write(0,watcher.getWatchableObjects());
     }

@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mcmiddleearth.entities.entities.composite.bones.Bone;
+import com.mcmiddleearth.entities.protocol.EntityMeta;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -66,7 +67,7 @@ public class BoneMetaPacket extends AbstractPacket {
 
     protected void writeHeadPose(WrappedDataWatcher watcher) {
         WrappedDataWatcher.WrappedDataWatcherObject state = new WrappedDataWatcher
-                .WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.getVectorSerializer());
+                .WrappedDataWatcherObject(EntityMeta.ARMOR_STAND_HEAD_POSE, WrappedDataWatcher.Registry.getVectorSerializer());
         watcher.setObject(state, new Vector3F((float)bone.getRotatedHeadPose().getX(),
                                               (float)bone.getRotatedHeadPose().getY(),
                                               (float)bone.getRotatedHeadPose().getZ()), false);
