@@ -50,7 +50,9 @@ public class BakedAnimationTree {
 
     private void addBackwardFallbackAnimation(String[] path, BakedAnimation animation) {
         if(getAnimation(path) == null) {
-            addAnimation(path, animation.getReverse(Joiner.on('.').join(path)));
+            String name = Joiner.on('.').join(path);
+            // FIXME: This will generate non-unique names for the reverse animations. I do not care.
+            addAnimation(path, animation.getReverse(name, name));
 //Logger.getGlobal().info("adding fallback: "+Joiner.on('.').join(path));
         }
     }
