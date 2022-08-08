@@ -85,6 +85,14 @@ public class BakedAnimationEntity extends CompositeEntity {
 //Logger.getGlobal().info("DataFile: "+factory.getDataFile());
                     animationKey = entry.getKey();
                 }
+                // Ignore integers if they're the last part of the path - those are used to distinguish different animations with the same key
+                int lastDot = animationKey.lastIndexOf('.');
+                if (lastDot > 0) {
+                    String lastKeyPart = animationKey.substring(lastDot + 1);
+                    if (lastKeyPart.matches("^\\d+$")) {
+                        animationKey = animationKey.substring(0, lastDot);
+                    }
+                }
 //Logger.getGlobal().info("AnimationKey: "+animationKey);
                 animationTree.addAnimation(animationKey, BakedAnimation.loadAnimation(entry.getValue().getAsJsonObject(),
                         itemMaterial, this, animationKey));

@@ -25,10 +25,6 @@ public class BakedAnimationTree {
 
     public void addAnimation(String path, BakedAnimation animation) {
         String[] pathArray = path.split("\\.");
-        try {
-            Integer.parseInt(pathArray[pathArray.length-1]);
-            pathArray = Arrays.copyOf(pathArray, pathArray.length-1);
-        } catch (NumberFormatException ignore) {}
         addAnimation(pathArray,animation);
         for(int i = 0; i < pathArray.length; i++) {
             try{
