@@ -25,10 +25,6 @@ public class BakedAnimationTree {
 
     public void addAnimation(String path, BakedAnimation animation) {
         String[] pathArray = path.split("\\.");
-        try {
-            Integer.parseInt(pathArray[pathArray.length-1]);
-            pathArray = Arrays.copyOf(pathArray, pathArray.length-1);
-        } catch (NumberFormatException ignore) {}
         addAnimation(pathArray,animation);
         for(int i = 0; i < pathArray.length; i++) {
             try{
@@ -54,7 +50,9 @@ public class BakedAnimationTree {
 
     private void addBackwardFallbackAnimation(String[] path, BakedAnimation animation) {
         if(getAnimation(path) == null) {
-            addAnimation(path, animation.getReverse(Joiner.on('.').join(path)));
+            String name = Joiner.on('.').join(path);
+            // FIXME: This will generate non-unique names for the reverse animations. I do not care.
+            addAnimation(path, animation.getReverse(name, name));
 //Logger.getGlobal().info("adding fallback: "+Joiner.on('.').join(path));
         }
     }

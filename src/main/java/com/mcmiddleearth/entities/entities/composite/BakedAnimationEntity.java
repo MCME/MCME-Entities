@@ -85,9 +85,18 @@ public class BakedAnimationEntity extends CompositeEntity {
 //Logger.getGlobal().info("DataFile: "+factory.getDataFile());
                     animationKey = entry.getKey();
                 }
+                String animationName = animationKey;
+                // Ignore integers if they're the last part of the path - those are used to distinguish different animations with the same key
+                int lastDot = animationName.lastIndexOf('.');
+                if (lastDot > 0) {
+                    String lastKeyPart = animationName.substring(lastDot + 1);
+                    if (lastKeyPart.matches("^\\d+$")) {
+                        animationName = animationName.substring(0, lastDot);
+                    }
+                }
 //Logger.getGlobal().info("AnimationKey: "+animationKey);
-                animationTree.addAnimation(animationKey, BakedAnimation.loadAnimation(entry.getValue().getAsJsonObject(),
-                        itemMaterial, this, animationKey));
+                animationTree.addAnimation(animationName, BakedAnimation.loadAnimation(entry.getValue().getAsJsonObject(),
+                        itemMaterial, this, animationKey, animationName));
             });
 //Logger.getGlobal().info("Animation loading: "+(System.currentTimeMillis()-start));
         } catch (IOException | JsonParseException | IllegalStateException e) {
@@ -132,7 +141,14 @@ public class BakedAnimationEntity extends CompositeEntity {
             AnimationJob expected = new AnimationJob(animationTree.getAnimation(this),null,0);
 //Logger.getGlobal().info("Expected: "+(expected == null?"none":expected.getName()));
             if(expected.getAnimation() != null
-                    && (currentAnimation== null || currentAnimation.getAnimation()!=expected.getAnimation())) {
+                    && (
+                            currentAnimation == null
+                            || currentAnimation.getAnimation() == null
+                            // If current animation is at the last frame, allow switching to another random animation
+                            || currentAnimation.getAnimation().isAtLastFrame()
+                            // And always switch if we're trying to switch to a completely different animation
+                            || !expected.getAnimation().getAnimationName().equals(currentAnimation.getAnimation().getAnimationName())
+                    )) {
 //Logger.getGlobal().info("Switch from: "+(currentAnimation == null?"none":currentAnimation.getName()));
                 if(!manualOverride && instantAnimationSwitching
                                    && callAnimationChangeEvent(currentAnimation,expected)) {

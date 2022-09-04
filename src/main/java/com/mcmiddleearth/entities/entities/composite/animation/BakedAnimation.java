@@ -28,9 +28,15 @@ public class BakedAnimation {
 
     private final String name;
 
-    public BakedAnimation(BakedAnimationEntity entity, BakedAnimationType type, String name, String next, int interval) {
+    /**
+     * The non-unique name of the animation this instance represents.
+     */
+    private final String animationName;
+
+    public BakedAnimation(BakedAnimationEntity entity, BakedAnimationType type, String name, String animationName, String next, int interval) {
         this.entity = entity;
         this.name = name;
+        this.animationName = animationName;
         this.type = type;
         this.next = next;
         this.interval = interval;
@@ -81,6 +87,10 @@ public class BakedAnimation {
         return name;
     }
 
+    public String getAnimationName() {
+        return animationName;
+    }
+
     public String getNext() {
         return next;
     }
@@ -98,7 +108,7 @@ public class BakedAnimation {
         }
     }
 
-    public static BakedAnimation loadAnimation(JsonObject data, Material itemMaterial, BakedAnimationEntity entity, String name) {
+    public static BakedAnimation loadAnimation(JsonObject data, Material itemMaterial, BakedAnimationEntity entity, String name, String animationName) {
         Map<String, Integer> states = new HashMap<>();
         BakedAnimationType type;
         try {
@@ -108,7 +118,7 @@ public class BakedAnimation {
         }
         int interval = (data.get("interval") == null? 1 : data.get("interval").getAsInt());
         String next = (data.has("next")?data.get("next").getAsString():null);
-        BakedAnimation animation = new BakedAnimation(entity, type, name, next, interval);
+        BakedAnimation animation = new BakedAnimation(entity, type, name, animationName, next, interval);
         JsonArray frameData = data.get("frames").getAsJsonArray();
 //long start = System.currentTimeMillis();
         for(int i = 0; i< frameData.size(); i++) {
@@ -118,8 +128,8 @@ public class BakedAnimation {
         return animation;
     }
 
-    public BakedAnimation getReverse(String name) {
-        BakedAnimation reverse = new BakedAnimation(entity, type, name, next, interval);
+    public BakedAnimation getReverse(String name, String animationName) {
+        BakedAnimation reverse = new BakedAnimation(entity, type, name, animationName, next, interval);
         for(int i = frames.size()-1; i >= 0; i--) {
             reverse.addFrame(frames.get(i));
         }
