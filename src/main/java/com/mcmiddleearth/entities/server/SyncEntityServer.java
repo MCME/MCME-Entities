@@ -45,7 +45,7 @@ public class SyncEntityServer implements EntityServer {
 
     private ServerTask serverTask;
 
-    private int lastEntityId = 100000;
+    private int lastEntityId = NO_ENTITY_ID;
 
     //private int viewDistance = 20;
 

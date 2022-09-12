@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
+import com.mcmiddleearth.entities.server.EntityServer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -16,12 +17,13 @@ public class ProjectileSpawnPacket extends AbstractPacket {
 
     public ProjectileSpawnPacket(McmeEntity entity, Vector velo, McmeEntity shooter) {
             this.entity = entity;
+            int shooterId = (shooter != null? shooter.getEntityId()+1 : EntityServer.NO_ENTITY_ID);
             spawn = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
             spawn.getIntegers().write(0, entity.getEntityId())
                     .write(1, (int)(velo.getX()*8000)) //veo
                     .write(2, (int)(velo.getY()*8000))
                     .write(3, (int)(velo.getZ()*8000))
-                    .write(6,shooter.getEntityId()+1); // object data
+                    .write(6,shooterId); // object data
 ///Logger.getGlobal().info("Spawn eid: "+entity.getEntityId());
 //Logger.getGlobal().info("id "+shooter.getEntityId()+" Velo: "+velo.getX()+" "+velo.getY()+" "+velo.getZ());
 //Logger.getGlobal().info("Type "+entity.getType().getBukkitEntityType());

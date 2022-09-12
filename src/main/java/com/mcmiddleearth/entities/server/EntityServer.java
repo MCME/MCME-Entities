@@ -21,6 +21,8 @@ import java.util.UUID;
 
 public interface EntityServer {
 
+    int NO_ENTITY_ID = 100000;
+
     void start();
 
     void stop();
