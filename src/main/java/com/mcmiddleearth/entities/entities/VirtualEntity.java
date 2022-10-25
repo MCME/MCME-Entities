@@ -58,6 +58,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     protected int tickCounter = 0;
 
     protected AbstractPacket spawnPacket;
+    protected boolean spawnPacketDirty = true;
     protected AbstractPacket removePacket;
     protected AbstractPacket teleportPacket;
     protected AbstractPacket movePacket;
@@ -261,7 +262,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         lookUpdate = false;
         rotationUpdate = false;
 
-        spawnPacket.update();
+        spawnPacketDirty = true;
     }
 
     public void move() {
@@ -283,7 +284,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         lookUpdate = false;
         rotationUpdate = false;
 
-        spawnPacket.update();
+        spawnPacketDirty = true;
     }
 
     @Override
@@ -464,6 +465,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         if(!useWhitelistAsBlacklist && !(whiteList.isEmpty() || whiteList.contains(player.getUniqueId()))
                 || useWhitelistAsBlacklist && whiteList.contains(player.getUniqueId())) {
             return;
+        }
+        if (spawnPacketDirty) {
+            spawnPacket.update();
+            spawnPacketDirty = false;
         }
         spawnPacket.send(player);
         viewers.add(player);
