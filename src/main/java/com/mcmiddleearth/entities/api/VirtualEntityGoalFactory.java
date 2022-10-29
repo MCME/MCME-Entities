@@ -202,7 +202,7 @@ public class VirtualEntityGoalFactory {
         Pathfinder pathfinder;
         GoalVirtualEntity goal;
         if((entity instanceof WingedFlightEntity) && movementType.equals(MovementType.FLYING)) {
-Logger.getGlobal().info("pathfinder: flying");
+            //Logger.getGlobal().info("pathfinder: flying");
             pathfinder = new FlyingPathfinder((WingedFlightEntity)entity);
         } else {
             switch (movementType) {

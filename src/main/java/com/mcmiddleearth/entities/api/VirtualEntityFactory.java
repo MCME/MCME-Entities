@@ -6,6 +6,7 @@ import com.mcmiddleearth.entities.entities.Projectile;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
 import com.mcmiddleearth.entities.entities.composite.BakedAnimationEntity;
+import com.mcmiddleearth.entities.entities.composite.TwoAxisRotationEntity;
 import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.entities.simple.SimpleHorse;
@@ -547,6 +548,8 @@ public class VirtualEntityFactory {
                     return new BakedAnimationEntity(entityId, this);
                 case WINGED_FLIGHT:
                     return new WingedFlightEntity(entityId, this);
+                case TWO_AXIS_ROTATION:
+                    return new TwoAxisRotationEntity(entityId, this);
                 default:
                     throw new RuntimeException("EntityType not implemented");
             }

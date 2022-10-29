@@ -25,7 +25,7 @@ public class McmeEntityType {
         BAKED_ANIMATION,
         WINGED_FLIGHT,
         SPEECH_BALLOON,
-        BONE;
+        BONE, TWO_AXIS_ROTATION;
     }
 
     /**

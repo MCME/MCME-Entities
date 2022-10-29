@@ -11,6 +11,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 public class MovementEngine {
 
@@ -50,6 +51,7 @@ public class MovementEngine {
         }
         switch(entity.getMovementType()) {
             case FLYING:
+            case SWIMMING:
 //Logger.getGlobal().info("location: "+ entity.getLocation());
 //Logger.getGlobal().info("speed: "+ entity.getFlyingSpeed());
                 Vector velocity = zero.clone();
@@ -117,14 +119,15 @@ public class MovementEngine {
                 }
                 if(cannotMove(velocity)) {
                     double jumpHeight = jumpHeight();
-                    if(jumpHeight>0 && jumpHeight<= entity.getJumpHeight()+0.01) {
+                    if(true){//jumpHeight>0){// && jumpHeight<= entity.getJumpHeight()+0.01) {
                         entity.setMovementType(MovementType.FALL);
-                        velocity.setY(Math.sqrt(-2 * jumpHeight * gravity.getY()));
+                        velocity.setY(Math.sqrt(-2 * Math.min(jumpHeight,entity.getJumpHeight()+0.01) * gravity.getY()));
 //if (!Double.isFinite(velocity.getY()) || velocity.getY()>10 || jumpHeight>1.2) {
 //    Logger.getGlobal().info("Warning! Wrong velocity: "+velocity.getY()+" jump: "+jumpHeight+" maxtJump: "+entity.getJumpHeight()+" gravity: "+gravity.getY());
 //}
 //Logger.getGlobal().info("entity vel: "+entity.getVelocity());
                     } else {
+Logger.getGlobal().info("too high to jump: "+jumpHeight);
                         velocity = new Vector(0,0,0);
                     }
                 } else if(distanceToGround()>0.01) {

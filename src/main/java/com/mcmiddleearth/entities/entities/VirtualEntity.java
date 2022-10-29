@@ -208,7 +208,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                     velocity = goal.getVelocity();
                 } else {
                     movementEngine.calculateMovement(goal.getDirection());
-//Logger.getGlobal().info("Goal: "+goal.getType()+" direction: "+goal.getDirection()+" vel: "+velocity);
+Logger.getGlobal().info("Goal: "+goal.getType()+" direction: "+goal.getDirection()+" vel: "+velocity);
                 }
                 if(goal.hasRotation()) {
 //Logger.getGlobal().info("rotation: "+ goal.getRotation());
