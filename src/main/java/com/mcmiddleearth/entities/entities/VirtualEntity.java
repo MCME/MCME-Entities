@@ -58,6 +58,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     protected int tickCounter = 0;
 
     protected AbstractPacket spawnPacket;
+    protected boolean spawnPacketDirty = true;
     protected AbstractPacket removePacket;
     protected AbstractPacket teleportPacket;
     protected AbstractPacket movePacket;
@@ -261,7 +262,7 @@ Logger.getGlobal().info("Goal: "+goal.getType()+" direction: "+goal.getDirection
         lookUpdate = false;
         rotationUpdate = false;
 
-        spawnPacket.update();
+        spawnPacketDirty = true;
     }
 
     public void move() {
@@ -273,17 +274,19 @@ Logger.getGlobal().info("Goal: "+goal.getType()+" direction: "+goal.getDirection
 //if(!(this instanceof Projectile)) Logger.getGlobal().info("location new: "+ getLocation().getX()+" "+getLocation().getY()+" "+getLocation().getZ());
         boundingBox.setLocation(location);
 
-        if((tickCounter % updateInterval == updateRandom)) {
-            teleportPacket.update();
-            teleportPacket.send(viewers);
-        } else {
-            movePacket.update();
-            movePacket.send(viewers);
+        if (hasViewers()) {
+            if ((tickCounter % updateInterval == updateRandom)) {
+                teleportPacket.update();
+                teleportPacket.send(viewers);
+            } else {
+                movePacket.update();
+                movePacket.send(viewers);
+            }
+            lookUpdate = false;
+            rotationUpdate = false;
         }
-        lookUpdate = false;
-        rotationUpdate = false;
 
-        spawnPacket.update();
+        spawnPacketDirty = true;
     }
 
     @Override
@@ -455,6 +458,10 @@ Logger.getGlobal().info("Goal: "+goal.getType()+" direction: "+goal.getDirection
         return viewers.contains(player);
     }
 
+    public boolean hasViewers() {
+        return viewers.size() > 0;
+    }
+
     public Set<Player> getViewers() {
         return viewers;
     }
@@ -464,6 +471,10 @@ Logger.getGlobal().info("Goal: "+goal.getType()+" direction: "+goal.getDirection
         if(!useWhitelistAsBlacklist && !(whiteList.isEmpty() || whiteList.contains(player.getUniqueId()))
                 || useWhitelistAsBlacklist && whiteList.contains(player.getUniqueId())) {
             return;
+        }
+        if (spawnPacketDirty) {
+            spawnPacket.update();
+            spawnPacketDirty = false;
         }
         spawnPacket.send(player);
         viewers.add(player);

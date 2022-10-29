@@ -53,7 +53,7 @@ public class Projectile extends SimpleNonLivingEntity {
     @Override
     public void doTick() {
         if(!onGround) {
-            spawnPacket.update();
+            spawnPacketDirty = true;
             Vector velocity = getVelocity().clone();//
             //Logger.getGlobal().info("FALLING: "+velocity);
             double speed = velocity.length();
