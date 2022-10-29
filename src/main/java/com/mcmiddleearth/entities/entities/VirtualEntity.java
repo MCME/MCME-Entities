@@ -273,15 +273,17 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 //if(!(this instanceof Projectile)) Logger.getGlobal().info("location new: "+ getLocation().getX()+" "+getLocation().getY()+" "+getLocation().getZ());
         boundingBox.setLocation(location);
 
-        if((tickCounter % updateInterval == updateRandom)) {
-            teleportPacket.update();
-            teleportPacket.send(viewers);
-        } else {
-            movePacket.update();
-            movePacket.send(viewers);
+        if (hasViewers()) {
+            if ((tickCounter % updateInterval == updateRandom)) {
+                teleportPacket.update();
+                teleportPacket.send(viewers);
+            } else {
+                movePacket.update();
+                movePacket.send(viewers);
+            }
+            lookUpdate = false;
+            rotationUpdate = false;
         }
-        lookUpdate = false;
-        rotationUpdate = false;
 
         spawnPacket.update();
     }
@@ -453,6 +455,10 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     public boolean isViewer(Player player) {
         return viewers.contains(player);
+    }
+
+    public boolean hasViewers() {
+        return viewers.size() > 0;
     }
 
     public Set<Player> getViewers() {
