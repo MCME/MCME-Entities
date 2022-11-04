@@ -4,9 +4,9 @@ import com.mcmiddleearth.command.McmeCommandSender;
 import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.api.VirtualEntityFactory;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 
@@ -34,7 +34,17 @@ public class BukkitCommandSender implements McmeCommandSender {
 
     @Override
     public void sendMessage(BaseComponent[] baseComponents) {
-        sender.sendMessage(new ComponentBuilder("[Entities] ").color(ChatColor.AQUA).append(baseComponents[0]).create());
+        sender.sendMessage(Component.text("[Entities] ", NamedTextColor.AQUA).append(Component.text(baseComponents[0].toLegacyText())));
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        sender.sendMessage(Component.text("[Entities] ", NamedTextColor.AQUA).append(Component.text(message)));
+    }
+
+    @Override
+    public void sendError(String message) {
+        sender.sendMessage(Component.text("[Entities] ", NamedTextColor.AQUA).append(Component.text(message, NamedTextColor.RED)));
     }
 
     public CommandSender getCommandSender() {
