@@ -193,6 +193,12 @@ public class SyncEntityServer implements EntityServer {
 
     @Override
     public Collection<? extends McmeEntity> getEntities(Class<? extends McmeEntity> clazz) {
+        if(clazz == null || clazz.equals(McmeEntity.class)) {
+            Set<McmeEntity> entities = new HashSet<>();
+            entities.addAll(playerProvider.getMcmePlayers());
+            entities.addAll(entityProvider.getEntities());
+            return entities;
+        }
         if(clazz.isAssignableFrom(RealPlayer.class)) {
             return playerProvider.getMcmePlayers();
         } else {

@@ -67,6 +67,7 @@ public final class EntitiesPlugin extends JavaPlugin {
         setExecutor("vset", new SetCommand("vset"));
         setExecutor("vexplode", new ExplosionCommand("vexplode"));
         setExecutor("vanimate", new AnimateCommand("vanimate"));
+        setExecutor("vtag", new TagCommand("vtag"));
         setExecutor("vload", new LoadCommand("vload"));
         setExecutor("vsave", new SaveCommand("vsave"));
         setExecutor("vtest", new TestCommand("vtest"));
