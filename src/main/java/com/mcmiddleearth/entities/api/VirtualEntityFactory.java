@@ -101,6 +101,8 @@ public class VirtualEntityFactory {
 
     private org.bukkit.entity.Entity dependingEntity;
 
+    private Set<String> tags = new HashSet<>();
+
     public VirtualEntityFactory(McmeEntityType type, Location location) {
         //uniqueId = UuidGenerator.fast_random();//getRandomV2();
         this.type = type;
@@ -531,6 +533,16 @@ public class VirtualEntityFactory {
 
     public VirtualEntityFactory withWriteDefaultValuesToFile(boolean writeDefaultValuesToFile) {
         this.writeDefaultValuesToFile = writeDefaultValuesToFile;
+        return this;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public VirtualEntityFactory withTags(Set<String> tags) {
+        this.tags.clear();
+        this.tags.addAll(tags);
         return this;
     }
 

@@ -120,6 +120,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 
     private org.bukkit.entity.Entity dependingEntity;
 
+    private final Set<String> tags = new HashSet<>();
+
     public VirtualEntity(VirtualEntityFactory factory) throws InvalidLocationException, InvalidDataException {
         this.updateInterval = factory.getUpdateInterval();
         this.updateRandom = new Random().nextInt(updateInterval);
@@ -158,6 +160,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         this.knockBackPerDamage = factory.getKnockBackPerDamage();
         this.enemies = (factory.getEnemies()!=null?factory.getEnemies():new HashSet<>());
         this.sitPoint = factory.getSitPoint();
+        this.tags.addAll(factory.getTags());
 //Logger.getGlobal().info("SitPoint: "+sitPoint);
         this.saddle = factory.getSaddlePoint();
 //Logger.getGlobal().info("This location: "+this.getLocation());
@@ -858,6 +861,11 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public Set<String> getTagList() {
+        return tags;
+    }
+
     public VirtualEntityFactory getFactory() {
         VirtualEntityFactory factory = new VirtualEntityFactory(type,location, useWhitelistAsBlacklist,uniqueId,name,attributes)
                 .withBoundingBox(boundingBox)
@@ -877,7 +885,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
                 .withSpeechBalloonLayout(defaultSpeechBalloonLayout)
                 .withSitPoint(sitPoint)
                 .withSaddlePoint(saddle)
-                .withAttackDelay(attackDelay);
+                .withAttackDelay(attackDelay)
+                .withTags(tags);
         if(goal!=null) {
             factory.withGoalFactory(goal.getFactory());
         }

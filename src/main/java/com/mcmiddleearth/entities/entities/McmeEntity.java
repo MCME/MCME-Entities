@@ -67,21 +67,21 @@ public interface McmeEntity extends Entity, InventoryHolder {
 
     public boolean hasRotationUpdate();
 
-    public Set<String> tags = new HashSet<>();
+    public Set<String> getTagList();
 
     public default boolean hasTag(String tag) {
-        for(String search: tags) {
+        for(String search: getTagList()) {
             if(search.equals(tag)) return true;
         }
         return false;
     }
 
     public default void addTag(String tag) {
-        tags.add(tag);
+        getTagList().add(tag);
     }
 
     public default void removeTag(String tag) {
-        tags.remove(tag);
+        getTagList().remove(tag);
     }
     //public boolean onGround();
 

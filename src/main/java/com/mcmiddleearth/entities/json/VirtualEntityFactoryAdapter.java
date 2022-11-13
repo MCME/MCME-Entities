@@ -67,7 +67,8 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
     SADDLE_POINT                = "saddle_point",
     ATTACK_POINT                = "attack_point",
     SIT_POINT                   = "sit_point",
-    ATTACK_DELAY                = "attack_delay";
+    ATTACK_DELAY                = "attack_delay",
+    TAGS                        = "tags";
 
     @Override
     public void write(JsonWriter out, VirtualEntityFactory factory) throws IOException {
@@ -164,6 +165,11 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
         JsonUtil.writeNonDefaultVector(out, SIT_POINT, factory.getSitPoint(), defaults.getSitPoint(), gson, writeDefaults);
         JsonUtil.writeNonDefaultVector(out, ATTACK_POINT, factory.getAttackPoint(), defaults.getAttackPoint(), gson, writeDefaults);
         JsonUtil.writeNonDefaultInt(out, ATTACK_DELAY, factory.getAttackDelay(), defaults.getAttackDelay(), writeDefaults);
+        if (writeDefaults || !factory.getTags().isEmpty()) {
+            out.name(TAGS).beginArray();
+            for (String tag: factory.getTags()) out.value(tag);
+            out.endArray();
+        }
 
         out.endObject();
     }
@@ -326,6 +332,16 @@ public class VirtualEntityFactoryAdapter extends TypeAdapter<VirtualEntityFactor
                     case ATTACK_DELAY:
                         factory.withAttackDelay(in.nextInt());
                         break;
+                    case TAGS:
+                        Set<String> tags = new HashSet<>();
+                        in.beginArray();
+                        //try {
+                        while(in.hasNext()) {
+                            tags.add(in.nextString());
+                        }
+                        //} finally {
+                        in.endArray(); //}
+                        factory.withTags(tags);
                     default:
                         in.skipValue();
                 }

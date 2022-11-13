@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
@@ -265,4 +266,10 @@ public class Placeholder implements McmeEntity {
     public McmeInventory getInventory() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public Set<String> getTagList() {
+        return Collections.emptySet();
+    }
+
 }

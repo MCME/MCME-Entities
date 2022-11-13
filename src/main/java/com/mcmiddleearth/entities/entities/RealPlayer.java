@@ -1,5 +1,9 @@
 package com.mcmiddleearth.entities.entities;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import com.mcmiddleearth.entities.EntitiesPlugin;
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.goal.GoalDistance;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
@@ -9,7 +13,6 @@ import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
 import com.mcmiddleearth.entities.command.BukkitCommandSender;
 import com.mcmiddleearth.entities.entities.attributes.VirtualEntityAttributeInstance;
-import com.mcmiddleearth.entities.inventory.McmeInventory;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -26,6 +29,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -37,12 +44,17 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
 
     private final int updateRandom = random.nextInt(40);
 
+    private final Set<String> tags = new HashSet<>();
+
     private final VirtualEntityAttributeInstance knockBackAttribute
             = new VirtualEntityAttributeInstance(Attribute.GENERIC_ATTACK_KNOCKBACK,0.4,0.4);
+
+    private static final File playerFolder = new File(EntitiesPlugin.getInstance().getDataFolder(),"realplayer");
 
     public RealPlayer(Player bukkitPlayer) {
         super(bukkitPlayer);
         bb.setLocation(bukkitPlayer.getLocation());
+        load();
         //getBoundingBox();
 //Logger.getGlobal().info("Create bb: "+bukkitPlayer.getName());
     }
@@ -418,4 +430,62 @@ public class RealPlayer extends BukkitCommandSender implements McmeEntity {
     public @NotNull Inventory getInventory() {
         return getBukkitPlayer().getInventory();
     };
+
+    @Override
+    public Set<String> getTagList() {
+        return tags;
+    }
+
+    @Override
+    public void addTag(String tag) {
+        McmeEntity.super.addTag(tag);
+        save();
+    }
+
+    @Override
+    public void removeTag(String tag) {
+        McmeEntity.super.removeTag(tag);
+        save();
+    }
+
+    private void load() {
+        File file = new File(playerFolder,getBukkitPlayer().getUniqueId()+".json");
+        if(file.exists()) {
+            Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
+            try (JsonReader reader = gson.newJsonReader(new FileReader(file))) {
+                reader.beginObject();
+                while(reader.hasNext()) {
+                    String key = reader.nextName();
+                    switch(key) {
+                        case "tags":
+                            reader.beginArray();
+                            while(reader.hasNext()) {
+                                tags.add(reader.nextString());
+                            }
+                            reader.endArray();
+                    }
+                }
+                reader.endObject();
+            } catch (IOException e) {
+                Logger.getLogger(RealPlayer.class.getName()).warning("File input error.");
+            }
+        }
+    }
+
+    private void save() {
+        File file = new File(playerFolder,getBukkitPlayer().getUniqueId()+".json");
+        Gson gson = EntitiesPlugin.getEntitiesGsonBuilder().create();
+        try (JsonWriter writer = gson.newJsonWriter(new FileWriter(file))) {
+            writer.beginObject()
+                  .name("tags")
+                  .beginArray();
+            for(String tag: tags) {
+                writer.value(tag);
+            }
+            writer.endArray()
+                  .endObject();
+        } catch (IOException e) {
+            Logger.getLogger(RealPlayer.class.getName()).warning("File output error.");
+        }
+    }
 }
