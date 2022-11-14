@@ -24,12 +24,14 @@ public class BoneMetaPacket extends AbstractPacket {
 
     private boolean hasPoseUpdate, hasItemUpdate;
 
-    private final List<WrappedDataWatcher> headPoseQueue = new ArrayList<>();
+    private final WrappedDataWatcher headPoseDataWatcher = new WrappedDataWatcher();
+    private final WrappedDataWatcher.WrappedDataWatcherObject headPoseWrappedObject = new WrappedDataWatcher.WrappedDataWatcherObject(EntityMeta.ARMOR_STAND_HEAD_POSE, WrappedDataWatcher.Registry.getVectorSerializer());
+    private final List<Vector3F> headPoseQueue = new ArrayList<>();
 
     public BoneMetaPacket(Bone bone, int headPoseDelay) {
         this.bone = bone;
-        posePacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        posePacket.getIntegers().write(0,bone.getEntityId());
+        posePacket = createHeadPosePacket(headPoseDataWatcher);
+        posePacket.getWatchableCollectionModifier().write(0, headPoseDataWatcher.getWatchableObjects());
 
         equipPacket = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
         equipPacket.getIntegers().write(0,bone.getEntityId());
@@ -41,22 +43,24 @@ public class BoneMetaPacket extends AbstractPacket {
         update();
     }
 
+    protected PacketContainer createHeadPosePacket(WrappedDataWatcher dataWatcher) {
+        PacketContainer posePacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+        posePacket.getIntegers().write(0, bone.getEntityId());
+
+        updateHeadPose(getHeadPose());
+
+        return posePacket;
+    }
+
     @Override
     public void update() {
-        if(bone.isHasHeadPoseUpdate()) {
-            WrappedDataWatcher watcher = new WrappedDataWatcher();
-            writeHeadPose(watcher);
-            headPoseQueue.add(watcher);
-        } else {
-            headPoseQueue.add(null);
-        }
-        if(headPoseQueue.get(0)!=null) {
-            posePacket.getWatchableCollectionModifier().write(0,headPoseQueue.get(0).getWatchableObjects());
+        Vector3F nextHeadPose = updateHeadPoseQueueAndPopNext();
+        if(nextHeadPose != null) {
+            headPoseDataWatcher.setObject(headPoseWrappedObject, nextHeadPose, false);
             hasPoseUpdate = true;
         } else {
             hasPoseUpdate = false;
         }
-        headPoseQueue.remove(0);
         if(bone.isHasItemUpdate()) {
             writeHeadItem();
             hasItemUpdate = true;
@@ -65,12 +69,31 @@ public class BoneMetaPacket extends AbstractPacket {
         }
     }
 
-    protected void writeHeadPose(WrappedDataWatcher watcher) {
-        WrappedDataWatcher.WrappedDataWatcherObject state = new WrappedDataWatcher
-                .WrappedDataWatcherObject(EntityMeta.ARMOR_STAND_HEAD_POSE, WrappedDataWatcher.Registry.getVectorSerializer());
-        watcher.setObject(state, new Vector3F((float)bone.getRotatedHeadPose().getX(),
-                                              (float)bone.getRotatedHeadPose().getY(),
-                                              (float)bone.getRotatedHeadPose().getZ()), false);
+    private Vector3F updateHeadPoseQueueAndPopNext() {
+        boolean hasHeadPoseUpdate = bone.isHasHeadPoseUpdate();
+
+        if (headPoseQueue.size() == 0) {
+            // No delay is enabled - skip the queue
+            return hasHeadPoseUpdate ? getHeadPose() : null;
+        }
+
+        if (hasHeadPoseUpdate) {
+            headPoseQueue.add(getHeadPose());
+        } else {
+            headPoseQueue.add(null);
+        }
+
+        return headPoseQueue.remove(0);
+    }
+
+    protected Vector3F getHeadPose() {
+        return new Vector3F((float)bone.getRotatedHeadPose().getX(),
+                (float)bone.getRotatedHeadPose().getY(),
+                (float)bone.getRotatedHeadPose().getZ());
+    }
+
+    protected void updateHeadPose(Vector3F headPose) {
+        headPoseDataWatcher.setObject(headPoseWrappedObject, headPose, false);
     }
 
     protected void writeHeadItem() {
