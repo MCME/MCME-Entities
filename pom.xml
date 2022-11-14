@@ -42,6 +42,16 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>org.apache.commons:commons-math3</include>
+                            <!-- Used internally for building messages and included because it's not available on some platforms anymore. Should be removed in favor of kyori Adventure API. -->
+                            <include>net.md-5:bungeecord-chat</include>
+                            <include>com.mcmiddleearth:MCME-CommandParser</include>
+                        </includes>
+                    </artifactSet>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -98,12 +108,7 @@
         <dependency>
             <groupId>com.mcmiddleearth</groupId>
             <artifactId>MCME-CommandParser</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.uuid</groupId>
-            <artifactId>java-uuid-generator</artifactId>
-            <version>4.0.1</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>

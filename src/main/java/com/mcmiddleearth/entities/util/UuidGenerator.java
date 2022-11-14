@@ -1,9 +1,5 @@
 package com.mcmiddleearth.entities.util;
 
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
-
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -38,14 +34,6 @@ public class UuidGenerator {
         long mostSig = (timeForUuidIn100Nanos & 0xFFFFFFFFFFFF0000L) + version + least12SignificatBitOfTime;
 
         UUID uuid = new UUID(mostSig,leastSig);
-Logger.getGlobal().info("UUID version: "+uuid.version());
-        return uuid;
-    }
-
-    public static UUID slow_getRandomV2() {
-        //long nul = 0;
-        //return new UUID(nul,nul);
-        UUID uuid = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate();
 Logger.getGlobal().info("UUID version: "+uuid.version());
         return uuid;
     }
