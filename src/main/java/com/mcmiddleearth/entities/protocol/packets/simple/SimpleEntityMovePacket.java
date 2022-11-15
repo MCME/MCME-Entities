@@ -3,11 +3,11 @@ package com.mcmiddleearth.entities.protocol.packets.simple;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
+import com.mcmiddleearth.entities.protocol.packets.AbstractMovePacket;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class SimpleEntityMovePacket extends AbstractPacket {
+public class SimpleEntityMovePacket extends AbstractMovePacket {
 
     private final PacketContainer move;
     private final PacketContainer moveLook;
@@ -17,7 +17,12 @@ public class SimpleEntityMovePacket extends AbstractPacket {
 
     private final McmeEntity entity;
 
-    private MoveType moveType;
+    private boolean hasMoveUpdate = true;
+    private boolean hasLookUpdate = true;
+    private boolean hasHeadUpdate = true;
+    private boolean shouldResendMove = false;
+    private boolean shouldResendMoveLook = false;
+    private boolean shouldResendHead = false;
 
     public SimpleEntityMovePacket(McmeEntity entity) {
         this.entity = entity;
@@ -35,74 +40,63 @@ public class SimpleEntityMovePacket extends AbstractPacket {
 
         head = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
         head.getIntegers().write(0, entity.getEntityId());
-
-        update();
     }
 
     @Override
     public void update() {
-        moveType = getMoveType();
-        switch (moveType) {
-            case MOVE:
-                Vector dir = getShift();
-                move.getShorts()
-                        .write(0, (short) dir.getBlockX())
-                        .write(1, (short) dir.getBlockY())
-                        .write(2, (short) dir.getBlockZ());
-                move.getBooleans().write(0,entity.onGround());
-                break;
-            /*case LOOK:
-                byte yaw = getAngle(entity.getRotation());
-                byte pitch = getAngle(entity.getLocation().getPitch());
-                look.getBytes()
-                        .write(0, yaw)
-                        .write(1, pitch);
-                look.getBooleans().write(0,entity.onGround());
-                break;*/
-            case LOOK:
-            case STAND:
-            case MOVE_LOOK:
-                dir = getShift();
-                byte yaw = getAngle(entity.getYaw());
-                byte pitch = getAngle(entity.getHeadPitch());
-//Logger.getGlobal().info("write packet: "+yaw+" "+pitch+" head: "+getAngle(entity.getLocation().getYaw()));
-                moveLook.getShorts()
-                        .write(0, (short) dir.getBlockX())
-                        .write(1, (short) dir.getBlockY())
-                        .write(2, (short) dir.getBlockZ());
-                moveLook.getBytes()
-                        .write(0, yaw)
-                        .write(1, pitch);
-                moveLook.getBooleans().write(0,entity.onGround());
-                break;
+        // Reset resend flags - previous update should be sent by now
+        shouldResendMove = false;
+        shouldResendMoveLook = false;
+        shouldResendHead = false;
+
+        if (hasLookUpdate) {
+            Vector dir = getShift();
+            byte yaw = getAngle(entity.getYaw());
+            byte pitch = getAngle(entity.getHeadPitch());
+
+            moveLook.getShorts()
+                    .write(0, (short) dir.getBlockX())
+                    .write(1, (short) dir.getBlockY())
+                    .write(2, (short) dir.getBlockZ());
+            moveLook.getBytes()
+                    .write(0, yaw)
+                    .write(1, pitch);
+            moveLook.getBooleans().write(0, entity.onGround());
+
+            hasLookUpdate = false;
+            shouldResendMoveLook = true;
+        } else if (hasMoveUpdate) {
+            // moveLook already contains this data - no point updating this packet as it will require another update before being sent again
+            Vector dir = getShift();
+
+            move.getShorts()
+                    .write(0, (short) dir.getBlockX())
+                    .write(1, (short) dir.getBlockY())
+                    .write(2, (short) dir.getBlockZ());
+            move.getBooleans().write(0, entity.onGround());
+
+            hasMoveUpdate = false;
+            shouldResendMove = true;
         }
-        if(entity.hasLookUpdate()) {
-            head.getBytes().write(0,getAngle(entity.getHeadYaw()));
+
+        if (hasHeadUpdate) {
+            head.getBytes().write(0, getAngle(entity.getHeadYaw()));
+            hasHeadUpdate = false;
+            shouldResendHead = true;
         }
     }
 
     @Override
     public void send(Player recipient) {
-//Logger.getGlobal().info(""+moveType.name());
-        switch(moveType) {
-            //case STAND:
-                //send(stand, recipient); //probably not required to send
-              //  break;
-            case MOVE:
-                send(move, recipient);
-                break;
-            case LOOK:
-            case STAND:
-            case MOVE_LOOK:
-//Logger.getGlobal().info("send movelook to : "+recipient.getName()+" "+moveLook.getShorts().read(0)
-//        +" "+moveLook.getShorts().read(1)+" "+moveLook.getShorts().read(2));
-                send(moveLook, recipient);
-                break;
-            //case LOOK:
-            //    send(look, recipient);
+        // move packet is redundant if moveLook was already sent - it contains the same data
+        if (shouldResendMoveLook) {
+            send(moveLook, recipient);
+        } else if (shouldResendMove) {
+            send(move, recipient);
         }
-        if(entity.hasLookUpdate()) {
-            send(head,recipient);
+
+        if (shouldResendHead) {
+            send(head, recipient);
         }
     }
 
@@ -117,24 +111,10 @@ public class SimpleEntityMovePacket extends AbstractPacket {
         return (byte)(bukkitAngle*256/360);
     }
 
-    private MoveType getMoveType() {
-        Vector velocity = entity.getVelocity();
-        if(velocity.getX() == 0 && velocity.getY() == 0 && velocity.getZ() == 0) {
-            if(entity.hasLookUpdate() || entity.hasRotationUpdate()) {
-                return MoveType.LOOK;
-            } else {
-                return MoveType.STAND;
-            }
-        } else {
-            if(entity.hasLookUpdate() || entity.hasRotationUpdate()) {
-                return MoveType.MOVE_LOOK;
-            } else {
-                return MoveType.MOVE;
-            }
-        }
-    }
-
-    public enum MoveType {
-        STAND, MOVE, MOVE_LOOK, LOOK
+    @Override
+    public void markMovementDirty(MoveType moveType) {
+        hasMoveUpdate |= moveType.updatesMove();
+        hasLookUpdate |= moveType.updatesLook();
+        hasHeadUpdate |= moveType.updatesHead();
     }
 }

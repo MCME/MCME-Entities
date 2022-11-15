@@ -10,7 +10,6 @@ import com.mcmiddleearth.entities.ai.movement.MovementEngine;
 import com.mcmiddleearth.entities.api.*;
 import com.mcmiddleearth.entities.entities.attributes.VirtualAttributeFactory;
 import com.mcmiddleearth.entities.entities.composite.SpeechBalloonEntity;
-import com.mcmiddleearth.entities.entities.composite.WingedFlightEntity;
 import com.mcmiddleearth.entities.entities.composite.bones.SpeechBalloonLayout;
 import com.mcmiddleearth.entities.events.events.McmeEntityDamagedEvent;
 import com.mcmiddleearth.entities.events.events.McmeEntityDeathEvent;
@@ -22,6 +21,7 @@ import com.mcmiddleearth.entities.events.events.virtual.VirtualEntityTalkEvent;
 import com.mcmiddleearth.entities.exception.InvalidDataException;
 import com.mcmiddleearth.entities.exception.InvalidLocationException;
 import com.mcmiddleearth.entities.inventory.McmeInventory;
+import com.mcmiddleearth.entities.protocol.packets.AbstractMovePacket;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import com.mcmiddleearth.entities.util.UuidGenerator;
 import org.bukkit.Location;
@@ -33,12 +33,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public abstract class VirtualEntity implements McmeEntity, Attributable {
 
@@ -61,7 +59,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
     protected boolean spawnPacketDirty = true;
     protected AbstractPacket removePacket;
     protected AbstractPacket teleportPacket;
-    protected AbstractPacket movePacket;
+    protected AbstractMovePacket movePacket;
     protected AbstractPacket statusPacket;
     private Location location;
 
@@ -274,6 +272,8 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
 //if(!(this instanceof Projectile)) Logger.getGlobal().info("location new: "+ getLocation().getX()+" "+getLocation().getY()+" "+getLocation().getZ());
         boundingBox.setLocation(location);
 
+        movePacket.markMovementDirty(AbstractMovePacket.MoveType.getEntityMoveType(this));
+
         if (hasViewers()) {
             if ((tickCounter % updateInterval == updateRandom)) {
                 teleportPacket.update();
@@ -311,6 +311,7 @@ public abstract class VirtualEntity implements McmeEntity, Attributable {
         headYaw = yaw;
         headPitch = pitch;
         lookUpdate = true;
+        movePacket.markMovementDirty(AbstractMovePacket.MoveType.HEAD);
     }
 
     @Override

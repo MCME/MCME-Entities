@@ -2,14 +2,16 @@ package com.mcmiddleearth.entities.entities.composite.bones;
 
 import com.mcmiddleearth.entities.ai.goal.Goal;
 import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
+import com.mcmiddleearth.entities.api.ActionType;
+import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.api.MovementSpeed;
 import com.mcmiddleearth.entities.api.MovementType;
-import com.mcmiddleearth.entities.api.ActionType;
 import com.mcmiddleearth.entities.entities.McmeEntity;
-import com.mcmiddleearth.entities.api.McmeEntityType;
 import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
 import com.mcmiddleearth.entities.inventory.McmeInventory;
-import com.mcmiddleearth.entities.protocol.packets.*;
+import com.mcmiddleearth.entities.protocol.packets.AbstractMovePacket;
+import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
+import com.mcmiddleearth.entities.protocol.packets.DisplayNamePacket;
 import com.mcmiddleearth.entities.protocol.packets.composite.BoneInitPacket;
 import com.mcmiddleearth.entities.protocol.packets.composite.BoneMetaPacket;
 import com.mcmiddleearth.entities.protocol.packets.simple.SimpleEntityAnimationPacket;
@@ -25,6 +27,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,6 +44,15 @@ public class Bone implements McmeEntity {
     protected EulerAngle headPose, rotatedHeadPose;
     protected float yaw;//, pitch;
 
+    /**
+     * Stores recent values of the {@code rotatedHeadPose}. {@code null} if no head pose delay is enabled.
+     */
+    private final List<EulerAngle> headPoseHistory;
+    /**
+     * Stores the {@code rotatedHeadPose} delayed by an amount of ticks specified in the constructor.
+     */
+    private EulerAngle delayedHeadPose = new EulerAngle(0d, 0d, 0d);
+
     //private float rotation;
 
     private ItemStack headItem;
@@ -51,9 +64,9 @@ public class Bone implements McmeEntity {
 
     private final AbstractPacket spawnPacket;
     private final AbstractPacket teleportPacket;
-    private final AbstractPacket movePacket;
-    private final AbstractPacket metaPacket;
-    private final AbstractPacket initPacket;
+    private final AbstractMovePacket movePacket;
+    private final BoneMetaPacket metaPacket;
+    private final BoneInitPacket initPacket;
     private final AbstractPacket namePacket;
     private final SimpleEntityAnimationPacket animationPacket;
 
@@ -81,6 +94,14 @@ public class Bone implements McmeEntity {
         //pitch = 0;
         //currentYaw = 0;
         //currentPitch = 0;
+        if (headPoseDelay == 0) {
+            headPoseHistory = null;
+        } else {
+            headPoseHistory = new LinkedList<>();
+            for (int i = 0; i < headPoseDelay; i++) {
+                headPoseHistory.add(null);
+            }
+        }
         this.headItem = headItem;
         spawnPacket = new SimpleNonLivingEntitySpawnPacket(this);
 //Logger.getGlobal().info("spawn packet: "+(System.currentTimeMillis()-start));
@@ -90,7 +111,7 @@ public class Bone implements McmeEntity {
 //Logger.getGlobal().info("move packet: "+(System.currentTimeMillis()-start));
         initPacket = new BoneInitPacket(this);
 //Logger.getGlobal().info("init packet: "+(System.currentTimeMillis()-start));
-        metaPacket = new BoneMetaPacket(this, headPoseDelay);
+        metaPacket = new BoneMetaPacket(this);
 //Logger.getGlobal().info("meta packet: "+(System.currentTimeMillis()-start));
         namePacket = new DisplayNamePacket(this.entityId);
 //Logger.getGlobal().info("name packet: "+(System.currentTimeMillis()-start));
@@ -125,6 +146,7 @@ public class Bone implements McmeEntity {
 
         velocity = parent.getVelocity().clone().add(shift);
 
+        afterMoveUpdate();
     }
 
     public void teleport() {
@@ -136,6 +158,8 @@ public class Bone implements McmeEntity {
         }
         relativePositionRotated = RotationMatrix.fastRotateY(/*RotationMatrix
                     .fastRotateX(*/relativePosition/*.clone().subtract(parent.getHeadPitchCenter()),pitch).add(parent.getHeadPitchCenter())*/, -yaw);
+
+        afterMoveUpdate();
     }
 
     public void resetUpdateFlags() {
@@ -151,6 +175,34 @@ public class Bone implements McmeEntity {
         //rotationUpdate = false;
     }
 
+    protected void afterMoveUpdate() {
+        // Must run before packet updates
+        updateDelayedHeadPose();
+
+        movePacket.markMovementDirty(AbstractMovePacket.MoveType.getEntityMoveType(this));
+    }
+
+    private void updateDelayedHeadPose() {
+        boolean hasHeadPoseUpdate = isHasHeadPoseUpdate();
+
+        if (headPoseHistory == null) {
+            // No delay is enabled - skip the queue
+            if (hasHeadPoseUpdate) {
+                setDelayedHeadPose(getRotatedHeadPose());
+            }
+
+            return;
+        }
+
+        if (hasHeadPoseUpdate) {
+            headPoseHistory.add(getRotatedHeadPose());
+        } else {
+            headPoseHistory.add(null);
+        }
+
+        setDelayedHeadPose(headPoseHistory.remove(0));
+    }
+
     public ItemStack getHeadItem() {
         return headItem;
     }
@@ -158,6 +210,8 @@ public class Bone implements McmeEntity {
     public void setHeadItem(ItemStack headItem) {
         if (!headItem.equals(this.headItem)) {
             hasItemUpdate = true;
+            metaPacket.markHeadItemDirty();
+            initPacket.markHeadItemDirty();
             this.headItem = headItem;
         }
     }
@@ -341,12 +395,21 @@ public class Bone implements McmeEntity {
         return rotatedHeadPose;
     }
 
-    public boolean isHasHeadPoseUpdate() {
-        return hasHeadPoseUpdate;
+    public EulerAngle getDelayedHeadPose() {
+        return delayedHeadPose;
     }
 
-    public boolean isHasItemUpdate() {
-        return hasItemUpdate;
+    private void setDelayedHeadPose(EulerAngle eulerAngle) {
+        if (eulerAngle == null) return;
+
+        delayedHeadPose = new EulerAngle(eulerAngle.getX(), eulerAngle.getY(), eulerAngle.getZ());
+
+        metaPacket.markHeadPoseDirty();
+        initPacket.markHeadPoseDirty();
+    }
+
+    public boolean isHasHeadPoseUpdate() {
+        return hasHeadPoseUpdate;
     }
 
     @Override

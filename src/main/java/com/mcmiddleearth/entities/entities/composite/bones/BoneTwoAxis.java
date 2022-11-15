@@ -1,23 +1,10 @@
 package com.mcmiddleearth.entities.entities.composite.bones;
 
-import com.mcmiddleearth.entities.ai.goal.Goal;
-import com.mcmiddleearth.entities.ai.movement.EntityBoundingBox;
-import com.mcmiddleearth.entities.api.ActionType;
-import com.mcmiddleearth.entities.api.McmeEntityType;
-import com.mcmiddleearth.entities.api.MovementSpeed;
-import com.mcmiddleearth.entities.api.MovementType;
-import com.mcmiddleearth.entities.entities.McmeEntity;
 import com.mcmiddleearth.entities.entities.composite.CompositeEntity;
-import com.mcmiddleearth.entities.protocol.packets.*;
 import com.mcmiddleearth.entities.util.RotationMatrix;
-import com.mcmiddleearth.entities.util.UuidGenerator;
-import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-
-import java.util.Set;
-import java.util.UUID;
 
 public class BoneTwoAxis extends Bone {//implements McmeEntity {
 
@@ -124,6 +111,7 @@ public class BoneTwoAxis extends Bone {//implements McmeEntity {
 
         velocity = parent.getVelocity().clone().add(shift);
 
+        afterMoveUpdate();
     }
 
     public void teleport() {

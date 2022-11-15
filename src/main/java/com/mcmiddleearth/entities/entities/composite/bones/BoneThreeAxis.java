@@ -6,8 +6,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import java.util.logging.Logger;
-
 public class BoneThreeAxis extends BoneTwoAxis {
 
     private float roll;
@@ -45,6 +43,7 @@ public class BoneThreeAxis extends BoneTwoAxis {
     Logger.getGlobal().info("velo: "+velocity);
 }*/
 
+        afterMoveUpdate();
     }
 
     public void teleport() {

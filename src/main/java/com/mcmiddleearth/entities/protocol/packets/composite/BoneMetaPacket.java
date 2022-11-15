@@ -11,6 +11,7 @@ import com.mcmiddleearth.entities.protocol.EntityMeta;
 import com.mcmiddleearth.entities.protocol.packets.AbstractPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,78 +23,70 @@ public class BoneMetaPacket extends AbstractPacket {
 
     protected final Bone bone;
 
-    private boolean hasPoseUpdate, hasItemUpdate;
+    private boolean hasPoseUpdate = true;
+    private boolean hasItemUpdate = true;
+    private boolean shouldResendPose = false;
+    private boolean shouldResendItem = false;
 
     private final WrappedDataWatcher headPoseDataWatcher = new WrappedDataWatcher();
     private final WrappedDataWatcher.WrappedDataWatcherObject headPoseWrappedObject = new WrappedDataWatcher.WrappedDataWatcherObject(EntityMeta.ARMOR_STAND_HEAD_POSE, WrappedDataWatcher.Registry.getVectorSerializer());
-    private final List<Vector3F> headPoseQueue = new ArrayList<>();
 
-    public BoneMetaPacket(Bone bone, int headPoseDelay) {
+    public BoneMetaPacket(Bone bone) {
         this.bone = bone;
         posePacket = createHeadPosePacket(headPoseDataWatcher);
         posePacket.getWatchableCollectionModifier().write(0, headPoseDataWatcher.getWatchableObjects());
 
         equipPacket = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
         equipPacket.getIntegers().write(0,bone.getEntityId());
-
-        for(int i = 0; i < headPoseDelay; i++) {
-            headPoseQueue.add(null);
-        }
-        //headPoseQueue.add(null);
-        update();
     }
 
     protected PacketContainer createHeadPosePacket(WrappedDataWatcher dataWatcher) {
         PacketContainer posePacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         posePacket.getIntegers().write(0, bone.getEntityId());
 
-        updateHeadPose(getHeadPose());
+        updateHeadPose(getDelayedHeadPoseAsVector());
 
         return posePacket;
     }
 
     @Override
     public void update() {
-        Vector3F nextHeadPose = updateHeadPoseQueueAndPopNext();
-        if(nextHeadPose != null) {
-            headPoseDataWatcher.setObject(headPoseWrappedObject, nextHeadPose, false);
-            hasPoseUpdate = true;
-        } else {
+        // Reset resend flags before an update - all relevant updates for the previous update should be sent by now
+        shouldResendPose = false;
+        shouldResendItem = false;
+
+        if (hasPoseUpdate) {
+            updateHeadPose(getDelayedHeadPoseAsVector());
             hasPoseUpdate = false;
+            shouldResendPose = true;
         }
-        if(bone.isHasItemUpdate()) {
+        if (hasItemUpdate) {
             writeHeadItem();
-            hasItemUpdate = true;
-        } else {
             hasItemUpdate = false;
+            shouldResendItem = true;
         }
     }
 
-    private Vector3F updateHeadPoseQueueAndPopNext() {
-        boolean hasHeadPoseUpdate = bone.isHasHeadPoseUpdate();
+    protected Vector3F getDelayedHeadPoseAsVector() {
+        EulerAngle rotatedHeadPose = bone.getDelayedHeadPose();
 
-        if (headPoseQueue.size() == 0) {
-            // No delay is enabled - skip the queue
-            return hasHeadPoseUpdate ? getHeadPose() : null;
-        }
-
-        if (hasHeadPoseUpdate) {
-            headPoseQueue.add(getHeadPose());
-        } else {
-            headPoseQueue.add(null);
-        }
-
-        return headPoseQueue.remove(0);
-    }
-
-    protected Vector3F getHeadPose() {
-        return new Vector3F((float)bone.getRotatedHeadPose().getX(),
-                (float)bone.getRotatedHeadPose().getY(),
-                (float)bone.getRotatedHeadPose().getZ());
+        return new Vector3F(
+                (float) rotatedHeadPose.getX(),
+                (float) rotatedHeadPose.getY(),
+                (float) rotatedHeadPose.getZ()
+        );
     }
 
     protected void updateHeadPose(Vector3F headPose) {
         headPoseDataWatcher.setObject(headPoseWrappedObject, headPose, false);
+    }
+
+    public void markHeadPoseDirty() {
+        hasPoseUpdate = true;
+    }
+
+    public void markHeadItemDirty() {
+        hasItemUpdate = true;
     }
 
     protected void writeHeadItem() {
@@ -104,11 +97,11 @@ public class BoneMetaPacket extends AbstractPacket {
 
     @Override
     public void send(Player recipient) {
-        if(hasPoseUpdate) {
+        if(shouldResendPose) {
             send(posePacket, recipient);
 //Logger.getGlobal().info("send bone pose");
         }
-        if(hasItemUpdate) {
+        if(shouldResendItem) {
             send(equipPacket, recipient);
 //Logger.getGlobal().info("send bone item");
         }

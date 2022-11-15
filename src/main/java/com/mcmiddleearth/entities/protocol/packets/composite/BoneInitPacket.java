@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class BoneInitPacket extends BoneMetaPacket {
 
     public BoneInitPacket(Bone bone) {
-        super(bone,0);
+        super(bone);
 
 //long start = System.currentTimeMillis();
 
@@ -40,18 +40,8 @@ public class BoneInitPacket extends BoneMetaPacket {
     }
 
     @Override
-    public void update() {
-        if(bone.isHasHeadPoseUpdate()) {
-            updateHeadPose(getHeadPose());
-        }
-
-        if(bone.isHasItemUpdate()) {
-            writeHeadItem();
-        }
-    }
-
-    @Override
     public void send(Player recipient) {
+        // Override super to unconditionally send out packets - these are used to spawn the entity in
         send(posePacket, recipient);
         send(equipPacket, recipient);
 //Logger.getGlobal().info("send bone init to "+recipient.getName()+" with id: "+bone.getEntityId());
