@@ -24,7 +24,7 @@ commands:
     permission: mcmeentities.developer
     usage: /animation
   vtag:
-    description: : add bukkit like tags to mcme-entities (virtual entities and players)
+    description: add bukkit like tags to mcme-entities (virtual entities and players)
     permission: mcmeentities.user
     usage: /vtag <name> add | remove <tag>
   vspawn:
